@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
     url: BASE_URL,
     siteName: "CalibrateDS",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "CalibrateDS" }],
     locale: "en_US",
     type: "website",
   },
@@ -33,7 +32,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "CalibrateDS | Quality Control for Design Engineers",
     description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
-    images: ["/og-image.png"],
     creator: "@deepadalja",
   },
 };
