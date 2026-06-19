@@ -49,7 +49,7 @@ export function Footer() {
             <a href="https://www.figma.com/@deepadalja" target="_blank" rel="noreferrer" className={styles.link}>Figma</a>
             <a href="https://www.youtube.com/@DeepAdalja" target="_blank" rel="noreferrer" className={styles.link}>YouTube</a>
             <a href="https://medium.com/@deepadalja" target="_blank" rel="noreferrer" className={styles.link}>Medium</a>
-            <a href="https://www.npmjs.com/~deepadalja" target="_blank" rel="noreferrer" className={styles.link}>npm</a>
+            <a href="https://www.npmjs.com/package/@calibrate-ds/cli" target="_blank" rel="noreferrer" className={styles.link}>npm</a>
             <a href="https://www.instagram.com/thedeepadalja/" target="_blank" rel="noreferrer" className={styles.link}>Instagram</a>
           </div>
         </div>
