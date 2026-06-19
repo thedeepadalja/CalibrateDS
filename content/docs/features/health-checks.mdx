@@ -1,0 +1,48 @@
+---
+title: "Health Checks"
+description: "Audit your Figma components to ensure they generate high-quality code."
+---
+
+# Health Checks
+
+The quality of generated code (whether via `ptb implement` or your own AI IDE) depends entirely on how well the component is constructed in Figma.
+
+## `ptb doctor`
+
+The `ptb doctor` command acts as a linter for your Figma design system. It scores components across 10 distinct architectural checks.
+
+```bash
+ptb doctor                       # System overview
+ptb doctor component Button      # Deep audit of a single component
+ptb doctor component .           # Scorecard table for all components
+ptb doctor tokens                # Verify token resolution coverage
+```
+
+## The 10-Point Grading System
+
+The doctor evaluates the following criteria:
+
+1. **Layout**: Does the component use Auto Layout?
+2. **Sizing**: Are sizing rules (Hug, Fill, Fixed) deterministic?
+3. **Token Bindings**: Are fills and text colors bound to Variables, or hardcoded hexes?
+4. **Variants**: Does the component have meaningful variant axes?
+5. **State Contract**: Does it define hover/focus states?
+6. **Prototype Interactions**: Are there Figma prototype links attached?
+7. **Render Tree**: Is the layer structure clean?
+8. **Dependencies** *(Critical)*: Are nested instances fully built and ready?
+9. **Description**: Did the designer provide a description?
+10. **Kind**: Can PTB infer if this is atomic, primitive, or a wrapper?
+
+**Grades:**
+- **Healthy:** ≥ 90%
+- **Warning:** 60–89%
+- **Critical:** < 60%
+
+> [!TIP]
+> If a component receives a low doctor score, go back to Figma, apply Auto Layout, attach Variables to colors, and run `ptb scan` again!
+
+---
+
+## Next Steps
+
+Familiarize yourself with all available commands in the [CLI Overview](/docs/cli/overview) reference.

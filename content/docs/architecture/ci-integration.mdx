@@ -1,0 +1,36 @@
+---
+title: "CI Integration"
+description: "Block PRs with stale implementations using GitHub Actions."
+---
+
+# CI Integration
+
+The `ptb.lock` file allows you to track design freshness in CI without needing access to the Figma API.
+
+## Setup GitHub Actions
+
+If you are a Lead, you can generate a workflow file by running:
+
+```bash
+ptb ci setup
+```
+
+This creates `.github/workflows/ptb.yml`.
+
+## How it works
+
+The workflow runs `ptb status --fail-on-stale` on every Push and Pull Request. 
+
+Because `ptb status` simply compares the `stampedHash` against the `designHash` in the committed `ptb.lock` file, it **does not require a Figma token** to run. 
+
+If a designer updates a component in Figma, and a developer runs `ptb scan` (updating the `designHash` in the lockfile) but forgets to implement the changes and run `ptb stamp`, the CI check will fail. This prevents "Design Drift" from leaking into your `main` branch.
+
+## Committing Context
+
+For CI to work optimally without a Figma connection, ensure you always commit the output of `ptb export context` and your `ptb.lock` file:
+
+```bash
+ptb export context
+git add .ptb/context/ ptb.lock
+git commit -m "chore: update design system context"
+```

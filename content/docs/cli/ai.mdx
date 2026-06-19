@@ -1,0 +1,24 @@
+---
+title: "AI Commands"
+description: "CLI commands for AI implementation and prompt generation."
+---
+
+# AI & Context Commands
+
+CalibrateDS includes powerful tools to pass design context to Large Language Models.
+
+| Command | What it does |
+|---|---|
+| `ptb ai setup` | Interactive wizard to configure your AI provider (Claude, OpenAI) and API keys. |
+| `ptb ai list` | Lists all saved AI providers and highlights the active one. |
+| `ptb ai use <provider>` | Switches the active provider (e.g., `ptb ai use claude`). |
+| `ptb ai model [id]` | Changes the model ID for the active provider (e.g., `claude-sonnet-4-6`). |
+| `ptb implement component <name>` | The magic command. Sends the `ComponentContext` to the active AI model and writes the component code, types, and styles. |
+| `ptb export context` | Exports all component context files as JSON to `.ptb/context/` so AI IDEs (Cursor, Copilot) can read them. |
+| `ptb prompt component <name>` | Prints the raw markdown prompt that PTB uses internally for AI generation. |
+
+---
+
+## Next Steps
+
+Review the [Team Commands](/docs/cli/team) reference.

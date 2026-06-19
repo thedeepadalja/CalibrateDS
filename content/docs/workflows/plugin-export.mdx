@@ -1,0 +1,36 @@
+---
+title: "Plugin Export Workflow"
+description: "Using the Calibrate Figma Plugin for Pro, Starter, and Free plans."
+---
+
+# Plugin Export Workflow
+
+Figma's REST API currently restricts access to Variables (Tokens) for Pro, Starter, and Free plans. To bypass this limitation, CalibrateDS provides a companion Figma plugin.
+
+## The Workflow
+
+The plugin securely extracts your variables and tokens from within Figma and exports them as a JSON file, which the CLI then consumes during its scan.
+
+### 1. Export and Place the file
+1. Open your design system file in Figma.
+2. Run the **[CalibrateDS](https://figma.com/@deepadalja)** Figma plugin.
+3. Click **Export Tokens**.
+4. Save the generated JSON file as `imported-tokens.json` directly into the hidden `.ptb/` folder at the root of your project. *(Note: On Mac, press `Cmd + Shift + .` to show hidden folders in Finder).*
+
+### 2. Sync with PTB
+Run the CLI to merge the exported tokens with the standard REST API component data:
+
+```bash
+ptb scan
+ptb generate-tokens
+ptb generate-components
+```
+
+> [!NOTE]
+> You only need to re-export from the plugin when your **Tokens or Variables** change. If you are only updating component layouts or variants, a simple `ptb scan` will work!
+
+---
+
+## Next Steps
+
+Learn how to use PTB to scaffold your UI library in the [Generation](/docs/features/generation) guide.

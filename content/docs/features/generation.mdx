@@ -1,0 +1,38 @@
+---
+title: "Generation"
+description: "Scaffold typed components and design tokens automatically."
+---
+
+# Code Generation
+
+Once you have scanned your Figma file, CalibrateDS can automatically scaffold the foundational files for your design system. 
+
+## Generate Components
+
+```bash
+ptb generate-components
+```
+
+This command parses the `.ptb/latest.json` model and creates framework-specific component shells (e.g., React `tsx` files).
+
+These generated shells are highly intelligent. They include:
+- **TypeScript Interfaces**: Prop types generated from Figma Variant axes (e.g., `size: "sm" | "md" | "lg"`).
+- **Data Attributes**: `data-variant={variant}` bindings ready for CSS styling.
+- **Slot APIs**: If your component has nested instances, PTB scaffolds React `children` or named slots.
+
+## Generate Tokens
+
+```bash
+ptb generate-tokens
+```
+
+This generates a global CSS file mapping your Figma Variables into standardized CSS Custom Properties (e.g., `--color-primary: #000;`).
+
+> [!IMPORTANT]
+> Generation is entirely deterministic. It does not use AI. It creates the *structural contracts* that your developers (or AI assistants) will fill in with implementation details.
+
+---
+
+## Next Steps
+
+Now that you have the component shells, learn how to document them in the [Documentation](/docs/features/documentation) guide.

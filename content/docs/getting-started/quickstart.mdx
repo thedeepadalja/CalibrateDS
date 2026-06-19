@@ -1,0 +1,79 @@
+---
+title: "Quickstart"
+description: "The complete end-to-end workflow to go from Figma to AI-generated component code."
+---
+
+# Quickstart
+
+This guide will walk you through initializing CalibrateDS (`ptb`), fetching your design system, and generating your first component.
+
+## 1. Initialize your project
+
+Navigate to your project directory (or an empty folder) and run:
+
+```bash
+cd your-project
+ptb init
+```
+
+PTB intelligently detects whether your repo is fresh or existing:
+- **Fresh repo:** Scaffolds `packages/ui/` with framework-specific `package.json`, `tsconfig.json`, and component/token directories.
+- **Existing repo:** Writes `ptb.config.json` and `.gitignore` entries only, leaving your code untouched.
+
+You will be asked to choose your framework, workflow, and documentation tool.
+
+## 2. Set your Figma token
+
+```bash
+export FIGMA_ACCESS_TOKEN=your_token_here
+```
+
+Generate a token at **Figma → Account Settings → Security → Generate New Token**. 
+
+> [!IMPORTANT]
+> PTB never stores the token value in your code. `ptb.config.json` only stores the environment variable name (`FIGMA_ACCESS_TOKEN`), keeping your credentials secure.
+
+## 3. Scan your Figma file
+
+Find your file key in the Figma URL: `figma.com/design/<FILE_KEY>/...` and run:
+
+```bash
+ptb scan
+```
+
+This fetches your Figma file, normalizes it into a `DesignSystemModel`, saves the snapshot to `.ptb/latest.json`, and exports component context files to `.ptb/context/`.
+
+## 4. Generate components and tokens
+
+```bash
+ptb generate-components    # typed React shells in packages/ui/src/components/
+ptb generate-tokens        # CSS custom properties in packages/ui/src/tokens/
+```
+
+## 5. Document components
+
+```bash
+ptb document component .   # generates MDX + Storybook stories for all components
+```
+
+## 6. Implement with AI
+
+```bash
+ptb ai setup               # configure Claude or OpenAI once
+ptb implement component Button
+```
+
+## 7. Track freshness
+
+Once you finish implementing the component, stamp it to mark it as complete:
+
+```bash
+ptb status                 # shows which components are stale vs implemented
+ptb stamp component Button # mark Button as implemented against the current design
+```
+
+---
+
+## Next Steps
+
+Now that you have the basic workflow down, dive deeper into how CalibrateDS structures data in the [Design System Model](/docs/concepts/design-system-model) guide.

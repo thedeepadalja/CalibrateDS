@@ -1,0 +1,42 @@
+---
+title: "Overview"
+description: "Understanding the CalibrateDS CLI commands and getting help."
+---
+
+# CLI Overview
+
+The `ptb` CLI is organized into topical command groups. At any time, you can access the built-in documentation and guides.
+
+## Getting Help
+
+```bash
+ptb --help                    # Full command list
+ptb <command> --help          # Flags and options for a specific command
+```
+
+## Built-in Topic Guides
+
+CalibrateDS includes interactive reference guides directly in the terminal.
+
+```bash
+ptb guide                     # List all feature-area topics
+ptb guide <topic>             # Read the focused reference for a topic
+```
+
+**Available Topics:**
+`setup` · `context` · `implement` · `document` · `status` · `team` · `ai` · `doctor` · `ci`
+
+## Command Notation
+
+Throughout the CLI, you can target specific components by name, or use dot notation to target **all** components:
+
+```bash
+ptb doctor component Button   # Targets only Button
+ptb doctor component .        # Targets all components
+```
+
+---
+
+## Next Steps
+
+Review the [Setup Commands](/docs/cli/setup) reference.

@@ -1,0 +1,36 @@
+---
+title: "Component Readiness"
+description: "Validate if a component is structurally shippable to engineering."
+---
+
+# Component Readiness
+
+Handoff between design and engineering often breaks because a component isn't structurally sound. The **Component Readiness** module acts as a strict linter for your Figma components.
+
+## What it Checks
+
+This module scans your selected component (or component set) and grades it across several architectural vectors:
+
+### 1. Prop Contract Extraction
+It auto-generates a JSON property contract from your Figma variants. It highlights structural issues such as combinatorial explosions (too many variants) or generic property names (e.g., leaving a property named `Property 1`).
+
+### 2. Naming Quality
+Detects non-code-safe names. The plugin uses semantic heuristics to suggest high-quality renames with confidence scoring. You can accept suggestions, edit them manually, and export the updated JSON contract.
+
+### 3. Token Coverage
+This is a critical metric for any mature design system. Token coverage calculates the percentage of properties bound to Figma Variables or Styles versus hardcoded values (like raw hex codes). 
+
+The plugin breaks this down by category:
+- Colors
+- Spacing
+- Radius
+- Typography
+
+### 4. Nested Instance Scanning
+Recursively audits all child instances grouped by the main component, ensuring that your core building blocks aren't secretly relying on detached or broken dependencies.
+
+---
+
+## Next Steps
+
+Learn how to simulate edge cases on your components in the [Stress Test (AI)](/docs/plugin/stress-test) guide.

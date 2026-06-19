@@ -1,0 +1,54 @@
+---
+title: "Team Collaboration"
+description: "Assign components and track work across your engineering team."
+---
+
+# Team Collaboration
+
+CalibrateDS provides a lightweight governance model through a committed `ptb-team.json` roster. It requires no external servers—everything is managed via git.
+
+## Roles: Leads vs Members
+
+- **Leads:** Can assign components to anyone, stamp any component, promote/demote members, and modify CI settings. The person who runs `ptb init` is automatically the first Lead.
+- **Members:** Can self-assign components and stamp only their assigned components.
+
+## Joining the Team
+
+When a new developer clones the repository, they should run:
+
+```bash
+ptb join
+```
+This registers them in `ptb-team.json` as a Member.
+
+> [!NOTE]
+> Leads can promote members by running: `ptb team role @handle lead`.
+
+## Assigning Work
+
+Leads can distribute components to specific developers:
+
+```bash
+ptb assign Button @alice
+ptb assign . @bob        # Assign all unimplemented components to Bob
+```
+
+Members can self-assign work:
+
+```bash
+ptb assign Button
+```
+
+## Viewing the Roster & Workload
+
+```bash
+ptb team                 # Show the roster and roles
+ptb status --team        # View workload grouped by assignee
+ptb status --mine        # View only your assigned tasks
+```
+
+---
+
+## Next Steps
+
+Ensure the design data feeding your team is healthy by reading the [Health Checks](/docs/features/health-checks) guide.

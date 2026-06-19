@@ -1,0 +1,37 @@
+---
+title: "Token Exporter"
+description: "Export Figma local variable collections to engineering-ready formats."
+---
+
+# Token Exporter
+
+Figma Variables are incredibly powerful, but getting them out of Figma and into code can be tedious. The **Token Exporter** module bridges this gap by generating production-ready code directly from your collections.
+
+## Export Formats
+
+You can export your tokens into 6 different formats:
+
+| Format | Extension | Use Case |
+|---|---|---|
+| **PTB JSON** | `.ptb.tokens.json` | Used by the CalibrateDS CLI for AI context. |
+| **CSS Variables** | `.tokens.css` | Standard Web projects. |
+| **JS Tokens** | `.tokens.js` | JavaScript/Node projects. |
+| **React TS** | `.tokens.tsx` | React + TypeScript projects. |
+| **Tailwind** | `.tailwind.tokens.js` | Tailwind CSS configuration. |
+| **Style Dictionary** | `.style-dictionary.tokens.json`| Standard Design Token pipelines. |
+
+## Multi-Mode & Validation
+
+The exporter doesn't just blindly dump data. It is highly intelligent:
+
+- **Validation Report:** Before exporting, it runs a validation check. It warns you about unresolved aliases, circular references, missing mode values, and duplicate code names.
+- **Dependency Detection:** If you select the "Colors" collection, but those colors reference a "Primitives" collection that isn't selected, the plugin warns you and offers a one-click "Add Required" button.
+- **Multi-Mode Support:** Full support for Light/Dark themes and responsive breakpoint modes.
+
+You can preview the live code snippet directly in the plugin before clicking **Download as File** or **Copy to Clipboard**.
+
+---
+
+## Next Steps
+
+You've completed the documentation! If you haven't already, check out the [CLI Overview](/docs/cli/overview) to see how CalibrateDS powers code generation in the terminal.

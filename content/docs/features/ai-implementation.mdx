@@ -1,0 +1,50 @@
+---
+title: "AI Implementation"
+description: "Write component code automatically using top-tier AI models."
+---
+
+# AI Implementation
+
+CalibrateDS extracts so much structured context from Figma (layout trees, state contracts, token bindings) that AI can write nearly perfect, production-ready code on the first try.
+
+## 1. Setup your AI Provider
+
+Run the interactive setup to configure your API keys and select a model.
+
+```bash
+ptb ai setup
+```
+
+**Supported Providers:**
+- **Claude (Anthropic)**: Highly recommended. Set the `ANTHROPIC_API_KEY` environment variable.
+- **OpenAI**: Set the `OPENAI_API_KEY` environment variable.
+- **Local Models**: Supported via OpenAI-compatible `baseUrl`.
+
+> [!TIP]
+> We strongly recommend using **Claude 3.5 Sonnet** (`claude-sonnet-4-6`) or **GPT-4o**. Weaker models often ignore accessibility contracts and variant constraints.
+
+## 2. Implement a Component
+
+Once setup, simply run:
+
+```bash
+ptb implement component Button
+```
+
+PTB will bundle the rich `ComponentContext` and send it to your configured model, injecting the resulting code directly into your component files.
+
+### Using your own AI IDE
+
+If you prefer interactive development, you don't have to use `ptb implement`. 
+
+1. Run `ptb export context`.
+2. Open **Cursor**, **Claude Code**, or **Copilot**.
+3. Tell your AI IDE to "implement the Button component using the context in `.ptb/context/components/button.json`."
+
+Your AI IDE now has full Figma design intent without needing a Figma API connection!
+
+---
+
+## Next Steps
+
+If you are working with other developers, see the [Team Collaboration](/docs/features/team-collaboration) guide.

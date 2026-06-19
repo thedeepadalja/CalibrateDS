@@ -1,0 +1,72 @@
+---
+title: "PTB Configuration"
+description: "Understanding the ptb.config.json file."
+---
+
+# PTB Configuration
+
+When you run `ptb init`, PTB creates a `ptb.config.json` file at your project root. This file controls generation output, naming conventions, and AI settings.
+
+## Full Schema
+
+```json
+{
+  "designTool": {
+    "provider": "figma",
+    "fileKey": "YOUR_FIGMA_FILE_KEY",
+    "accessTokenEnv": "FIGMA_ACCESS_TOKEN"
+  },
+  "project": {
+    "rootDir": "."
+  },
+  "output": {
+    "componentsDir": "packages/ui/src/components",
+    "tokensDir": "packages/ui/src/tokens",
+    "metadataDir": ".ptb"
+  },
+  "framework": {
+    "name": "react",
+    "typescript": true,
+    "styling": "css-modules"
+  },
+  "generation": {
+    "stories": true,
+    "tests": false,
+    "types": true,
+    "indexFiles": true,
+    "cssFiles": true
+  },
+  "naming": {
+    "componentCase": "PascalCase",
+    "folderCase": "kebab-case",
+    "tokenCase": "camelCase"
+  },
+  "classification": {
+    "treatComponentSetsAsCanonical": true,
+    "treatStandaloneComponentsAsCanonical": true,
+    "treatNestedInstancesAsReferences": true
+  },
+  "docs": {
+    "tool": "storybook",
+    "format": "both"
+  },
+  "ai": {
+    "active": "claude",
+    "providers": {
+      "claude": {
+        "model": "claude-sonnet-4-6",
+        "accessTokenEnv": "ANTHROPIC_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### Security Note
+The `accessTokenEnv` field stores the **name** of the environment variable (e.g., `"FIGMA_ACCESS_TOKEN"`), never the token value itself. PTB reads `process.env` at runtime.
+
+---
+
+## Next Steps
+
+Learn about the [Internal Architecture](/docs/architecture/internals) and how PTB parses Figma data.

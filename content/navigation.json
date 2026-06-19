@@ -1,0 +1,63 @@
+[
+  {
+    "title": "Getting Started",
+    "links": [
+      { "title": "Install", "href": "/docs/getting-started/install" },
+      { "title": "Quickstart", "href": "/docs/getting-started/quickstart" }
+    ]
+  },
+  {
+    "title": "Core Concepts",
+    "links": [
+      { "title": "Design System Model", "href": "/docs/concepts/design-system-model" },
+      { "title": "Design Freshness", "href": "/docs/concepts/design-freshness" },
+      { "title": "Token Resolution", "href": "/docs/concepts/token-resolution" }
+    ]
+  },
+  {
+    "title": "Figma Workflows",
+    "links": [
+      { "title": "Direct API", "href": "/docs/workflows/direct-api" },
+      { "title": "Plugin Export", "href": "/docs/workflows/plugin-export" }
+    ]
+  },
+  {
+    "title": "Features & Usage",
+    "links": [
+      { "title": "Generation", "href": "/docs/features/generation" },
+      { "title": "Documentation", "href": "/docs/features/documentation" },
+      { "title": "AI Implementation", "href": "/docs/features/ai-implementation" },
+      { "title": "Team Collaboration", "href": "/docs/features/team-collaboration" },
+      { "title": "Health Checks", "href": "/docs/features/health-checks" }
+    ]
+  },
+  {
+    "title": "CLI Reference",
+    "links": [
+      { "title": "Overview", "href": "/docs/cli/overview" },
+      { "title": "Setup", "href": "/docs/cli/setup" },
+      { "title": "State", "href": "/docs/cli/state" },
+      { "title": "AI", "href": "/docs/cli/ai" },
+      { "title": "Team", "href": "/docs/cli/team" },
+      { "title": "Admin", "href": "/docs/cli/admin" }
+    ]
+  },
+  {
+    "title": "Configuration & Architecture",
+    "links": [
+      { "title": "PTB Config", "href": "/docs/config/ptb-config" },
+      { "title": "Internals", "href": "/docs/architecture/internals" },
+      { "title": "CI Integration", "href": "/docs/architecture/ci-integration" }
+    ]
+  },
+  {
+    "title": "Figma Plugin",
+    "links": [
+      { "title": "Overview", "href": "/docs/plugin/overview" },
+      { "title": "Accessibility Advisor", "href": "/docs/plugin/accessibility-advisor" },
+      { "title": "Component Readiness", "href": "/docs/plugin/component-readiness" },
+      { "title": "Stress Test (AI)", "href": "/docs/plugin/stress-test" },
+      { "title": "Token Exporter", "href": "/docs/plugin/token-exporter" }
+    ]
+  }
+]

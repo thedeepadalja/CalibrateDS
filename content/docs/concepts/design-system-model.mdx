@@ -1,0 +1,48 @@
+---
+title: "Design System Model"
+description: "How CalibrateDS normalizes raw Figma data into a strict, engineering-ready model."
+---
+
+# Design System Model
+
+CalibrateDS is built around a unified, tool-agnostic architecture. While Figma is the primary data source today, the system relies on an intermediate model that normalizes design intent into engineering contracts.
+
+## The Pipeline
+
+1. **Figma API:** The raw, nested JSON representing your design file.
+2. **`ptb scan`:** Reads the raw JSON and transforms it into the `DesignSystemModel`.
+3. **Context Engine:** Builds rich `ComponentContext` files for AI and code generation.
+
+## Core Types
+
+### `DesignSystemModel`
+
+This is the root model saved to `.ptb/latest.json` after every `ptb scan`.
+
+```typescript
+interface DesignSystemModel {
+  version: string;
+  tokens: TokenCollection[];
+  components: ComponentDefinition[];
+}
+```
+
+### `ComponentContext`
+
+This is the richest object in PTB. It is generated during `ptb scan` and exported to `.ptb/context/components/`. This context feeds the AI prompt generators and documentation engines.
+
+It contains:
+- **Variant Axes:** Explicit properties like `size` (sm/md/lg) or `variant` (primary/secondary).
+- **Token Bindings:** How fills, strokes, and spacing map to Figma Variables (CSS Variables).
+- **State Contracts:** Hover, focus, and active state requirements.
+- **Render Tree:** The literal layout and DOM structure expected by the design.
+- **Dependencies:** Which other components are required to build this one.
+
+> [!TIP]
+> The `ComponentContext` files in `.ptb/context/` are designed to be committed to git. They serve as a portable source of truth that can be read by any AI IDE (Cursor, Copilot, Claude Code) without requiring a live Figma connection.
+
+---
+
+## Next Steps
+
+Understand how we track changes to this model over time in the [Design Freshness](/docs/concepts/design-freshness) guide.

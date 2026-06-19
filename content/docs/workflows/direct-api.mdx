@@ -1,0 +1,40 @@
+---
+title: "Direct API Workflow"
+description: "Using the direct Figma API for Organization and Enterprise plans."
+---
+
+# Direct API Workflow
+
+If your team is on a **Figma Organization** or **Enterprise** plan, you can use the Direct API workflow. This is the fastest and most automated way to sync your design system.
+
+## The Workflow
+
+Because Enterprise/Org plans have access to the Figma Variables REST API, `ptb scan` can fetch everything—components, layout, and tokens—in a single command without any plugins.
+
+### 1. Set your token
+Ensure your `FIGMA_ACCESS_TOKEN` is set in your environment.
+
+### 2. Run the interactive checklist
+CalibrateDS provides an interactive command to walk you through the Direct API workflow step-by-step:
+
+```bash
+ptb flow direct
+```
+
+### 3. Sync
+Whenever the design changes, simply run:
+
+```bash
+ptb scan
+ptb generate-tokens
+ptb generate-components
+```
+
+> [!TIP]
+> This workflow is ideal for CI/CD environments since it requires zero manual exports from Figma.
+
+---
+
+## Next Steps
+
+If you are on a Pro or Starter plan, see the [Plugin Export Workflow](/docs/workflows/plugin-export) instead. Otherwise, learn about [Generation Features](/docs/features/generation).

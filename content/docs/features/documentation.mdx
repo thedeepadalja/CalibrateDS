@@ -1,0 +1,46 @@
+---
+title: "Documentation"
+description: "Automatically generate MDX and Storybook documentation for your design system."
+---
+
+# Documentation
+
+Keeping documentation in sync with design is notoriously difficult. CalibrateDS solves this by generating documentation directly from the design source of truth.
+
+## Documenting Components
+
+```bash
+ptb document component Button          # Single component
+ptb document component .               # All components
+```
+
+On your first run, PTB will ask you to select a documentation tool (`storybook`, `docusaurus`, or `none`). Depending on your choice, it generates:
+- **Standalone MDX Files**: Rich documentation describing the component's intent, variants, and anatomy.
+- **Storybook Stories (`*.stories.tsx`)**: Auto-generated stories bound to your React components.
+- **AI Example Stories**: If you have an AI provider configured, PTB generates rich, realistic usage examples in your stories!
+
+### Overriding Settings
+
+If you chose Storybook but want to skip generating stories for a specific run, use the `--format` flag:
+
+```bash
+ptb document component Button --format mdx
+```
+
+## System Documentation
+
+You can also document the entire system at once:
+
+```bash
+ptb document system
+```
+
+This generates two files at your package root:
+1. **`components.md`**: A human-readable component inventory.
+2. **`AI.md`**: A machine-readable intent map designed specifically for AI coding assistants like Cursor or Claude Code.
+
+---
+
+## Next Steps
+
+Learn how to use AI to actually write the component implementation in the [AI Implementation](/docs/features/ai-implementation) guide.

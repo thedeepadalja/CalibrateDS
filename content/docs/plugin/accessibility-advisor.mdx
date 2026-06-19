@@ -1,0 +1,41 @@
+---
+title: "Accessibility Advisor"
+description: "Context-aware, WCAG-aligned auditing that goes beyond simple contrast checks."
+---
+
+# Accessibility Advisor
+
+The Accessibility Advisor is the flagship module of the CalibrateDS Plugin. Unlike traditional contrast checkers that only flag issues, the Advisor detects context-specific problems, explains *why* they matter, and offers **one-click inline fixes**.
+
+## Context-Aware Checks
+
+Accessibility thresholds change depending on where your design will be deployed. CalibrateDS allows you to switch context modes to ensure accurate auditing:
+
+- **Web Desktop**
+- **Web Mobile**
+- **Native iOS**
+- **Native Android**
+- **TV / Large Screen**
+- **Custom** (User-defined body minimums and tap targets)
+
+### What it checks
+
+1. **Contrast:** Checks text against background fills, including complex rendered/blended backgrounds.
+2. **Font Size:** Ensures typography meets platform-specific minimum thresholds.
+3. **Tap Target Size:** Validates touch target sizing for interactive elements (e.g., 44x44pt for iOS, 48x48dp for Android, 24x24px for Web).
+4. **Image Alt Text:** Detects missing alt text on images and icon graphics.
+
+## Fixing Issues
+
+CalibrateDS doesn't just tell you something is broken.
+
+- **Severity System:** Issues are categorized into `Pass`, `Alert`, and `Fail` with WCAG and Advisory tags.
+- **Inline Suggestions:** The plugin calculates the mathematically closest compliant color, font size, or padding adjustments and lets you **Live Preview** the fix before applying it.
+- **Bulk Operations:** Found a contrast failure on a button? Use "Find similar" to locate every identical button in your file and fix them all at once.
+- **Learning Mode:** Turn this on to reveal "Why it matters" educational content for every issue type.
+
+---
+
+## Next Steps
+
+Learn how to validate the architecture of your components in the [Component Readiness](/docs/plugin/component-readiness) guide.

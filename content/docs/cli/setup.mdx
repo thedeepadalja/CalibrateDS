@@ -1,0 +1,22 @@
+---
+title: "Setup & Scanning"
+description: "CLI commands for initializing the workspace and scanning Figma."
+---
+
+# Setup & Scanning Commands
+
+These commands handle the initialization of PTB, parsing of design files, and scaffolding of code.
+
+| Command | What it does |
+|---|---|
+| `ptb init` | Initializes PTB in the current directory. Detects if the repo is fresh or existing. Scaffolds `packages/ui` if fresh, and writes `ptb.config.json`. Registers you as the Lead. |
+| `ptb scan` | Fetches the Figma file via REST API (or reads `imported-tokens.json`), normalizes it into `DesignSystemModel`, saves the snapshot, and exports AI context files. |
+| `ptb generate-components [name]` | Scaffolds typed component shells using the framework generator (e.g., React `tsx` files). |
+| `ptb generate-tokens` | Scaffolds CSS custom property files based on Figma Variables. |
+| `ptb import-tokens <path>` | Alternative to dropping `imported-tokens.json` in `.ptb`. Imports a Calibrate plugin token export directly. |
+
+---
+
+## Next Steps
+
+Review the [State Tracking Commands](/docs/cli/state) reference.

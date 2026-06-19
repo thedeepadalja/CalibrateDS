@@ -1,0 +1,230 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border);
+}
+
+.navInner {
+  height: 4rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(182, 141, 66, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(182, 141, 66, 0.2);
+}
+
+.logoText {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+  color: var(--text-heading);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+.link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.link:hover {
+  color: var(--text-heading);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.searchTrigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.6rem 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.searchTrigger:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.searchText {
+  margin-right: var(--spacing-4);
+}
+
+.searchKbd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0 0.3rem;
+  font-size: 0.7rem;
+  font-family: var(--font-inter), sans-serif;
+  color: var(--text-secondary);
+}
+
+.ctaButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: rgba(182, 141, 66, 0.1);
+  color: var(--brand);
+  border: 1px solid rgba(182, 141, 66, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+  background: rgba(182, 141, 66, 0.2);
+  border-color: var(--brand);
+  color: var(--text-heading);
+  box-shadow: 0 0 15px rgba(182, 141, 66, 0.3);
+}
+
+/* Mobile Menu Defaults (Hidden on Desktop) */
+.mobileMenuBtn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-2);
+  margin-left: var(--spacing-4);
+}
+
+.mobileMenuOverlay {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .navLinks {
+    display: none; /* Hide top nav links on mobile */
+  }
+
+  .mobileMenuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobileMenuOverlay {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: var(--bg-primary); /* Full dark background */
+  }
+
+  .mobileMenuHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    height: 4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .closeMenuBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobileMenuContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-6) 1.5rem;
+  }
+
+  .mobilePrimaryLinks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .mobilePrimaryLink {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-heading);
+  }
+
+  .mobileDivider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .mobileSection {
+    margin-bottom: var(--spacing-8);
+  }
+
+  .mobileSectionTitle {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(160, 157, 150, 0.5);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .mobileLinkList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .mobileLink {
+    display: block;
+    padding: var(--spacing-2) 0;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+
+  .mobileActive {
+    color: var(--brand);
+    font-weight: 500;
+  }
+}

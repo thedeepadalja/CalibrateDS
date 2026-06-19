@@ -1,0 +1,39 @@
+---
+title: "Stress Test (AI)"
+description: "Simulate real-world content edge cases on components non-destructively."
+---
+
+# Stress Test (Beta)
+
+Designers often design for the "happy path"—short, perfectly wrapped text. But what happens when that button gets translated to German? What happens if user-generated content is 3x longer than expected?
+
+The **Stress Test** module solves this by simulating real-world edge cases.
+
+## How it Works
+
+1. **Non-Destructive Sandboxing:** Select a component or frame. CalibrateDS instantly creates a sandbox page with cloned variants. Your original design is **never touched**.
+2. **Simulation:** The plugin injects long text, translations, and forces content scaling on the clones.
+3. **Detection:** It scans the clones to detect `TEXT_OVERFLOW`, `CLIPPING`, and `LAYOUT_BREAK` issues, attaching confidence levels to each.
+
+## AI-Enhanced Scenarios (BYOK)
+
+Stress Test works perfectly fine offline using built-in heuristics (like simply repeating text). However, if you provide an API key (OpenAI, Anthropic, Gemini, Groq, etc.), the plugin unlocks **AI-Enhanced Scenarios**.
+
+When connected, the AI analyzes the *actual semantic content* of your component and generates realistic, context-aware edge cases (e.g., if it's a username field, it generates edge-case real names rather than `Lorem Ipsum`).
+
+## Fix Simulation
+
+Once an issue is detected, you can use "Simulate Fix." The plugin attempts to apply structural fixes to the clones (e.g., changing text wrapping, adjusting Auto Layout hugging) and reports back the outcome:
+
+- **Resolved**
+- **Improved**
+- **No Change**
+- **Worse**
+
+You can review these outcomes before deciding to commit the structural fix back to your original master component.
+
+---
+
+## Next Steps
+
+Once your components are accessible, structurally sound, and stress-tested, it's time to export their data to engineering via the [Token Exporter](/docs/plugin/token-exporter).

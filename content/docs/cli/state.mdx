@@ -1,0 +1,22 @@
+---
+title: "State & Freshness"
+description: "CLI commands for tracking design drift and implementation freshness."
+---
+
+# State Tracking Commands
+
+These commands read the `ptb.lock` file to help you track "Design Drift".
+
+| Command | What it does |
+|---|---|
+| `ptb status` | The core command. Compares your implemented code (`stampedHash`) against the latest Figma design (`designHash`) to show you what is Ready, Stale, or Not Implemented. |
+| `ptb diff` | Displays exactly what changed in Figma since your last `stamp`. Shows unstamped design changes. |
+| `ptb log` | Prints the git-style history of design changes and developer stamps. |
+| `ptb stamp component <name>` | Marks a component as implemented against the *current* design snapshot. Writes the `stampedHash`. |
+| `ptb assign <name> [person]` | Assigns a component to a developer. (e.g., `ptb assign Button @alice`). Leads can assign anyone, members can only self-assign. |
+
+---
+
+## Next Steps
+
+Review the [AI Commands](/docs/cli/ai) reference.

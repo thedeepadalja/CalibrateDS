@@ -1,0 +1,123 @@
+.h1 {
+  font-size: 2.25rem;
+  margin-top: var(--spacing-8);
+  margin-bottom: var(--spacing-4);
+  color: var(--text-heading);
+}
+
+.h2 {
+  font-size: 1.5rem;
+  margin-top: var(--spacing-8);
+  margin-bottom: var(--spacing-4);
+  color: var(--text-heading);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--spacing-2);
+}
+
+.h3 {
+  font-size: 1.25rem;
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-3);
+  color: var(--text-heading);
+}
+
+.p {
+  margin-bottom: var(--spacing-4);
+  line-height: 1.7;
+}
+
+.a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.a:hover {
+  text-decoration: underline;
+}
+
+.ul, .ol {
+  margin-bottom: var(--spacing-4);
+  padding-left: var(--spacing-6);
+}
+
+.li {
+  margin-bottom: var(--spacing-2);
+}
+
+.blockquote {
+  border-left: 4px solid var(--brand);
+  padding-left: var(--spacing-4);
+  margin: var(--spacing-6) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  background: rgba(182, 141, 66, 0.05);
+  padding: var(--spacing-4);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.code {
+  font-family: var(--font-mono);
+  background: var(--bg-tertiary);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+  color: var(--text-primary);
+}
+
+.preContainer {
+  position: relative;
+  margin: var(--spacing-6) 0;
+}
+
+.pre {
+  background: #111113;
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.pre .code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.875rem;
+}
+
+.hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--spacing-8) 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: var(--spacing-6) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.th {
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--spacing-4);
+  font-weight: 600;
+  color: var(--text-heading);
+  border-bottom: 1px solid var(--border);
+}
+
+.td {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.tr:last-child .td {
+  border-bottom: none;
+}

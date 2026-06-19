@@ -1,0 +1,116 @@
+.container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-16) var(--spacing-6);
+}
+
+.card {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: var(--spacing-12);
+  border-radius: var(--radius-xl);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at top center, rgba(182, 141, 66, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.title {
+  position: relative;
+  font-size: 2rem;
+  margin-bottom: var(--spacing-4);
+  color: var(--text-heading);
+  z-index: 1;
+}
+
+.description {
+  position: relative;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-8);
+  font-size: 1rem;
+  z-index: 1;
+}
+
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  z-index: 1;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  background: var(--brand);
+  color: #000000;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.submitBtn:hover {
+  background: var(--brand-hover);
+  transform: translateY(-2px);
+}
+
+.successMessage {
+  padding: var(--spacing-8) 0;
+}
+
+.successMessage h3 {
+  color: var(--brand);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-2);
+}
+
+.successMessage p {
+  color: var(--text-secondary);
+}

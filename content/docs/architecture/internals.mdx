@@ -1,0 +1,48 @@
+---
+title: "Internals & Generator System"
+description: "How CalibrateDS is architected internally."
+---
+
+# Internals
+
+CalibrateDS (`ptb`) operates as a pipeline. It extracts data, normalizes it, and passes it to generators.
+
+## Pipeline Architecture
+
+1. **Figma API**: The raw data source.
+2. **Scanner & Normalizer**: The `packages/core` logic that reads the raw JSON and creates the `DesignSystemModel`.
+3. **Diff & Plan**: Compares the snapshot against the previous version to identify affected components and determine the dependency order.
+4. **Generator Registry**: Dispatches the model to a framework-specific generator plugin (like React).
+
+## Generator Plugins
+
+Generators are framework plugins registered at CLI startup.
+
+Every generator implements `IGenerator`:
+
+```typescript
+interface IGenerator {
+  writeComponents(model, config, options?): Promise<WriteComponentsReport>;
+  writeTokens(model, config, options?): Promise<WriteTokensReport>;
+  writeScaffold(args: ScaffoldArgs): Promise<ScaffoldWriteReport>;
+  pruneComponents(config, staleEntries): Promise<PruneResult>;
+}
+```
+
+The current implementation is `ptbReactGenerator`. To add support for Vue or Svelte, a new package implementing `IGenerator` would be registered.
+
+## Inline Metadata Headers
+
+Every file written by PTB includes a `PTB_METADATA` comment header. This is how PTB detects user-modified files to avoid accidentally overwriting manual code.
+
+```typescript
+// PTB_METADATA {"componentId":"...","contextHash":"abc123","generatedAt":"...","framework":"react"}
+```
+
+If you remove this header, PTB assumes you want to take over ownership of the file and will never overwrite it without the `--force` flag.
+
+---
+
+## Next Steps
+
+Learn how to enforce design drift in CI in the [CI Integration](/docs/architecture/ci-integration) guide.

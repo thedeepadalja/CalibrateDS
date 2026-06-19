@@ -1,0 +1,52 @@
+---
+title: "Design Freshness"
+description: "How PTB tracks staleness using the ptb.lock file."
+---
+
+# Design Freshness
+
+The core value proposition of CalibrateDS is eliminating "Design Drift"—the gap between what is in Figma and what is in code. We solve this using a local-first lockfile system.
+
+## The `ptb.lock` File
+
+Whenever you run `ptb scan`, PTB calculates a `designHash` for every component based on its design properties, tokens, and layout. This hash is stored in `ptb.lock`.
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "components": {
+    "button": {
+      "displayName": "Button",
+      "designHash": "a1b2c3d4...",
+      "stampedHash": "a1b2c3d4...",
+      "assignedTo": "@alice"
+    }
+  }
+}
+```
+
+## Stamping a Component
+
+When a developer finishes implementing a component against the current design, they "stamp" it:
+
+```bash
+ptb stamp component Button
+```
+
+This copies the current `designHash` into the `stampedHash` field. 
+
+## Detecting Staleness (`ptb status`)
+
+The `ptb status` command compares the two hashes:
+- `stampedHash === designHash`: The component is **ready** and up-to-date.
+- `stampedHash !== designHash`: The component is **stale** (Figma was updated since the last stamp).
+- `stampedHash` is missing: The component is **not implemented**.
+
+> [!NOTE]
+> `ptb.lock` does **not** use root-level timestamps. This ensures that two developers working on different components in separate branches will never encounter a merge conflict in the lockfile.
+
+---
+
+## Next Steps
+
+Learn how design tokens map to CSS in the [Token Resolution](/docs/concepts/token-resolution) guide.

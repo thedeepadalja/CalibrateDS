@@ -1,0 +1,36 @@
+---
+title: "Token Resolution"
+description: "How Figma variables are converted into predictable CSS Custom Properties."
+---
+
+# Token Resolution
+
+CalibrateDS extracts Figma Variables and Styles, normalizes them, and generates CSS Custom Properties (variables) that power your component's styling.
+
+## How it works
+
+When you run `ptb generate-tokens`, the CLI traverses your `DesignSystemModel` and writes a global CSS file containing all your tokens.
+
+Figma variables like `color/primary/500` or `spacing/large` are transformed according to the `naming.tokenCase` rule in your `ptb.config.json` (e.g., `camelCase` or `kebab-case`).
+
+```css
+:root {
+  --colorPrimary500: #0070F3;
+  --spacingLarge: 24px;
+}
+```
+
+## Token Bindings in Context
+
+When AI implements a component (or when you build it manually), PTB passes `tokenBindings` in the component context. Instead of telling the AI to use literal hex codes (`#0070F3`), the context explicitly tells the AI to use the mapped CSS variable (`var(--colorPrimary500)`).
+
+This guarantees that your generated code is deeply coupled to your design system's semantic tokens, not raw values.
+
+> [!WARNING]
+> If a token is unresolved or missing from your Figma variables, `ptb doctor` will flag it during health checks to prevent hardcoded values from slipping into production.
+
+---
+
+## Next Steps
+
+Ready to fetch your data? Choose your workflow: [Direct API](/docs/workflows/direct-api) or [Plugin Export](/docs/workflows/plugin-export).

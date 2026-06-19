@@ -1,0 +1,39 @@
+---
+title: "Install"
+description: "How to install the CalibrateDS CLI on macOS, Linux, and Windows."
+---
+
+# Installation
+
+**Requirements:** Node.js ≥ 20 — [download here](https://nodejs.org) if you don't have it.
+
+## Mac / Linux
+
+Run these commands once in your terminal to fix npm permissions and install the CLI globally:
+
+```bash
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.zshrc 2>/dev/null || echo 'export PATH=$HOME/.npm-global/bin:$PATH' >> ~/.bash_profile
+export PATH=$HOME/.npm-global/bin:$PATH
+npm install -g @calibrate-ds/cli
+ptb --version
+```
+
+> [!NOTE]
+> The first three lines only need to be run once — they fix the global npm permission issue permanently without requiring `sudo`. Next time you update, just run `npm install -g @calibrate-ds/cli`.
+
+## Windows
+
+Open **PowerShell as Administrator** and run:
+
+```powershell
+npm install -g @calibrate-ds/cli
+ptb --version
+```
+
+---
+
+## Next Steps
+
+Once installed, head over to the [Quickstart](/docs/getting-started/quickstart) guide to initialize CalibrateDS in your project!

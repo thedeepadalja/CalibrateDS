@@ -1,0 +1,63 @@
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  height: calc(100vh - 4rem);
+  position: sticky;
+  top: 4rem;
+  overflow-y: auto;
+  padding: var(--spacing-6) var(--spacing-4);
+  background-color: var(--bg-primary);
+}
+
+.section {
+  margin-bottom: var(--spacing-8);
+}
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(160, 157, 150, 0.5); /* Dimmed out text-secondary */
+  margin-bottom: var(--spacing-3);
+  padding: 0 var(--spacing-2);
+}
+
+.linkList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.link {
+  display: block;
+  padding: var(--spacing-2);
+  font-size: 0.875rem;
+  color: var(--text-primary); /* Brighter, looks clickable */
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.link:hover {
+  color: var(--text-heading);
+  background-color: var(--bg-secondary);
+}
+
+.active {
+  color: var(--brand);
+  background-color: rgba(182, 141, 66, 0.1);
+  font-weight: 500;
+}
+
+.active:hover {
+  color: var(--brand-hover);
+  background-color: rgba(182, 141, 66, 0.15);
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none; /* In a real app we'd need a mobile menu */
+  }
+}
