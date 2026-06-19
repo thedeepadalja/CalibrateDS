@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <Navbar />
         <main style={{ minHeight: 'calc(100vh - 4rem)', paddingTop: '4rem', display: 'flex', flexDirection: 'column' }}>
           {children}

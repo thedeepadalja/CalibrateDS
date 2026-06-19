@@ -1,0 +1,65 @@
+---
+title: "Token Commands"
+description: "Store and manage API credentials for the CLI and MCP server."
+---
+
+# Token Commands
+
+The `ptb token` command manages API credentials stored in `~/.config/calibrate-ds/credentials.json`. This file is read at call time by both the CLI and the MCP server, so one `ptb token set` call works everywhere — no shell profile edits, no `launchctl setenv`, no IDE restart required.
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `ptb token set <value>` | Stores a token persistently. Reads the key name from `ptb.config.json` by default. |
+| `ptb token set <value> --name KEY` | Stores a token under a specific env var name (e.g., `ANTHROPIC_API_KEY`). |
+| `ptb token show` | Shows where the active token comes from — env var or credentials file. |
+| `ptb token clear` | Removes the stored token from the credentials file. |
+| `ptb token list` | Lists all active tokens and their sources. |
+
+## Setting a token
+
+```bash
+# Store your Figma token (key name read from ptb.config.json)
+ptb token set figd_xxxxxxxxxxxxxxxxxxxx
+
+# Store an AI provider key explicitly
+ptb token set sk-ant-xxxx --name ANTHROPIC_API_KEY
+ptb token set sk-xxxx --name OPENAI_API_KEY
+```
+
+## Checking what's active
+
+```bash
+ptb token show
+# FIGMA_ACCESS_TOKEN (credentials file, active): figd_...4f2a
+
+ptb token list
+# Credentials file: ~/.config/calibrate-ds/credentials.json
+#   FIGMA_ACCESS_TOKEN:  figd_...4f2a  (credentials file)
+#   ANTHROPIC_API_KEY:   sk-an...9c1f  (env var)
+```
+
+## Priority
+
+PTB always checks `process.env` first. If the env var is set (e.g., in CI), it wins over the credentials file. The credentials file is the fallback for local development and the MCP server.
+
+```
+process.env[KEY]  →  wins if set (CI, shell export)
+~/.config/calibrate-ds/credentials.json[KEY]  →  fallback (local dev, MCP server)
+```
+
+## CI and server environments
+
+For CI pipelines, use env vars directly — do not use the credentials file on shared machines:
+
+```bash
+# In CI (GitHub Actions, etc.)
+export FIGMA_ACCESS_TOKEN=${{ secrets.FIGMA_ACCESS_TOKEN }}
+```
+
+---
+
+## Next Steps
+
+Review the [Setup & Scanning Commands](/docs/cli/setup) reference.

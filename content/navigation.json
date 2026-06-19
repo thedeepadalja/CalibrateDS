@@ -7,6 +7,14 @@
     ]
   },
   {
+    "title": "MCP — AI IDE Integration",
+    "links": [
+      { "title": "Overview", "href": "/docs/mcp/overview" },
+      { "title": "Setup", "href": "/docs/mcp/setup" },
+      { "title": "Tools Reference", "href": "/docs/mcp/tools" }
+    ]
+  },
+  {
     "title": "Core Concepts",
     "links": [
       { "title": "Design System Model", "href": "/docs/concepts/design-system-model" },
@@ -27,6 +35,7 @@
       { "title": "Generation", "href": "/docs/features/generation" },
       { "title": "Documentation", "href": "/docs/features/documentation" },
       { "title": "AI Implementation", "href": "/docs/features/ai-implementation" },
+      { "title": "Visual Verification", "href": "/docs/features/verify" },
       { "title": "Team Collaboration", "href": "/docs/features/team-collaboration" },
       { "title": "Health Checks", "href": "/docs/features/health-checks" }
     ]
@@ -35,8 +44,9 @@
     "title": "CLI Reference",
     "links": [
       { "title": "Overview", "href": "/docs/cli/overview" },
-      { "title": "Setup", "href": "/docs/cli/setup" },
-      { "title": "State", "href": "/docs/cli/state" },
+      { "title": "Setup & Scanning", "href": "/docs/cli/setup" },
+      { "title": "Tokens", "href": "/docs/cli/tokens" },
+      { "title": "State & Freshness", "href": "/docs/cli/state" },
       { "title": "AI", "href": "/docs/cli/ai" },
       { "title": "Team", "href": "/docs/cli/team" },
       { "title": "Admin", "href": "/docs/cli/admin" }

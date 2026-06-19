@@ -62,8 +62,15 @@ When you run `ptb init`, PTB creates a `ptb.config.json` file at your project ro
 }
 ```
 
-### Security Note
-The `accessTokenEnv` field stores the **name** of the environment variable (e.g., `"FIGMA_ACCESS_TOKEN"`), never the token value itself. PTB reads `process.env` at runtime.
+## Security Note
+
+`accessTokenEnv` stores the **name** of the environment variable (e.g., `"FIGMA_ACCESS_TOKEN"`), never the token value itself.
+
+At runtime PTB resolves the token in this order:
+1. `process.env[accessTokenEnv]` — env var wins (used in CI)
+2. `~/.config/calibrate-ds/credentials.json` — credentials file (set via `ptb token set`, works for local dev and the MCP server)
+
+**Never put a token value directly in `ptb.config.json`** — that file is committed to git.
 
 ---
 

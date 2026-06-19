@@ -1,0 +1,247 @@
+---
+title: "MCP Tools Reference"
+description: "Complete reference for all 22 CalibrateDS MCP tools."
+---
+
+# MCP Tools Reference
+
+The CalibrateDS MCP server exposes 22 tools across six categories. Your AI IDE calls these automatically during implementation — you can also invoke them by name in the chat.
+
+---
+
+## Inspection
+
+### `get_component`
+
+Returns the full design context for a component. This is what the AI reads before writing code.
+
+```
+get_component({ name: "Button" })
+get_component({ name: "Button", detail: "full" })  // includes raw render tree
+```
+
+By default returns a compact summary. Pass `detail: "full"` when the AI needs the complete variant matrix, interaction contracts, and render tree.
+
+### `list_components`
+
+Lists all components in the design system with their current implementation status (not implemented / stale / ready).
+
+```
+list_components()
+list_components({ status: "stale" })  // only stale components
+```
+
+### `find_component_by_figma_node`
+
+Given a Figma node ID (from the Figma URL `?node-id=...`), returns the matching component and its file path. Enables design-to-code navigation from Figma links.
+
+```
+find_component_by_figma_node({ nodeId: "123:456" })
+```
+
+### `list_themes`
+
+Lists all token collections and their modes (e.g., Light/Dark).
+
+```
+list_themes()
+```
+
+### `get_token`
+
+Resolves a token by name to its value, alias chain, and which components reference it. Also accepts a hex color to find matching tokens.
+
+```
+get_token({ query: "colors.brand.900" })
+get_token({ query: "#103D1A" })          // reverse lookup by hex
+get_token({ query: "--ptb-colors-brand-900" })
+```
+
+---
+
+## Pipeline Actions
+
+### `run`
+
+Runs a PTB pipeline stage. Replaces running commands in a terminal.
+
+```
+run({ stage: "scan" })       // fetch fresh data from Figma
+run({ stage: "generate" })   // scaffold component shells
+run({ stage: "tokens" })     // regenerate CSS token files
+run({ stage: "context" })    // export .ptb/context/ for AI IDEs
+run({ stage: "prune" })      // remove files for deleted components
+```
+
+### `implement_component`
+
+Returns a structured implementation brief — component context, prompt, thumbnail path, and workflow steps — that the AI uses to write the full component: types, styles, and logic.
+
+```
+implement_component({ name: "Button" })
+```
+
+This is the highest-value tool in the server. A single call gives the AI everything it needs to produce production-ready code on the first attempt.
+
+### `document_component`
+
+Generates MDX documentation and/or Storybook stories for a component.
+
+```
+document_component({ name: "Button" })
+document_component({ name: "Button", format: "mdx" })
+```
+
+### `assign_component`
+
+Assigns a component to a team member.
+
+```
+assign_component({ name: "Button", to: "@alice" })
+assign_component({ name: "Button" })  // self-assign
+```
+
+### `start_work`
+
+Marks a component as in-progress. Locks it from being assigned to someone else.
+
+```
+start_work({ name: "Button" })
+```
+
+### `submit_work`
+
+Stamps a component as implemented against the current design snapshot. Equivalent to `ptb stamp component`.
+
+```
+submit_work({ name: "Button" })
+submit_work({ name: "Button", transitionTo: "stamped", artifacts: ["src/components/button/Button.tsx"] })
+```
+
+---
+
+## Governance
+
+### `get_status`
+
+Compares `stampedHash` against `designHash` for all components. Shows what is ready, stale, or not yet implemented.
+
+```
+get_status()
+get_status({ quick: true })   // fast check using ptb.lock only, no file reads
+```
+
+### `run_diff`
+
+Shows exactly what changed in Figma since the last stamp — which variant axes were added, which tokens changed, which layout properties shifted.
+
+```
+run_diff({ name: "Button" })
+run_diff()  // diff across all components
+```
+
+### `diff_clear`
+
+Clears the diff history for a component after reviewing changes.
+
+```
+diff_clear({ name: "Button" })
+```
+
+### `what_uses`
+
+Finds all components that depend on a given component. Essential before refactoring shared primitives.
+
+```
+what_uses({ name: "Button" })
+what_uses({ name: "Icon" })
+```
+
+### `token_impact`
+
+Finds all components that reference a specific token. Run before changing a token value to understand blast radius.
+
+```
+token_impact({ tokenName: "colors.brand.900" })
+token_impact({ tokenName: "--ptb-colors-brand-900" })
+```
+
+### `my_queue`
+
+Returns the components assigned to the current developer, sorted by status (stale first).
+
+```
+my_queue()
+```
+
+### `whats_new`
+
+Returns the per-version upgrade changelog — what to re-run after updating PTB.
+
+```
+whats_new()
+```
+
+---
+
+## Verification
+
+### `run_verify`
+
+Pixel-diffs the current implementation against the Figma thumbnail captured at scan time. Returns a similarity score (0.0–1.0) and annotated diff image. Requires Storybook to be running locally.
+
+```
+run_verify({ name: "Button" })
+run_verify({ name: "Button", story: "Primary" })
+```
+
+A score ≥ 0.90 is the passing threshold. If verification fails, the AI can read the diff image and adjust styles accordingly.
+
+### `get_verify_report`
+
+Returns the last verification report for a component without re-running the pixel diff.
+
+```
+get_verify_report({ name: "Button" })
+```
+
+---
+
+## Setup & Info
+
+### `get_checklist`
+
+Returns a live setup or upgrade checklist with status detection.
+
+```
+get_checklist({ kind: "setup" })    // first-time setup guide with live state
+get_checklist({ kind: "upgrade" })  // what to re-run after updating PTB
+```
+
+The setup checklist is smart — it checks your actual workspace state and marks steps as done, pending, or blocked. Steps that can be auto-run include the MCP tool to call next.
+
+### `setup_mcp`
+
+Configures PTB's MCP server in additional IDEs from inside the chat.
+
+```
+setup_mcp({ ide: "cursor" })
+setup_mcp({ ide: "windsurf" })
+```
+
+---
+
+## Using Tools in Chat
+
+Most AI IDEs let you invoke tools explicitly. Examples:
+
+> "Check which components are stale"  → AI calls `get_status()`  
+> "Implement the Card component"  → AI calls `implement_component({ name: "Card" })`  
+> "What changed in Button since last stamp?"  → AI calls `run_diff({ name: "Button" })`  
+> "Scan Figma and regenerate tokens"  → AI calls `run({ stage: "scan" })` then `run({ stage: "tokens" })`
+
+---
+
+## Next Steps
+
+[Back to MCP Overview →](/docs/mcp/overview)

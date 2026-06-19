@@ -5,46 +5,75 @@ description: "Write component code automatically using top-tier AI models."
 
 # AI Implementation
 
-CalibrateDS extracts so much structured context from Figma (layout trees, state contracts, token bindings) that AI can write nearly perfect, production-ready code on the first try.
+CalibrateDS extracts so much structured context from Figma — layout trees, state contracts, token bindings, variant axes — that AI can write production-ready component code on the first attempt.
 
-## 1. Setup your AI Provider
+## Two Ways to Implement
 
-Run the interactive setup to configure your API keys and select a model.
+### Via your AI IDE (recommended)
+
+With the [MCP server connected](/docs/mcp/setup), just ask your IDE:
+
+> "Implement the Button component"
+
+Your AI calls `implement_component`, reads the full design context, writes the code, then calls `run_verify` to pixel-diff the result against the Figma thumbnail. No terminal required, no prompt engineering needed — the AI has everything it needs through MCP.
+
+### Via the CLI
+
+If you prefer terminal-driven automation:
+
+#### 1. Set up your AI provider
 
 ```bash
 ptb ai setup
 ```
 
-**Supported Providers:**
-- **Claude (Anthropic)**: Highly recommended. Set the `ANTHROPIC_API_KEY` environment variable.
-- **OpenAI**: Set the `OPENAI_API_KEY` environment variable.
-- **Local Models**: Supported via OpenAI-compatible `baseUrl`.
+Store the API key persistently (works for CLI and MCP server):
 
-> [!TIP]
-> We strongly recommend using **Claude 3.5 Sonnet** (`claude-sonnet-4-6`) or **GPT-4o**. Weaker models often ignore accessibility contracts and variant constraints.
+```bash
+ptb token set sk-ant-xxxx --name ANTHROPIC_API_KEY
+```
 
-## 2. Implement a Component
+**Supported providers:**
+- **Claude (Anthropic)** — recommended. Use `claude-sonnet-4-6` or `claude-opus-4-8`.
+- **OpenAI** — use `gpt-4o` or `gpt-4o-mini`.
+- **Local models** — supported via OpenAI-compatible `baseUrl`.
 
-Once setup, simply run:
+> We strongly recommend Claude Sonnet or GPT-4o. Smaller models often ignore accessibility contracts and variant constraints from the design context.
+
+#### 2. Implement
 
 ```bash
 ptb implement component Button
+ptb implement component .        # implement all components sequentially
 ```
 
-PTB will bundle the rich `ComponentContext` and send it to your configured model, injecting the resulting code directly into your component files.
+PTB bundles the rich `ComponentContext` and sends it to your configured model, injecting the resulting code directly into your component files.
 
-### Using your own AI IDE
+## What the AI Receives
 
-If you prefer interactive development, you don't have to use `ptb implement`. 
+The `ComponentContext` fed to the AI includes:
 
-1. Run `ptb export context`.
-2. Open **Cursor**, **Claude Code**, or **Copilot**.
-3. Tell your AI IDE to "implement the Button component using the context in `.ptb/context/components/button.json`."
+- **Variant axes** — every Figma property and its allowed values
+- **Token bindings** — fills, strokes, spacing mapped to CSS variables (`var(--ptb-colors-brand-900)`)
+- **State contracts** — hover, focus, active, disabled state requirements
+- **Interaction contracts** — Figma prototype links and expected behaviors
+- **Render tree** — the expected DOM/layout structure from Figma Auto Layout
+- **Dependencies** — which other components must be imported
 
-Your AI IDE now has full Figma design intent without needing a Figma API connection!
+This context is what separates PTB from naively pasting a screenshot into a chat window.
+
+## Using Context Without PTB's AI
+
+You can also pass design context to any AI tool manually:
+
+1. Run `ptb export context`
+2. Open Cursor, Claude Code, or any AI editor
+3. Tell your AI: *"Implement the Button component using the context in `.ptb/context/components/button.json`"*
+
+Your AI IDE gets the full Figma design intent without needing a live Figma connection.
 
 ---
 
 ## Next Steps
 
-If you are working with other developers, see the [Team Collaboration](/docs/features/team-collaboration) guide.
+If you are working with a team, see the [Team Collaboration](/docs/features/team-collaboration) guide.

@@ -5,17 +5,38 @@ description: "CLI commands for AI implementation and prompt generation."
 
 # AI & Context Commands
 
-CalibrateDS includes powerful tools to pass design context to Large Language Models.
+CalibrateDS includes tools to configure AI providers, generate context for AI IDEs, and run terminal-based implementation.
+
+> **Prefer using your AI IDE via MCP.** The commands below are for terminal-driven workflows. With [MCP connected](/docs/mcp/setup), your IDE drives implementation directly through `implement_component`, `document_component`, and `export_context` tools.
+
+## Provider Management
 
 | Command | What it does |
 |---|---|
-| `ptb ai setup` | Interactive wizard to configure your AI provider (Claude, OpenAI) and API keys. |
+| `ptb ai setup` | Interactive wizard to configure your AI provider (Claude, OpenAI) and store the API key. |
 | `ptb ai list` | Lists all saved AI providers and highlights the active one. |
 | `ptb ai use <provider>` | Switches the active provider (e.g., `ptb ai use claude`). |
 | `ptb ai model [id]` | Changes the model ID for the active provider (e.g., `claude-sonnet-4-6`). |
-| `ptb implement component <name>` | The magic command. Sends the `ComponentContext` to the active AI model and writes the component code, types, and styles. |
-| `ptb export context` | Exports all component context files as JSON to `.ptb/context/` so AI IDEs (Cursor, Copilot) can read them. |
-| `ptb prompt component <name>` | Prints the raw markdown prompt that PTB uses internally for AI generation. |
+| `ptb ai status` | Shows the currently active provider, model, and whether the API key is set. |
+| `ptb ai providers` | Lists all supported provider names. |
+| `ptb ai remove <provider>` | Removes a configured provider from the AI config. |
+
+## Implementation & Context
+
+| Command | What it does |
+|---|---|
+| `ptb implement component <name>` | Sends the `ComponentContext` to the active AI model and writes the component code, types, and styles. Use `.` for all components. |
+| `ptb export context` | Exports all component context files as JSON to `.ptb/context/` for AI IDEs to read. Commit these files. |
+| `ptb prompt component <name>` | Prints the raw markdown prompt that PTB uses internally for AI generation. Useful for debugging or customizing. |
+
+## Storing AI provider tokens
+
+Use `ptb token set` to store provider API keys persistently (works for CLI and MCP server):
+
+```bash
+ptb token set sk-ant-xxxx --name ANTHROPIC_API_KEY
+ptb token set sk-xxxx --name OPENAI_API_KEY
+```
 
 ---
 

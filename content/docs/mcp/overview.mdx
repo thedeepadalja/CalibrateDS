@@ -1,0 +1,69 @@
+---
+title: "MCP Overview"
+description: "How the CalibrateDS MCP server turns your AI IDE into a design-system-aware coding partner."
+---
+
+# MCP — AI IDE Integration
+
+The **CalibrateDS MCP server** is the primary way to use PTB. Instead of switching between your terminal and your IDE, you talk to your design system directly from the chat window of Claude Code, Cursor, or Windsurf.
+
+## What is MCP?
+
+MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When PTB's MCP server is connected, your AI assistant gains 22 purpose-built tools that cover the entire design-to-code pipeline — scanning, inspecting, generating, verifying, and stamping — without you ever leaving the chat.
+
+## Why MCP Is the Right Way to Use PTB
+
+Without MCP, the workflow is manual:
+
+```
+terminal: ptb scan
+terminal: ptb export context
+IDE: "implement this component using the context file at .ptb/context/..."
+terminal: ptb stamp component Button
+```
+
+With MCP, the AI drives the whole loop:
+
+```
+you: "implement the Button component"
+AI: calls implement_component → reads design context → writes the code → calls run_verify → calls submit_work
+```
+
+The AI IDE has live access to your design system. It knows which components are stale, what tokens they use, which other components they depend on, and whether the implementation matches the Figma thumbnail — all without you spelling it out.
+
+## What the MCP Server Can Do
+
+| Category | What your AI IDE gains |
+|---|---|
+| **Inspect** | Read the full design context for any component — variant axes, token bindings, state contracts, render tree |
+| **Run pipeline** | Trigger `ptb scan`, `ptb generate-tokens`, `ptb generate-components` without opening a terminal |
+| **Implement** | Get a structured implementation brief that the AI turns directly into component code |
+| **Verify** | Pixel-diff the implementation against the Figma thumbnail to catch visual regressions |
+| **Govern** | Check freshness, view the diff of what changed in Figma, see your work queue, stamp completed work |
+| **Tokens** | Resolve any token by name, see alias chains, find every component that uses a given token |
+| **Setup** | Configure PTB and register MCP in additional IDEs from inside the chat |
+
+## Supported IDEs
+
+- **Claude Code** — auto-configured by `ptb init` and `ptb mcp setup`
+- **Cursor** — auto-configured by `ptb mcp setup cursor`
+- **Windsurf** — auto-configured by `ptb mcp setup windsurf`
+- **VS Code** (with MCP extension) — auto-configured by `ptb mcp setup vscode`
+
+## Token Setup — One Command, Works Everywhere
+
+The MCP server is a separate process from your terminal. It cannot inherit shell exports. Run this once and it works for both the CLI and every MCP server, across all IDEs, without any restart:
+
+```bash
+ptb token set your_figma_token_here
+```
+
+The token is stored in `~/.config/calibrate-ds/credentials.json` (owner-readable only) and read at call time by both the CLI and the MCP server.
+
+> **After a global `npm install -g @calibrate-ds/cli` update:** restart your IDE so it re-spawns the MCP server with the new binary. You will see `[PTB MCP] vX.X.X started` in your IDE's MCP logs to confirm which version is running.
+
+---
+
+## Next Steps
+
+[Set up MCP in your IDE →](/docs/mcp/setup)

@@ -1,0 +1,123 @@
+---
+title: "MCP Setup"
+description: "Connect the CalibrateDS MCP server to your AI IDE in under two minutes."
+---
+
+# Setting Up the MCP Server
+
+## Prerequisites
+
+- PTB CLI installed (`npm install -g @calibrate-ds/cli`)
+- `ptb.config.json` in your project (run `ptb init` if you haven't)
+- A Figma access token
+
+## Step 1 — Store your Figma token (once)
+
+```bash
+ptb token set your_figma_token_here
+```
+
+This writes to `~/.config/calibrate-ds/credentials.json`. Both the CLI and every MCP server instance read from this file at call time — no shell profile edits, no `launchctl setenv`, no IDE restart required after setting the token.
+
+> Get your token at **Figma → Account Settings → Security → Generate New Token**
+
+## Step 2 — Auto-configure your IDE
+
+Run this from inside your project directory:
+
+```bash
+ptb mcp setup
+```
+
+PTB detects which AI IDEs are installed on your machine and writes the correct config file for each one. You will see output like:
+
+```
+✔ Created: Claude Code → .mcp.json
+✔ Created: Cursor → .cursor/mcp.json
+```
+
+Restart the IDE afterwards to pick up the new config.
+
+### Target a specific IDE
+
+```bash
+ptb mcp setup claude-code
+ptb mcp setup cursor
+ptb mcp setup windsurf
+ptb mcp setup vscode
+```
+
+---
+
+## Manual Configuration
+
+If auto-setup doesn't cover your IDE, copy the relevant block below.
+
+### Claude Code
+
+Create or update `.mcp.json` at your project root:
+
+```json
+{
+  "mcpServers": {
+    "ptb": {
+      "command": "ptb",
+      "args": ["mcp", "--cwd", "/absolute/path/to/your/project"]
+    }
+  }
+}
+```
+
+### Cursor
+
+Create or update `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "ptb": {
+      "command": "ptb",
+      "args": ["mcp", "--cwd", "/absolute/path/to/your/project"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "ptb": {
+      "command": "ptb",
+      "args": ["mcp", "--cwd", "/absolute/path/to/your/project"]
+    }
+  }
+}
+```
+
+> **Why `--cwd`?** The MCP server is spawned by the IDE, not from your terminal. `--cwd` tells it which project root to use for `ptb.config.json` lookup. Replace the path with the output of `pwd` run from your project root.
+
+---
+
+## Verifying the Connection
+
+Once the IDE is restarted, open a chat and ask:
+
+> "Run the PTB setup checklist"
+
+The AI will call `get_checklist({ kind: "setup" })` and return a live status report showing which steps are done and which are pending. If the tool call succeeds, MCP is connected.
+
+---
+
+## Keeping MCP Up to Date
+
+After running `npm install -g @calibrate-ds/cli` to update PTB, restart your IDE. The MCP server is a long-running process and keeps using the old binary until the IDE re-spawns it. Check your IDE's MCP logs for `[PTB MCP] vX.X.X started` to confirm the version.
+
+---
+
+## Next Steps
+
+[Browse all 22 MCP tools →](/docs/mcp/tools)

@@ -5,18 +5,38 @@ description: "CLI commands for initializing the workspace and scanning Figma."
 
 # Setup & Scanning Commands
 
-These commands handle the initialization of PTB, parsing of design files, and scaffolding of code.
+These commands handle initialization, design file parsing, code scaffolding, and credential management.
+
+## Initialization
 
 | Command | What it does |
 |---|---|
-| `ptb init` | Initializes PTB in the current directory. Detects if the repo is fresh or existing. Scaffolds `packages/ui` if fresh, and writes `ptb.config.json`. Registers you as the Lead. |
-| `ptb scan` | Fetches the Figma file via REST API (or reads `imported-tokens.json`), normalizes it into `DesignSystemModel`, saves the snapshot, and exports AI context files. |
-| `ptb generate-components [name]` | Scaffolds typed component shells using the framework generator (e.g., React `tsx` files). |
-| `ptb generate-tokens` | Scaffolds CSS custom property files based on Figma Variables. |
-| `ptb import-tokens <path>` | Alternative to dropping `imported-tokens.json` in `.ptb`. Imports a Calibrate plugin token export directly. |
+| `ptb init` | Initializes PTB in the current directory. Detects fresh vs existing repo. Scaffolds `packages/ui` if fresh, writes `ptb.config.json`, registers you as Lead. |
+| `ptb mcp setup` | Auto-detects installed AI IDEs and writes MCP config files. Run after `ptb init`. See [MCP Setup](/docs/mcp/setup). |
+
+## Credentials
+
+| Command | What it does |
+|---|---|
+| `ptb token set <value>` | Stores a token in `~/.config/calibrate-ds/credentials.json`. Works for CLI and MCP server without env vars. |
+| `ptb token show` | Shows where the active token comes from (env var or credentials file). |
+| `ptb token clear` | Removes the stored token. |
+| `ptb token list` | Lists all active tokens and their sources. |
+
+See [Token Commands](/docs/cli/tokens) for the full reference.
+
+## Scanning & Generation
+
+| Command | What it does |
+|---|---|
+| `ptb scan` | Fetches the Figma file via REST API (or reads `imported-tokens.json`), normalizes it into `DesignSystemModel`, saves snapshot, exports AI context files. |
+| `ptb generate-components [name]` | Scaffolds typed component shells using the framework generator (React `tsx` files). |
+| `ptb generate-tokens` | Generates `--ptb-*` CSS custom property files from Figma Variables. |
+| `ptb export context` | Exports all component context files to `.ptb/context/`. Commit these — AI IDEs and CI read from them. |
+| `ptb import-tokens <path>` | Imports a CalibrateDS plugin token export directly (alternative to dropping `imported-tokens.json` in `.ptb/`). |
 
 ---
 
 ## Next Steps
 
-Review the [State Tracking Commands](/docs/cli/state) reference.
+Review the [State & Freshness Commands](/docs/cli/state) reference.

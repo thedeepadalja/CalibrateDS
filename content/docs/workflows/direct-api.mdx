@@ -5,36 +5,42 @@ description: "Using the direct Figma API for Organization and Enterprise plans."
 
 # Direct API Workflow
 
-If your team is on a **Figma Organization** or **Enterprise** plan, you can use the Direct API workflow. This is the fastest and most automated way to sync your design system.
+If your team is on a **Figma Organization** or **Enterprise** plan, you can use the Direct API workflow. This is the fastest and most automated way to sync your design system — no plugin export step required.
 
 ## The Workflow
 
-Because Enterprise/Org plans have access to the Figma Variables REST API, `ptb scan` can fetch everything—components, layout, and tokens—in a single command without any plugins.
+Because Enterprise/Org plans have access to the Figma Variables REST API, `ptb scan` fetches everything — components, layout, and tokens — in a single command.
 
-### 1. Set your token
-Ensure your `FIGMA_ACCESS_TOKEN` is set in your environment.
-
-### 2. Run the interactive checklist
-CalibrateDS provides an interactive command to walk you through the Direct API workflow step-by-step:
+### 1. Store your token
 
 ```bash
-ptb flow direct
+ptb token set your_figma_token_here
 ```
 
-### 3. Sync
-Whenever the design changes, simply run:
+This stores the token in `~/.config/calibrate-ds/credentials.json`. It works for both the CLI and the MCP server, across all IDEs, without any environment variable management.
+
+### 2. Run the scan
 
 ```bash
 ptb scan
-ptb generate-tokens
-ptb generate-components
 ```
 
-> [!TIP]
-> This workflow is ideal for CI/CD environments since it requires zero manual exports from Figma.
+Or from your AI IDE: *"Run ptb scan"*
+
+### 3. Generate and sync
+
+```bash
+ptb generate-tokens
+ptb generate-components
+ptb export context         # commit these files — AI IDEs read from .ptb/context/
+```
+
+> **CI environments:** use an env var instead of `ptb token set` on shared machines — `export FIGMA_ACCESS_TOKEN=...`. PTB checks the env var first, so it always wins over the credentials file.
+
+> This workflow is ideal for CI/CD since it requires zero manual exports from Figma.
 
 ---
 
 ## Next Steps
 
-If you are on a Pro or Starter plan, see the [Plugin Export Workflow](/docs/workflows/plugin-export) instead. Otherwise, learn about [Generation Features](/docs/features/generation).
+If you are on a Pro or Starter plan, see the [Plugin Export Workflow](/docs/workflows/plugin-export) instead. Otherwise, continue to [Generation Features](/docs/features/generation).

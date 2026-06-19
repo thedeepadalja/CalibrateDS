@@ -5,31 +5,28 @@ description: "The 4-in-1 design quality toolkit for Figma."
 
 # CalibrateDS Figma Plugin
 
-While the CalibrateDS CLI handles code generation, the **CalibrateDS Figma Plugin** is designed specifically for Designers and Design Engineers working inside Figma. 
+While the CalibrateDS CLI handles code generation, the **CalibrateDS Figma Plugin** is designed for designers and design engineers working inside Figma.
 
-It is a complete quality toolkit providing accessibility auditing, component readiness checks, AI-powered stress testing, and multi-format token exporting—all without ever leaving Figma.
+It is a complete quality toolkit providing accessibility auditing, component readiness checks, AI-powered stress testing, and multi-format token exporting — all without leaving Figma.
 
 ## 4 Modules, 1 Plugin
 
-Most design quality workflows require stringing together multiple single-purpose plugins. CalibrateDS combines the entire pipeline into one interface:
-
-1. **[Accessibility Advisor](/docs/plugin/accessibility-advisor)**: Context-aware WCAG auditing with inline fix suggestions.
-2. **[Component Readiness](/docs/plugin/component-readiness)**: Validates if a component is structurally shippable to engineering.
-3. **[Stress Test (AI)](/docs/plugin/stress-test)**: Simulates real-world content edge cases non-destructively.
-4. **[Token Exporter](/docs/plugin/token-exporter)**: Export Figma local variable collections to 6 engineering-ready formats.
+1. **[Accessibility Advisor](/docs/plugin/accessibility-advisor)** — Context-aware WCAG auditing with inline fix suggestions and bulk operations.
+2. **[Component Readiness](/docs/plugin/component-readiness)** — Validates if a component is structurally shippable to engineering: naming, token coverage, nested instance health.
+3. **[Stress Test (AI)](/docs/plugin/stress-test)** — Simulates real-world content edge cases (long text, translations, overflow) non-destructively using sandboxed clones.
+4. **[Token Exporter](/docs/plugin/token-exporter)** — Exports Figma local variable collections to 6 engineering-ready formats, including the PTB JSON format consumed by `ptb scan`.
 
 ## Privacy & Local-First
 
-CalibrateDS is built on a strict privacy model:
-- **100% Local**: Zero cloud dependency. Your designs never leave your machine.
-- **BYOK AI**: Bring Your Own Key. If you use the AI-enhanced features, you connect your own API key (OpenAI, Anthropic, Gemini, Groq). Data goes straight to your provider.
-- **No Telemetry**: No analytics or tracking.
+- **100% Local** — Zero cloud dependency. Your designs never leave your machine.
+- **BYOK AI** — Bring Your Own Key. AI-enhanced features connect directly to your provider (OpenAI, Anthropic, Gemini, Groq). Data goes straight to your provider, not through CalibrateDS.
+- **No Telemetry** — No analytics or tracking.
 
 ## Installation
 
-You can install the plugin directly from the Figma Community:
+Install directly from the Figma Community:
 
-[**Get the CalibrateDS Plugin on Figma Community**](https://figma.com/@deepadalja)
+[**Get the CalibrateDS Plugin on Figma Community →**](https://www.figma.com/community/plugin/1520848851134730449/calibrateds)
 
 ---
 

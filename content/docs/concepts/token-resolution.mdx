@@ -5,29 +5,64 @@ description: "How Figma variables are converted into predictable CSS Custom Prop
 
 # Token Resolution
 
-CalibrateDS extracts Figma Variables and Styles, normalizes them, and generates CSS Custom Properties (variables) that power your component's styling.
+CalibrateDS extracts Figma Variables and Styles, normalizes them, and generates CSS Custom Properties that power your component styling.
 
 ## How it works
 
-When you run `ptb generate-tokens`, the CLI traverses your `DesignSystemModel` and writes a global CSS file containing all your tokens.
+When you run `ptb generate-tokens`, the CLI traverses your `DesignSystemModel` and writes a CSS file for each token collection. Figma variable names are transformed into `--ptb-*` prefixed CSS custom properties using the collection and token name.
 
-Figma variables like `color/primary/500` or `spacing/large` are transformed according to the `naming.tokenCase` rule in your `ptb.config.json` (e.g., `camelCase` or `kebab-case`).
+A Figma variable like `colors / brand / 900` becomes:
 
 ```css
 :root {
-  --colorPrimary500: #0070F3;
-  --spacingLarge: 24px;
+  --ptb-colors-brand-900: #103D1A;
 }
 ```
 
-## Token Bindings in Context
+Spacing, radius, and typography tokens follow the same convention:
 
-When AI implements a component (or when you build it manually), PTB passes `tokenBindings` in the component context. Instead of telling the AI to use literal hex codes (`#0070F3`), the context explicitly tells the AI to use the mapped CSS variable (`var(--colorPrimary500)`).
+```css
+:root {
+  --ptb-spacing-large: 24px;
+  --ptb-radius-md: 8px;
+}
+```
 
-This guarantees that your generated code is deeply coupled to your design system's semantic tokens, not raw values.
+## Alias Tokens
 
-> [!WARNING]
-> If a token is unresolved or missing from your Figma variables, `ptb doctor` will flag it during health checks to prevent hardcoded values from slipping into production.
+If a Figma variable references another variable (an alias), PTB resolves the chain and emits a `var()` reference:
+
+```css
+:root {
+  --ptb-colors-primary: var(--ptb-colors-brand-900);
+}
+```
+
+PTB detects circular alias chains and skips them, reporting the count in the token generation metrics.
+
+## Token Bindings in Component Context
+
+When AI implements a component (or you build it manually), PTB passes `tokenBindings` in the `ComponentContext`. Instead of telling the AI to use a literal hex code like `#103D1A`, the context instructs the AI to use the semantic CSS variable:
+
+```
+fill: var(--ptb-colors-brand-900)
+```
+
+This ensures generated code is coupled to your design system's tokens — not hardcoded values that break when themes change.
+
+## Naming Convention
+
+The `naming.tokenCase` option in `ptb.config.json` controls how the token name segment is cased within the `--ptb-*` prefix. The default is `camelCase`:
+
+```css
+/* camelCase (default) */
+--ptb-colorsBrand900
+
+/* kebab-case */
+--ptb-colors-brand-900
+```
+
+> If a token is unresolved or missing from your Figma variables, `ptb doctor tokens` will flag it during health checks to prevent hardcoded values from slipping through.
 
 ---
 

@@ -5,15 +5,30 @@ description: "CLI commands for tracking design drift and implementation freshnes
 
 # State Tracking Commands
 
-These commands read the `ptb.lock` file to help you track "Design Drift".
+These commands read the `ptb.lock` file to help you track Design Drift — the gap between the current Figma design and your implementation.
 
 | Command | What it does |
 |---|---|
-| `ptb status` | The core command. Compares your implemented code (`stampedHash`) against the latest Figma design (`designHash`) to show you what is Ready, Stale, or Not Implemented. |
-| `ptb diff` | Displays exactly what changed in Figma since your last `stamp`. Shows unstamped design changes. |
+| `ptb status` | Compares `stampedHash` against `designHash` for all components. Shows what is Ready, Stale, or Not Implemented. |
+| `ptb diff` | Shows exactly what changed in Figma since your last stamp — variant axes added, tokens changed, layout shifts. |
+| `ptb diff clear` | Clears diff history after you've reviewed and addressed the changes. |
 | `ptb log` | Prints the git-style history of design changes and developer stamps. |
-| `ptb stamp component <name>` | Marks a component as implemented against the *current* design snapshot. Writes the `stampedHash`. |
-| `ptb assign <name> [person]` | Assigns a component to a developer. (e.g., `ptb assign Button @alice`). Leads can assign anyone, members can only self-assign. |
+| `ptb stamp component <name>` | Marks a component as implemented against the *current* design snapshot. Use `.` for all components. |
+| `ptb assign <name> [person]` | Assigns a component to a developer. Leads can assign anyone; members can only self-assign. |
+| `ptb verify component <name>` | Pixel-diffs your implementation against the Figma thumbnail. Requires Storybook running on localhost:6006. |
+
+## Verify before stamping
+
+The recommended workflow is to run verification before stamping a component as done:
+
+```bash
+ptb verify component Button     # score must be ≥ 0.90 to pass
+ptb stamp component Button      # once verify passes
+```
+
+Or from your AI IDE: the AI calls `run_verify` automatically after `implement_component`, adjusts styles if the score is below threshold, then calls `submit_work`.
+
+See [Visual Verification](/docs/features/verify) for a detailed guide.
 
 ---
 
