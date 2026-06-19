@@ -109,11 +109,10 @@ function confirmationHtml(email: string) {
               </p>
 
               <!-- Footer text -->
-              <p style="margin:0;font-size:11px;color:#374151;text-align:center;line-height:1.6;">
+              <p style="margin:0;font-size:11px;color:#374151;text-align:center;line-height:1.8;">
                 You received this because you signed up at
-                <a href="https://calibrateds.deepadalja.com" style="color:#4B5563;text-decoration:none;">calibrateds.deepadalja.com</a>.
-                &nbsp;&middot;&nbsp; Made by
-                <a href="https://deepadalja.com" style="color:#4B5563;text-decoration:none;">Deep Adalja</a>.
+                <a href="https://calibrateds.deepadalja.com" style="color:#4B5563;text-decoration:none;">calibrateds.deepadalja.com</a>.<br>
+                Made by <a href="https://deepadalja.com" style="color:#4B5563;text-decoration:none;">Deep Adalja</a>.
               </p>
 
             </td></tr>
