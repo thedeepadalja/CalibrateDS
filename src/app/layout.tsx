@@ -7,6 +7,9 @@ import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+  },
   title: "CalibrateDS | Quality Control for Design Engineers",
   description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
   openGraph: {
