@@ -35,33 +35,32 @@ function confirmationHtml(email: string) {
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
 
-        <!-- Logo row -->
-        <tr><td align="center" style="padding-bottom:28px;">
-          <img src="https://calibrateds.deepadalja.com/CalibrateDSLogoFull.svg"
-               alt="CalibrateDS" width="160" height="32"
-               style="display:block;border:0;max-width:160px;"
-          />
-        </td></tr>
-
         <!-- Card -->
         <tr><td style="background:#111113;border:1px solid #1e1e22;border-radius:16px;overflow:hidden;">
 
-          <!-- Gold accent bar -->
+          <!-- Header: left accent bar + content + logo top-right -->
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td width="4" style="background:#B68D42;padding:0;line-height:0;font-size:0;">&nbsp;</td>
-              <td style="background:linear-gradient(90deg,#1a1508 0%,#111113 60%);padding:28px 36px 24px;">
-                <p style="margin:0;font-size:11px;font-weight:700;color:#B68D42;text-transform:uppercase;letter-spacing:0.1em;">CalibrateDS Enterprise</p>
+              <td style="background:linear-gradient(90deg,#1a1508 0%,#111113 60%);padding:28px 28px 28px 32px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="vertical-align:top;">
+                      <p style="margin:0 0 12px;font-size:10px;font-weight:700;color:#B68D42;text-transform:uppercase;letter-spacing:0.12em;">CalibrateDS Enterprise</p>
+                      <h1 style="margin:0;font-size:30px;font-weight:800;color:#F5F0E8;line-height:1.15;letter-spacing:-0.5px;">You're on the list.</h1>
+                    </td>
+                    <td style="vertical-align:top;text-align:right;white-space:nowrap;">
+                      <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;font-size:15px;font-weight:800;letter-spacing:-0.02em;color:#F5F0E8;">Calibrate<span style="color:#B68D42;">DS</span></span>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
           </table>
 
           <!-- Body -->
           <table width="100%" cellpadding="0" cellspacing="0">
-            <tr><td style="padding:0 36px 36px;">
-              <h1 style="margin:0 0 12px;font-size:30px;font-weight:800;color:#F5F0E8;line-height:1.15;letter-spacing:-0.5px;">
-                You're on the list.
-              </h1>
+            <tr><td style="padding:16px 36px 36px 36px;">
               <p style="margin:0 0 28px;font-size:15px;color:#94A3B8;line-height:1.75;">
                 Thanks for signing up, <strong style="color:#C8B87A;">${name}</strong>. We'll reach out as soon as Enterprise access opens — you'll be first in line.
               </p>
