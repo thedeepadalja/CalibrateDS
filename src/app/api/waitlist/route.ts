@@ -8,6 +8,8 @@ const NOTIFY_TO = 'deep@deepadalja.com';
 
 const SOCIAL_LINKS = [
   { label: 'Website',   href: 'https://deepadalja.com' },
+  { label: 'LinkedIn',  href: 'https://www.linkedin.com/in/deepadalja/' },
+  { label: 'GitHub',    href: 'https://github.com/thedeepadalja' },
   { label: 'Figma',     href: 'https://www.figma.com/@deepadalja' },
   { label: 'npm',       href: 'https://www.npmjs.com/package/@calibrate-ds/cli' },
   { label: 'Medium',    href: 'https://medium.com/@deepadalja' },
