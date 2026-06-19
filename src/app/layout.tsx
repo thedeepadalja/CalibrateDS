@@ -6,25 +6,25 @@ import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 
+const BASE_URL = 'https://calibrateds.deepadalja.com';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
   },
   title: "CalibrateDS | Quality Control for Design Engineers",
-  description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
+  description: "The complete ecosystem to stop design drift. Your Figma design file is source code — scan Figma, generate typed React components, detect staleness in CI.",
+  keywords: ["design system", "Figma", "React components", "design tokens", "design drift", "MCP", "CLI", "design engineering"],
+  authors: [{ name: "Deep Adalja", url: "https://deepadalja.com" }],
+  alternates: { canonical: BASE_URL },
+  robots: { index: true, follow: true },
   openGraph: {
     title: "CalibrateDS | Quality Control for Design Engineers",
     description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
-    url: "https://calibrateds.deepadalja.com",
+    url: BASE_URL,
     siteName: "CalibrateDS",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "CalibrateDS",
-      },
-    ],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "CalibrateDS" }],
     locale: "en_US",
     type: "website",
   },
@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     title: "CalibrateDS | Quality Control for Design Engineers",
     description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
     images: ["/og-image.png"],
+    creator: "@deepadalja",
   },
 };
 
@@ -43,6 +44,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'CalibrateDS',
+              applicationCategory: 'DeveloperApplication',
+              operatingSystem: 'macOS, Linux, Windows',
+              url: 'https://calibrateds.deepadalja.com',
+              description: 'A local-first design system compiler. Scans Figma files, generates typed React components, detects design drift in CI, and exposes live design context via MCP.',
+              author: { '@type': 'Person', name: 'Deep Adalja', url: 'https://deepadalja.com' },
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+              downloadUrl: 'https://www.npmjs.com/package/@calibrate-ds/cli',
+              softwareVersion: '0.1.37',
+            }),
+          }}
+        />
+      </head>
       <body suppressHydrationWarning>
         <Navbar />
         <main style={{ minHeight: 'calc(100vh - 4rem)', paddingTop: '4rem', display: 'flex', flexDirection: 'column' }}>

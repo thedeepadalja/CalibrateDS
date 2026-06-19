@@ -1,0 +1,35 @@
+# CalibrateDS
+
+> A local-first design system compiler and quality control toolkit for design engineers. Connects Figma to code, enforces design freshness, and automates React component generation.
+
+## What CalibrateDS does
+
+CalibrateDS is a CLI tool (`@calibrate-ds/cli`) and Figma plugin that bridges the gap between design and engineering. It reads a Figma file, normalises it into a structured DesignSystemModel, and generates typed React components, design tokens, and AI-ready implementation prompts.
+
+Key capabilities:
+- Scans Figma files and builds a normalised DesignSystemModel (variants, tokens, states, interactions)
+- Generates typed React + TypeScript components from the model
+- MCP (Model Context Protocol) server — lets AI assistants like Claude query live design context directly
+- `ptb status` — detects design drift: which components are stale vs. fresh
+- `ptb dev` — live Vite playground to preview generated components with variant controls sourced from Figma
+- Figma plugin with 6 quality modules: Accessibility Advisor, Component Readiness, Token Inspector, State Diff Engine, Stress Test, Token Exporter
+
+## Why it exists
+
+Design systems drift. Engineers implement components once and never update them when designers iterate. CalibrateDS treats your Figma file as source code — every component has a `contextHash` that changes when the design changes, making staleness measurable and automatable in CI.
+
+## How to install
+
+```bash
+npm install -g @calibrate-ds/cli
+ptb init
+```
+
+## Links
+
+- Documentation: https://calibrateds.deepadalja.com/docs/getting-started/quickstart
+- npm: https://www.npmjs.com/package/@calibrate-ds/cli
+- Figma plugin: https://www.figma.com/community/plugin/1520848851134730449
+- MCP setup: https://calibrateds.deepadalja.com/docs/mcp/setup
+- GitHub: https://github.com/thedeepadalja
+- Made by Deep Adalja — https://deepadalja.com
