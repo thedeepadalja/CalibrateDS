@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CalibrateDS | Quality Control for Design Engineers",
     description: "The complete ecosystem to stop design drift. Your Figma design file is source code.",
-    url: "https://calibrateds.com",
+    url: "https://calibrateds.deepadalja.com",
     siteName: "CalibrateDS",
     images: [
       {

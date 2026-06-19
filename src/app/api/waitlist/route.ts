@@ -35,7 +35,7 @@ function confirmationHtml(email: string) {
 
         <!-- Logo row -->
         <tr><td align="center" style="padding-bottom:28px;">
-          <img src="https://calibrateds.com/CalibrateDSLogoFull.svg"
+          <img src="https://calibrateds.deepadalja.com/CalibrateDSLogoFull.svg"
                alt="CalibrateDS" width="160" height="32"
                style="display:block;border:0;max-width:160px;"
           />
@@ -88,7 +88,7 @@ function confirmationHtml(email: string) {
               <!-- CTA button -->
               <table cellpadding="0" cellspacing="0">
                 <tr><td style="border-radius:8px;background:#B68D42;">
-                  <a href="https://calibrateds.com/docs/mcp/overview"
+                  <a href="https://calibrateds.deepadalja.com/docs/mcp/overview"
                      style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:700;color:#000;text-decoration:none;letter-spacing:0.01em;">
                     Explore the docs &rarr;
                   </a>
@@ -109,7 +109,7 @@ function confirmationHtml(email: string) {
               <!-- Footer text -->
               <p style="margin:0;font-size:11px;color:#374151;text-align:center;line-height:1.6;">
                 You received this because you signed up at
-                <a href="https://calibrateds.com" style="color:#4B5563;text-decoration:none;">calibrateds.com</a>.
+                <a href="https://calibrateds.deepadalja.com" style="color:#4B5563;text-decoration:none;">calibrateds.deepadalja.com</a>.
                 &nbsp;&middot;&nbsp; Made by
                 <a href="https://deepadalja.com" style="color:#4B5563;text-decoration:none;">Deep Adalja</a>.
               </p>
