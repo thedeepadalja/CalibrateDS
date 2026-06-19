@@ -76,7 +76,7 @@ export default function Home() {
         >
           <div className={styles.badge}>
             <span className={styles.badgeDot}></span>
-            CalibrateDS v0.1.36 · MCP-Powered
+            CalibrateDS v0.1.37 · MCP-Powered
           </div>
 
           <h1 className={styles.title}>
