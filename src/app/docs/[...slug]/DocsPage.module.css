@@ -122,6 +122,13 @@
   line-height: 1.3;
 }
 
+.pageNavDesc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 0.15rem;
+}
+
 .pageNavNext .pageNavBtn {
   align-items: flex-end;
   text-align: right;

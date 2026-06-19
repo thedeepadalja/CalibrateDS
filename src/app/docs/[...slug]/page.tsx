@@ -9,18 +9,30 @@ import { Metadata } from 'next';
 import navigation from '../../../../content/navigation.json';
 
 interface NavLink { title: string; href: string; }
+interface NavLinkWithDesc extends NavLink { description?: string; }
 
-// Flatten navigation sections into a single ordered list of links
 function getAllLinks(): NavLink[] {
   return (navigation as { title: string; links: NavLink[] }[]).flatMap((s) => s.links);
 }
 
-function getAdjacentPages(currentHref: string): { prev: NavLink | null; next: NavLink | null } {
+function hrefToSlug(href: string): string[] {
+  return href.replace(/^\/docs\//, '').split('/');
+}
+
+async function getAdjacentPages(currentHref: string): Promise<{ prev: NavLinkWithDesc | null; next: NavLinkWithDesc | null }> {
   const links = getAllLinks();
   const idx = links.findIndex((l) => l.href === currentHref);
+  const prevLink = idx > 0 ? links[idx - 1] : null;
+  const nextLink = idx >= 0 && idx < links.length - 1 ? links[idx + 1] : null;
+
+  const [prevMdx, nextMdx] = await Promise.all([
+    prevLink ? getMdxContent(hrefToSlug(prevLink.href)) : Promise.resolve(null),
+    nextLink ? getMdxContent(hrefToSlug(nextLink.href)) : Promise.resolve(null),
+  ]);
+
   return {
-    prev: idx > 0 ? links[idx - 1] : null,
-    next: idx >= 0 && idx < links.length - 1 ? links[idx + 1] : null,
+    prev: prevLink ? { ...prevLink, description: prevMdx?.frontmatter.description } : null,
+    next: nextLink ? { ...nextLink, description: nextMdx?.frontmatter.description } : null,
   };
 }
 
@@ -50,7 +62,7 @@ export default async function DocPage({ params }: Props) {
   if (!mdx) notFound();
 
   const currentHref = `/docs/${resolvedParams.slug.join('/')}`;
-  const { prev, next } = getAdjacentPages(currentHref);
+  const { prev, next } = await getAdjacentPages(currentHref);
 
   return (
     <div className={styles.container}>
@@ -70,6 +82,9 @@ export default async function DocPage({ params }: Props) {
               <Link href={prev.href} className={styles.pageNavBtn}>
                 <span className={styles.pageNavDir}>← Previous</span>
                 <span className={styles.pageNavTitle}>{prev.title}</span>
+                {prev.description && (
+                  <span className={styles.pageNavDesc}>{prev.description}</span>
+                )}
               </Link>
             )}
           </div>
@@ -78,6 +93,9 @@ export default async function DocPage({ params }: Props) {
               <Link href={next.href} className={styles.pageNavBtn}>
                 <span className={styles.pageNavDir}>Next →</span>
                 <span className={styles.pageNavTitle}>{next.title}</span>
+                {next.description && (
+                  <span className={styles.pageNavDesc}>{next.description}</span>
+                )}
               </Link>
             )}
           </div>
