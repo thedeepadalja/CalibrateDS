@@ -1,26 +1,46 @@
 ---
 title: "Plugin Overview"
-description: "The 4-in-1 design quality toolkit for Figma."
+description: "The 6-module design quality toolkit for Figma — accessibility, tokens, readiness, AI stress testing, and more."
 ---
 
 # CalibrateDS Figma Plugin
 
-While the CalibrateDS CLI handles code generation, the **CalibrateDS Figma Plugin** is designed for designers and design engineers working inside Figma.
+While the CalibrateDS CLI handles code generation and AI IDE integration, the **CalibrateDS Figma Plugin** is designed for designers and design engineers working inside Figma.
 
-It is a complete quality toolkit providing accessibility auditing, component readiness checks, AI-powered stress testing, and multi-format token exporting — all without leaving Figma.
+It is a complete quality toolkit with 6 modules — accessibility auditing, component readiness checks, token inspection and export, variant state diffing, and AI-powered stress testing — all without leaving Figma.
 
-## 4 Modules, 1 Plugin
+## 6 Modules, 1 Plugin
 
-1. **[Accessibility Advisor](/docs/plugin/accessibility-advisor)** — Context-aware WCAG auditing with inline fix suggestions and bulk operations.
-2. **[Component Readiness](/docs/plugin/component-readiness)** — Validates if a component is structurally shippable to engineering: naming, token coverage, nested instance health.
-3. **[Stress Test (AI)](/docs/plugin/stress-test)** — Simulates real-world content edge cases (long text, translations, overflow) non-destructively using sandboxed clones.
-4. **[Token Exporter](/docs/plugin/token-exporter)** — Exports Figma local variable collections to 6 engineering-ready formats, including the PTB JSON format consumed by `ptb scan`.
+| Module | Purpose |
+|---|---|
+| [Accessibility Advisor](/docs/plugin/accessibility-advisor) | Context-aware WCAG auditing across 6 platforms with inline fixes and bulk operations |
+| [Component Readiness](/docs/plugin/component-readiness) | Validates naming, token coverage, and prop contracts — is this component actually shippable? |
+| [Token Inspector](/docs/plugin/token-inspector) | Inspect any node's token bindings and generate multi-platform code (CSS, React, Swift, Kotlin, Tailwind) |
+| [State Diff Engine](/docs/plugin/state-diff) | Compare style differences between component variants and export ready-to-use CSS state blocks |
+| [Stress Test (AI)](/docs/plugin/stress-test) | Simulate real-world content edge cases — long text, translations, narrow viewports — non-destructively |
+| [Token Exporter](/docs/plugin/token-exporter) | Export Figma variable collections to 6 engineering-ready formats, including PTB JSON for the CLI |
+
+## Dashboard & Health Score
+
+When you open the plugin, the **Home Dashboard** shows a live health score (0–100, A+ to F) for the selected component or frame across four axes:
+
+- **Accessibility** — contrast, font size, tap targets, alt text
+- **Token Coverage** — % of properties bound to variables vs. hardcoded
+- **Naming Hygiene** — property and variant naming quality
+- **Layout Consistency** — auto-layout and sizing correctness
+
+Click any cell to jump directly into that module's detailed audit.
+
+## AI Assistant
+
+The Dashboard also includes an **AI Assistant** tab — a chat interface for design system questions. It is context-aware (it knows what component you have selected) and supports the same BYOK providers as the Stress Test module.
 
 ## Privacy & Local-First
 
 - **100% Local** — Zero cloud dependency. Your designs never leave your machine.
-- **BYOK AI** — Bring Your Own Key. AI-enhanced features connect directly to your provider (OpenAI, Anthropic, Gemini, Groq). Data goes straight to your provider, not through CalibrateDS.
-- **No Telemetry** — No analytics or tracking.
+- **BYOK AI** — Bring Your Own Key. AI features connect directly to your provider (OpenAI, Anthropic, Gemini, Groq, Mistral, xAI, Together AI, or a custom endpoint). Data goes straight to your provider, not through CalibrateDS.
+- **No Telemetry** — No analytics or tracking of any kind.
+- **No Account Required** — Install and use immediately.
 
 ## Installation
 
@@ -28,8 +48,10 @@ Install directly from the Figma Community:
 
 [**Get the CalibrateDS Plugin on Figma Community →**](https://www.figma.com/community/plugin/1520848851134730449/calibrateds)
 
+Works in both **Design** and **Dev Mode** — though write operations (applying fixes, exporting tokens) are only available in Design mode.
+
 ---
 
 ## Next Steps
 
-Dive into the flagship feature: the [Accessibility Advisor](/docs/plugin/accessibility-advisor).
+Start with the flagship module: [Accessibility Advisor](/docs/plugin/accessibility-advisor).

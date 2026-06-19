@@ -66,6 +66,8 @@
       { "title": "Overview", "href": "/docs/plugin/overview" },
       { "title": "Accessibility Advisor", "href": "/docs/plugin/accessibility-advisor" },
       { "title": "Component Readiness", "href": "/docs/plugin/component-readiness" },
+      { "title": "Token Inspector", "href": "/docs/plugin/token-inspector" },
+      { "title": "State Diff Engine", "href": "/docs/plugin/state-diff" },
       { "title": "Stress Test (AI)", "href": "/docs/plugin/stress-test" },
       { "title": "Token Exporter", "href": "/docs/plugin/token-exporter" }
     ]

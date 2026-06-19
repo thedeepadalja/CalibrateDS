@@ -1,36 +1,55 @@
 ---
 title: "Component Readiness"
-description: "Validate if a component is structurally shippable to engineering."
+description: "Validate naming, token coverage, and prop contracts — is this component actually shippable to engineering?"
 ---
 
 # Component Readiness
 
-Handoff between design and engineering often breaks because a component isn't structurally sound. The **Component Readiness** module acts as a strict linter for your Figma components.
+Handoff breaks when a component isn't structurally sound. The **Component Readiness** module acts as a strict linter for your Figma components, checking naming, token coverage, and prop contracts before the component reaches engineering.
 
 ## What it Checks
 
-This module scans your selected component (or component set) and grades it across several architectural vectors:
-
 ### 1. Prop Contract Extraction
-It auto-generates a JSON property contract from your Figma variants. It highlights structural issues such as combinatorial explosions (too many variants) or generic property names (e.g., leaving a property named `Property 1`).
+
+Select a component set and the module extracts a clean JSON property contract from your variant structure. It surfaces structural issues such as:
+
+- Combinatorial explosions (too many variant combinations)
+- Generic property names (`Property 1`, `Type`, unnamed values)
+- Inconsistent casing across variant values
 
 ### 2. Naming Quality
-Detects non-code-safe names. The plugin uses semantic heuristics to suggest high-quality renames with confidence scoring. You can accept suggestions, edit them manually, and export the updated JSON contract.
+
+Detects non-code-safe and semantically weak names across your variants and properties. The plugin uses heuristics to generate rename suggestions with confidence scores. You can:
+
+- Accept a suggestion with one click
+- Edit it manually before applying
+- Batch-rename a property or value across **all variants in the component set** at once
+- Export the updated JSON contract
 
 ### 3. Token Coverage
-This is a critical metric for any mature design system. Token coverage calculates the percentage of properties bound to Figma Variables or Styles versus hardcoded values (like raw hex codes). 
 
-The plugin breaks this down by category:
-- Colors
-- Spacing
-- Radius
-- Typography
+The most important metric for a production-ready component. Token coverage measures the percentage of node properties that are bound to Figma Variables or Styles vs. hardcoded values (raw hex codes, numeric literals).
+
+Broken down by category:
+- **Colors** — fill, stroke, shadow
+- **Spacing** — padding, item spacing
+- **Radius** — corner radius
+- **Typography** — font size, line height, letter spacing
+
+**Auto-Resolve** — If hardcoded values have matching variables in your library, the plugin can resolve them for you with one click, binding the property to the appropriate variable without manual searching.
 
 ### 4. Nested Instance Scanning
-Recursively audits all child instances grouped by the main component, ensuring that your core building blocks aren't secretly relying on detached or broken dependencies.
+
+Recursively audits all child instances within the component, grouped by their main component. Identifies detached overrides, broken library links, and components that silently reference remote symbols not in your local library.
+
+## Instance Navigation
+
+When you navigate to a child instance during a readiness audit, the module tracks your path. Use the **Back / Forward** buttons in the header to move through your inspection history — including the viewport position and zoom level at each step. A "Return to Root" button snaps you back to the original component.
+
+Remote library components (symbols from external team files) are flagged with a notification rather than opening, since they can't be modified locally.
 
 ---
 
 ## Next Steps
 
-Learn how to simulate edge cases on your components in the [Stress Test (AI)](/docs/plugin/stress-test) guide.
+Inspect your token bindings and generate platform-specific code in the [Token Inspector](/docs/plugin/token-inspector).

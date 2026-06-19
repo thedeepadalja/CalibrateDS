@@ -1,37 +1,61 @@
 ---
 title: "Token Exporter"
-description: "Export Figma local variable collections to engineering-ready formats."
+description: "Export Figma local variable collections to 6 engineering-ready formats, with validation and multi-mode support."
 ---
 
 # Token Exporter
 
-Figma Variables are incredibly powerful, but getting them out of Figma and into code can be tedious. The **Token Exporter** module bridges this gap by generating production-ready code directly from your collections.
+Figma Variables are powerful, but getting them into code is tedious. The **Token Exporter** module generates production-ready output directly from your variable collections — with validation, dependency detection, and multi-mode support built in.
 
 ## Export Formats
 
-You can export your tokens into 6 different formats:
-
 | Format | Extension | Use Case |
 |---|---|---|
-| **PTB JSON** | `.ptb.tokens.json` | Used by the CalibrateDS CLI for AI context. |
-| **CSS Variables** | `.tokens.css` | Standard Web projects. |
-| **JS Tokens** | `.tokens.js` | JavaScript/Node projects. |
-| **React TS** | `.tokens.tsx` | React + TypeScript projects. |
-| **Tailwind** | `.tailwind.tokens.js` | Tailwind CSS configuration. |
-| **Style Dictionary** | `.style-dictionary.tokens.json`| Standard Design Token pipelines. |
+| **PTB JSON** | `.ptb.tokens.json` | CalibrateDS CLI — feeds `ptb generate-tokens` and AI context |
+| **CSS Variables** | `.tokens.css` | Standard web projects (`var(--color-brand)`) |
+| **JS Tokens** | `.tokens.js` | JavaScript/Node projects |
+| **React TS** | `.tokens.tsx` | React + TypeScript with typed token objects |
+| **Tailwind** | `.tailwind.tokens.js` | Tailwind CSS `theme.extend` configuration |
+| **Style Dictionary** | `.style-dictionary.tokens.json` | Standard design token pipelines (W3C format) |
 
-## Multi-Mode & Validation
+## Validation Report
 
-The exporter doesn't just blindly dump data. It is highly intelligent:
+Before exporting, the plugin runs a full validation pass and surfaces:
 
-- **Validation Report:** Before exporting, it runs a validation check. It warns you about unresolved aliases, circular references, missing mode values, and duplicate code names.
-- **Dependency Detection:** If you select the "Colors" collection, but those colors reference a "Primitives" collection that isn't selected, the plugin warns you and offers a one-click "Add Required" button.
-- **Multi-Mode Support:** Full support for Light/Dark themes and responsive breakpoint modes.
+- **Unresolved aliases** — a token references a variable that doesn't exist
+- **Circular references** — token A references token B which references token A
+- **Missing mode values** — a token has a value in Light mode but not Dark mode
+- **Duplicate code names** — two tokens would generate the same property name after transformation
 
-You can preview the live code snippet directly in the plugin before clicking **Download as File** or **Copy to Clipboard**.
+Validation issues are shown inline with severity levels. You can export anyway or fix first.
+
+## Dependency Detection
+
+If you select the "Brand Colors" collection but those colors reference a "Primitives" collection you didn't include, the plugin detects the dependency chain and warns you. A one-click **Add Required** button includes the missing collection automatically.
+
+## Multi-Mode Support
+
+The exporter fully supports Light/Dark themes, responsive breakpoints, and any custom modes you've defined. Each mode gets its own output block or file (depending on format). The default mode is used as the fallback when a mode value is missing.
+
+## Preview Before Export
+
+Before downloading, a live code preview updates as you change format or collection selections. Verify the output looks right, then:
+
+- **Download as File** — saves to your downloads folder
+- **Copy to Clipboard** — paste directly into your codebase
+
+## PTB JSON Format
+
+When you export using the **PTB JSON** format, the output is compatible with the CalibrateDS CLI's token pipeline. Place the file in your project and run:
+
+```bash
+ptb generate-tokens
+```
+
+The CLI reads the token file, resolves aliases, and generates platform-specific token outputs (CSS, TypeScript) plus embeds token bindings into every component's `ComponentContext` for AI implementation.
 
 ---
 
 ## Next Steps
 
-You've completed the documentation! If you haven't already, check out the [CLI Overview](/docs/cli/overview) to see how CalibrateDS powers code generation in the terminal.
+See how tokens flow into the CLI in [Setup & Scanning](/docs/cli/setup), or learn the full token resolution model in [Token Resolution](/docs/concepts/token-resolution).

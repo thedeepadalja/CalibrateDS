@@ -1,0 +1,57 @@
+---
+title: "Token Inspector"
+description: "Inspect any node's token bindings and generate multi-platform code snippets — CSS, React, Swift, Kotlin, Tailwind."
+---
+
+# Token Inspector
+
+The Token Inspector lets you select any node on the canvas and immediately see every bound variable, every hardcoded property, and the code snippet you'd write for each platform — without leaving Figma.
+
+## How to Use
+
+1. Select any node or frame on the canvas.
+2. Switch to the **Token Inspector** module.
+3. The plugin reads all properties of the selected node and resolves variable bindings.
+
+The view shows two lists side by side:
+- **Bound** — properties connected to a Figma Variable or Style (with the variable name and collection)
+- **Hardcoded** — properties with raw values not connected to any variable
+
+## Multi-Platform Code Generation
+
+For every bound property, the plugin generates the equivalent code in your target platform. Switch between outputs using the platform selector:
+
+| Platform | Output Example |
+|---|---|
+| **CSS Variables** | `color: var(--color-brand-primary);` |
+| **Tailwind CSS** | `className="text-brand-primary"` |
+| **React TypeScript** | `color: tokens.color.brand.primary` |
+| **Web CSS** | Flat CSS rule block |
+| **Swift** | `Color.brandPrimary` |
+| **Kotlin** | `R.color.brand_primary` |
+
+Token names are transformed per-platform using semantic syntax rules — dots become hyphens for CSS, camelCase for JS/TS, Pascal for Swift.
+
+## Semantic Suggestions
+
+For hardcoded properties, the Inspector computes the closest matching variable using semantic scoring:
+
+- **Exact match** — hardcoded value maps directly to a variable value
+- **Close match** — within a small tolerance (e.g., `#1A1A1A` vs. `#1C1C1C`)
+- **Domain boost** — variables with relevant keywords (e.g., `text`, `typography`) rank higher for text properties
+
+Accept a suggestion to bind the property in one click, or use it as a reference to find the right variable manually.
+
+## Selection History
+
+Navigate between previously inspected nodes using the **Back / Forward** buttons. Each history entry saves the selected node ID, viewport position, and zoom — so switching between a component's children and the parent is frictionless.
+
+## Layer Locator
+
+Each property row has a **Zoom to Layer** button that scrolls the Figma viewport to the exact node that owns that property — useful when inspecting nested frames where the selected node has many layers.
+
+---
+
+## Next Steps
+
+Compare style differences between component variants in the [State Diff Engine](/docs/plugin/state-diff).

@@ -1,0 +1,75 @@
+---
+title: "State Diff Engine"
+description: "Compare style differences between component variants and export ready-to-use CSS state blocks."
+---
+
+# State Diff Engine
+
+Most component bugs live in states: the hover color is slightly off, the disabled opacity uses the wrong value, the focus ring is a hardcoded color instead of a token. The **State Diff Engine** makes these differences visible by comparing sibling variants side by side and showing only what changed.
+
+## How to Use
+
+1. Select a component set (or any group of sibling frames/variants).
+2. Switch to the **State Diff** module.
+3. The plugin compares all sibling variants against the first (default) variant and surfaces only the modified properties.
+
+## What it Compares
+
+Every visual and layout property is included in the diff:
+
+- Fill colors (with live hex swatch previews)
+- Stroke color, width, and style
+- Opacity
+- Border radius (per corner)
+- Shadow — color, offset, blur, spread
+- Padding and item spacing
+- Text color, size, weight
+- Variable bindings (shows the variable name when bound, raw value when hardcoded)
+
+Properties that are identical across all variants are hidden — you only see what's different.
+
+## Side-by-Side Card View
+
+Each variant gets its own card. A card shows:
+- The variant name (e.g., `State=Hover`, `State=Disabled`)
+- The delta properties — only values that differ from the default variant
+- Color previews rendered as circular swatches inline
+
+## CSS State Block Export
+
+Once you've reviewed the diff, click **Copy CSS** to generate a ready-to-paste CSS block:
+
+```css
+/* Hover */
+.button:hover {
+  background-color: var(--color-brand-hover);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+}
+
+/* Disabled */
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+```
+
+The plugin maps variant names to CSS pseudo-classes and `data-` attributes automatically:
+- `State=Hover` → `:hover`
+- `State=Focus` → `:focus-visible`
+- `State=Disabled` → `:disabled` / `[data-disabled]`
+- `State=Active` → `:active`
+- `State=Selected` → `[data-selected]`
+
+Custom variant names are preserved as `data-` attributes.
+
+## When to Use This
+
+- During handoff — share the CSS block with the engineer implementing the component states
+- During review — quickly spot if a new variant accidentally changes properties it shouldn't
+- During token adoption — identify which state properties are still hardcoded vs. bound to variables
+
+---
+
+## Next Steps
+
+Simulate content edge cases on your components with the [Stress Test (AI)](/docs/plugin/stress-test).

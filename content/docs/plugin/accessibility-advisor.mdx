@@ -1,41 +1,80 @@
 ---
 title: "Accessibility Advisor"
-description: "Context-aware, WCAG-aligned auditing that goes beyond simple contrast checks."
+description: "Context-aware, WCAG-aligned auditing with inline fixes, bulk operations, and global override rules."
 ---
 
 # Accessibility Advisor
 
-The Accessibility Advisor is the flagship module of the CalibrateDS Plugin. Unlike traditional contrast checkers that only flag issues, the Advisor detects context-specific problems, explains *why* they matter, and offers **one-click inline fixes**.
+The Accessibility Advisor is the flagship module of the CalibrateDS Plugin. Unlike simple contrast checkers, it detects platform-specific problems, explains *why* they matter, and offers **one-click inline fixes** with live preview.
 
-## Context-Aware Checks
+## Platform Contexts
 
-Accessibility thresholds change depending on where your design will be deployed. CalibrateDS allows you to switch context modes to ensure accurate auditing:
+Accessibility thresholds differ depending on where your design ships. Select your context before auditing:
 
-- **Web Desktop**
-- **Web Mobile**
-- **Native iOS**
-- **Native Android**
-- **TV / Large Screen**
-- **Custom** (User-defined body minimums and tap targets)
+| Context | Use Case |
+|---|---|
+| **Auto-detect** | Plugin infers context from frame size and content |
+| **Web Desktop** | Browser on a mouse-driven display |
+| **Web Mobile** | Mobile browser (touch targets, viewport) |
+| **Native iOS** | SwiftUI / UIKit (44×44pt minimum tap target) |
+| **Native Android** | Compose / Material (48×48dp minimum tap target) |
+| **TV / Large Screen** | 10-foot UI — specialized density, focus, and text rules |
+| **Custom** | Set your own body text minimum and tap target threshold |
 
-### What it checks
+## What it Checks
 
-1. **Contrast:** Checks text against background fills, including complex rendered/blended backgrounds.
-2. **Font Size:** Ensures typography meets platform-specific minimum thresholds.
-3. **Tap Target Size:** Validates touch target sizing for interactive elements (e.g., 44x44pt for iOS, 48x48dp for Android, 24x24px for Web).
-4. **Image Alt Text:** Detects missing alt text on images and icon graphics.
+### Contrast
+Calculates text-to-background contrast ratios using actual rendered luminance — accounting for layer blending, fills, and opacity stacking — not just the top reported fill. Issues are tagged as WCAG AA, WCAG AAA, or Advisory.
+
+### Font Size
+Validates typography against platform-specific minimums. For example, Web Mobile requires larger body text than Web Desktop. TV context enforces viewing-distance-adjusted minimums.
+
+### Tap Target Size
+Validates interactive element hit areas. Detection mode can be set to:
+- **Balanced** — flags only clear violations
+- **Strict** — flags anything below the platform minimum regardless of apparent interactivity
+
+### Image Alt Text
+Detects image fills and icon graphics missing accessibility descriptions and prompts for alt text.
+
+### TV / Large Screen Checks
+Four additional checks activate in TV context:
+- Focus state visibility
+- Text density (characters per line)
+- Contrast at 10-foot viewing distance
+- Element density on screen
+
+## Severity System
+
+Every issue is tagged with:
+- `Fail` — violates WCAG AA (or platform equivalent)
+- `Alert` — violates WCAG AAA or an advisory guideline
+- `Pass` — compliant
 
 ## Fixing Issues
 
-CalibrateDS doesn't just tell you something is broken.
+The plugin doesn't just flag — it fixes.
 
-- **Severity System:** Issues are categorized into `Pass`, `Alert`, and `Fail` with WCAG and Advisory tags.
-- **Inline Suggestions:** The plugin calculates the mathematically closest compliant color, font size, or padding adjustments and lets you **Live Preview** the fix before applying it.
-- **Bulk Operations:** Found a contrast failure on a button? Use "Find similar" to locate every identical button in your file and fix them all at once.
-- **Learning Mode:** Turn this on to reveal "Why it matters" educational content for every issue type.
+**Live Preview** — The plugin computes the nearest compliant color, font size, or padding and previews it on the canvas in real time before you commit. Hover a suggestion to see it rendered; move away to revert.
+
+**Apply Fix** — Commits the change. The fix is added to the undo stack (up to 20 entries).
+
+**Undo Last Fix** — One click to revert the most recent applied fix.
+
+**Find Similar** — Finds every node in the file that shares the same component key or name+type fingerprint as the issue node.
+
+**Apply to All** — After "Find Similar", apply the same fix to every matching node in one operation.
+
+## Override Rules
+
+For systemic issues you've accepted as intentional (e.g., a brand-mandated low-contrast decorative element), you can create a **global override rule** scoped to a component fingerprint. Overrides persist across sessions in `figma.clientStorage`. Individual nodes can be excluded from overrides via a per-node exclusion flag.
+
+## Learning Mode
+
+Enable **Learning Mode** in Settings to expand every issue card with a "Why it matters" explanation — useful when onboarding designers to accessibility standards.
 
 ---
 
 ## Next Steps
 
-Learn how to validate the architecture of your components in the [Component Readiness](/docs/plugin/component-readiness) guide.
+Validate the architecture of your components in [Component Readiness](/docs/plugin/component-readiness).
