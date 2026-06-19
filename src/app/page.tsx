@@ -7,20 +7,21 @@ import { Terminal, ArrowRight, RefreshCw, PenTool, Code2, Cpu, Zap, ShieldCheck,
 import styles from './page.module.css';
 
 const TERMINAL_TEXT = [
+  '> ptb init',
+  '  ✔ ptb.config.json created',
+  '  ✔ Figma file key saved',
+  '',
   '> ptb token set figd_xxxxxxxxxxxx',
-  '✔ Token stored — works for CLI and MCP',
+  '  ✔ Token stored — works for CLI and MCP',
+  '',
+  '> ptb scan',
+  '  ✔ 24 components · 180 tokens · 6 variants',
   '',
   '> ptb mcp setup',
-  '✔ Claude Code  →  .mcp.json',
-  '✔ Cursor       →  .cursor/mcp.json',
+  '  ✔ Claude Code  →  .mcp.json',
+  '  ✔ Cursor       →  .cursor/mcp.json',
   '',
-  '// Now in your IDE chat:',
-  'You: "Implement the Button component"',
-  'AI:  [implement_component]  reading context...',
-  'AI:  [run_verify]  score 0.94 ✓',
-  'AI:  [submit_work]  Button stamped.',
-  '',
-  '✦ Design drift resolved.',
+  '  ✦ Design system wired.',
 ];
 
 const CHAT_MESSAGES = [
@@ -116,19 +117,16 @@ export default function Home() {
             <pre><code>
               {mounted && terminalLines.map((line, i) => {
                 const isCmd = line.startsWith('>');
-                const isSuccess = line.startsWith('✔') || line.startsWith('✦');
-                const isComment = line.startsWith('//');
-                const isAI = line.startsWith('AI:');
-                const isUser = line.startsWith('You:');
+                const isFinal = line.includes('✦');
                 return (
                   <span
                     key={i}
                     style={{
                       display: 'block',
-                      color: isCmd ? '#E2E8F0' : isSuccess ? '#27C93F' : isComment ? '#718096' : isAI ? 'var(--brand)' : isUser ? '#A78BFA' : '#94A3B8',
+                      color: isCmd ? '#E2E8F0' : isFinal ? '#B68D42' : '#4A5568',
                     }}
                   >
-                    {line || ' '}
+                    {line || ' '}
                   </span>
                 );
               })}
@@ -260,21 +258,21 @@ export default function Home() {
             {[
               {
                 n: '01',
-                title: 'Install & connect',
-                desc: 'Install the CLI, store your Figma token once, and run `ptb mcp setup` to wire your AI IDE.',
-                code: 'npm install -g @calibrate-ds/cli\nptb token set <figma-token>\nptb mcp setup',
+                title: 'Init your project',
+                desc: 'Run ptb init — it creates ptb.config.json, prompts for your Figma file key, and stores your access token once for both CLI and MCP.',
+                code: 'npm install -g @calibrate-ds/cli\nptb init\nptb token set figd_xxxxxxxxxxxx',
               },
               {
                 n: '02',
                 title: 'Scan your design file',
-                desc: 'PTB fetches your Figma file and normalizes it into a structured model — component variants, token bindings, state contracts, layout trees.',
+                desc: 'PTB fetches your Figma file and normalises it into a structured model — component variants, token bindings, state contracts, layout trees.',
                 code: 'ptb scan\nptb generate-tokens\nptb generate-components',
               },
               {
                 n: '03',
                 title: 'Let your AI IDE drive',
-                desc: 'Open a chat and ask your AI to implement, verify, or review any component. It has live access to every design decision.',
-                code: '// In Claude Code, Cursor, or Windsurf:\n"Implement the Button component"\n"What changed in Card since last sprint?"',
+                desc: 'Run ptb mcp setup, open your AI IDE, and ask it to implement, verify, or diff any component. It has live access to every design decision.',
+                code: 'ptb mcp setup\n\n// Then in Claude Code / Cursor:\n"Implement the Button component"',
               },
             ].map((step, i) => (
               <motion.div
