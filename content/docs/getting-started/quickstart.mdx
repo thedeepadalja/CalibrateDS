@@ -5,11 +5,11 @@ description: "The complete end-to-end workflow to go from Figma to AI-generated 
 
 # Quickstart
 
-This guide walks you through initializing CalibrateDS (`ptb`), connecting your AI IDE via MCP, fetching your design system, and having your AI assistant implement your first component.
+This guide walks you through the full workflow: initialize PTB, connect to Figma, generate your design system, and have your AI IDE implement your first component.
 
 ## 1. Initialize your project
 
-Navigate to your project directory (or an empty folder) and run:
+Navigate to your project directory and run:
 
 ```bash
 cd your-project
@@ -17,10 +17,10 @@ ptb init
 ```
 
 PTB detects whether your repo is fresh or existing:
-- **Fresh repo:** Scaffolds `packages/ui/` with framework-specific `package.json`, `tsconfig.json`, and component/token directories.
-- **Existing repo:** Writes `ptb.config.json` and `.gitignore` entries only, leaving your code untouched.
+- **Fresh repo** — scaffolds `packages/ui/` with framework-specific `package.json`, `tsconfig.json`, and component/token directories
+- **Existing repo** — writes `ptb.config.json` and `.gitignore` entries only, leaves your code untouched
 
-You will be asked to choose your framework, workflow, and documentation tool.
+You will be asked to choose your framework (React, Vue, Svelte), workflow type, and documentation tool.
 
 ## 2. Add your Figma file key
 
@@ -28,6 +28,14 @@ Open `ptb.config.json` and replace `"YOUR_FIGMA_FILE_KEY"` with your actual file
 
 ```
 figma.com/design/<FILE_KEY>/your-file-name
+```
+
+Edit the `fileKey` field:
+
+```json
+"designTool": {
+  "fileKey": "AbCdEfGhIjKlMnOp"
+}
 ```
 
 ## 3. Store your Figma token
@@ -38,31 +46,28 @@ ptb token set your_figma_token_here
 
 Generate a token at **Figma → Account Settings → Security → Generate New Token**.
 
-This stores the token in `~/.config/calibrate-ds/credentials.json`. It works for both the CLI and the MCP server — you never need to export env vars, edit shell profiles, or restart your IDE after setting a token.
+PTB stores the token in `~/.config/calibrate-ds/credentials.json` — not in `ptb.config.json`. This single command works for both the CLI and the MCP server in your IDE. No shell profile edits, no restart required.
 
-## 4. Connect your AI IDE via MCP
+> **CI / server environments:** use `export FIGMA_ACCESS_TOKEN=your_token_here` instead. PTB checks the env var first, so it always wins.
 
-```bash
-ptb mcp setup
-```
+## 4. Scan your Figma file
 
-PTB detects your installed AI IDEs and writes the MCP config automatically. Restart your IDE once to pick it up. Then open a chat and ask:
-
-> "Run the PTB setup checklist"
-
-If the MCP connection is working, your AI will respond with a live status report. **MCP is the primary way to use PTB** — your AI IDE drives the full workflow from here.
-
-## 5. Scan your Figma file
-
-From your IDE chat or the terminal:
+**Organization / Enterprise** — PTB reads directly from the Figma API, no plugin needed:
 
 ```bash
-ptb scan    # or: ask your AI to "run ptb scan"
+ptb scan
 ```
 
-This fetches your Figma file, normalizes it into a `DesignSystemModel`, saves it to `.ptb/latest.json`, and exports component context to `.ptb/context/`.
+**Pro / Starter / Free** — first export your tokens using the Figma plugin:
 
-## 6. Generate components and tokens
+1. Install **[CalibrateDS on Figma Community](https://www.figma.com/community/plugin/1520848851134730449/calibrateds)**
+2. Open your Figma file → **Plugins → CalibrateDS → Token Exporter → Export PTB JSON**
+3. Save as `imported-tokens.json` in your `.ptb/` folder
+4. Then run `ptb scan`
+
+`ptb scan` fetches your Figma file, normalizes it into a structured model, saves it to `.ptb/latest.json`, and exports component context to `.ptb/context/`.
+
+## 5. Generate components and tokens
 
 ```bash
 ptb generate-components    # typed React shells in packages/ui/src/components/
@@ -70,41 +75,70 @@ ptb generate-tokens        # CSS custom properties in packages/ui/src/tokens/
 ptb export context         # write .ptb/context/ files — commit these
 ```
 
-Or from your IDE chat: *"Generate components and tokens"*
-
-## 7. Configure your AI provider (for terminal-based implementation)
+## 6. Connect your AI IDE via MCP
 
 ```bash
-ptb ai setup               # connect Claude or OpenAI once
+ptb mcp setup
 ```
 
-> Skip this step if you plan to implement components via your AI IDE chat — the IDE uses its own model, not PTB's configured provider.
+PTB auto-detects your installed AI IDEs (Claude Code, Cursor, Windsurf, VS Code) and writes the correct config for each. Restart your IDE once to pick it up.
 
-## 8. Implement a component
+Then open a chat and ask: *"Run the PTB setup checklist"* — your AI will respond with a live status report confirming the connection.
+
+**MCP is the recommended way to work with PTB.** Once connected, you can scan, generate, implement, verify, and stamp components entirely from chat — no terminal needed.
+
+See [MCP Setup](/docs/mcp/setup) for manual IDE configs and troubleshooting.
+
+## 7. Implement with AI
 
 From your IDE chat:
 
 > "Implement the Button component"
 
-Your AI calls `implement_component`, reads the full design context, writes the component code and styles, then calls `run_verify` to pixel-diff the result against the Figma thumbnail.
+Your AI calls `implement_component`, reads the full design context (variant axes, token bindings, state contracts), writes the component files, then calls `run_verify` to pixel-diff the result against the Figma thumbnail.
 
 Or from the terminal:
 
 ```bash
+ptb ai setup                        # configure Claude or OpenAI once (required)
 ptb implement component Button
+```
+
+> `ptb ai setup` is required before `ptb implement component` — the command calls an AI provider to write code.
+
+## 8. Preview in the playground
+
+```bash
+ptb dev
+```
+
+Starts a live Vite playground at `http://localhost:4321`. Every implemented component appears automatically — variant controls are sourced directly from your Figma model, no stories to write.
+
+After every `ptb implement`, the CLI prints a direct link:
+
+```
+→ Preview: http://localhost:4321/component/button
 ```
 
 ## 9. Track freshness
 
 ```bash
-ptb status                     # see which components are stale vs implemented
-ptb stamp component Button     # mark Button as done against the current design
+ptb status                     # three-column table: Design / Code / Visual
+ptb stamp component Button     # mark Button as implemented against current design
 ```
 
-Or from your IDE: *"What components are stale? Stamp Button as done."*
+`ptb status` shows three signals per component:
+
+| Column | What it checks |
+|---|---|
+| **Design** | Did Figma change since last stamp? |
+| **Code** | Is the generated file up to date with the design? |
+| **Visual** | Pixel-diff score from last `ptb verify` run |
+
+Or from your IDE chat: *"What components are stale? Stamp Button as done."*
 
 ---
 
 ## Next Steps
 
-Dive deeper into MCP — the primary way to use PTB — in the [MCP Overview](/docs/mcp/overview) guide.
+MCP is the primary way to use PTB — dive into the [MCP Overview](/docs/mcp/overview) to see all 22 tools.
