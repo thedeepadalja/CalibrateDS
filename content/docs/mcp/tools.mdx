@@ -111,12 +111,18 @@ start_work({ name: "Button" })
 
 ### `submit_work`
 
-Stamps a component as implemented against the current design snapshot. Reconciles dependency statuses against `ptb.lock` before recording the stamp. Equivalent to `ptb stamp component`.
+Stamps a component as implemented. Before recording the stamp, the tool:
+1. Reads the actual `.ptb/verify/<slug>/report.json` from disk — never trusts self-reported scores from the caller.
+2. Hard-blocks if no report exists (never verified) or if the component is still an unimplemented scaffold (`@ptb-scaffold` marker detected).
+3. Enforces a regression gate: the new score must meet or exceed the previously-stamped score on the same design. Pass `skipVerifyRegression: true` to override.
 
 ```
 submit_work({ name: "Button" })
 submit_work({ name: "Button", transitionTo: "stamped", artifacts: ["src/components/button/Button.tsx"] })
+submit_work({ name: "Button", skipVerifyRegression: true })  // override regression gate
 ```
+
+Run `run_verify` before `submit_work` — the stamp will be blocked if no verify report exists.
 
 ---
 
