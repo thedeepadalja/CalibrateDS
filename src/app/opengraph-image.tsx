@@ -92,7 +92,7 @@ export default function OGImage() {
               }}
             />
             <span style={{ fontSize: '13px', fontWeight: 700, color: '#B68D42', letterSpacing: '0.06em' }}>
-              v0.1.37 · MCP-POWERED
+              v0.1.65 · MCP-POWERED
             </span>
           </div>
         </div>
