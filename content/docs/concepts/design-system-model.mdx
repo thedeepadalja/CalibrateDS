@@ -36,7 +36,10 @@ It contains:
 - **Token Bindings:** How fills, strokes, and spacing map to Figma Variables (CSS Variables).
 - **State Contracts:** Hover, focus, and active state requirements.
 - **Render Tree:** The literal layout and DOM structure expected by the design.
-- **Dependencies:** Which other components are required to build this one.
+- **Dependencies:** Which other components are required to build this one (direct instances).
+- **Transitive Dependencies:** All components reachable by descending into nested instance subtrees — catches hidden dependencies that only appear in non-default variant states.
+- **Slot Contract:** Named content slots derived from instance-swap properties and image fill nodes (including asset/image slots for components with background image fills).
+- **Implementation Hints:** Correct semantic root element (`button`, `input`, `select`, `div`, etc.) inferred from the component name and render tree — used to set the correct `Props extends` interface in generated TypeScript.
 
 > [!TIP]
 > The `ComponentContext` files in `.ptb/context/` are designed to be committed to git. They serve as a portable source of truth that can be read by any AI IDE (Cursor, Copilot, Claude Code) without requiring a live Figma connection.

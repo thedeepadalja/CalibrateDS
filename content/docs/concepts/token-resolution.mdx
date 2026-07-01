@@ -28,9 +28,11 @@ Spacing, radius, and typography tokens follow the same convention:
 }
 ```
 
+Dimension values are rounded to at most 3 decimal places, preserving sub-pixel values like `0.5px` while eliminating floating-point noise like `16.000000000000004px`.
+
 ## Alias Tokens
 
-If a Figma variable references another variable (an alias), PTB resolves the chain and emits a `var()` reference:
+If a Figma variable references another variable (an alias), PTB resolves the full chain and emits a `var()` reference:
 
 ```css
 :root {
@@ -38,17 +40,31 @@ If a Figma variable references another variable (an alias), PTB resolves the cha
 }
 ```
 
-PTB detects circular alias chains and skips them, reporting the count in the token generation metrics.
+PTB follows alias chains up to 10 hops deep. Circular alias chains are detected and skipped, with a count reported in the token generation metrics.
 
 ## Token Bindings in Component Context
 
-When AI implements a component (or you build it manually), PTB passes `tokenBindings` in the `ComponentContext`. Instead of telling the AI to use a literal hex code like `#103D1A`, the context instructs the AI to use the semantic CSS variable:
+When AI implements a component (or you build it manually), PTB passes `resolvedBindings` in the `ComponentContext`. Each binding includes:
 
-```
-fill: var(--ptb-colors-brand-900)
+- `cssVar` — the CSS custom property the component is directly bound to in Figma (use this in component stylesheets)
+- `cssValue` — the actual resolved CSS value (hex color, px dimension, etc.)
+- `canonicalCssVar` — the terminal token's CSS variable, after following the full alias chain
+
+Instead of telling the AI to use a literal hex code like `#103D1A`, the context instructs it to use the semantic CSS variable:
+
+```css
+fill: var(--ptb-colors-brand-900, #103D1A)
 ```
 
-This ensures generated code is coupled to your design system's tokens — not hardcoded values that break when themes change.
+The fallback is the concrete resolved value — so your components render correctly even before the token CSS file is loaded, and the browser always has a valid value to fall back to.
+
+## Unresolvable tokens
+
+If a token cannot be resolved (broken alias chain, missing variable), `cssValue` is an empty string. PTB emits the variable reference alone — it will never fabricate a fallback or produce a self-referential `var(--x, --x)`. `ptb doctor tokens` flags unresolvable tokens during health checks.
+
+## Gap and Padding Values
+
+For layout properties (gap, padding), PTB always prefers the raw numeric `rawValue` over the Figma token name. This ensures the generated CSS contains valid values like `16px`, not the internal Figma variable path like `spacing/large`.
 
 ## Naming Convention
 

@@ -103,7 +103,7 @@ assign_component({ name: "Button" })  // self-assign
 
 ### `start_work`
 
-Marks a component as in-progress. Locks it from being assigned to someone else.
+Marks a component as in-progress and returns the full implementation brief. Also reconciles the dependency readiness list against `ptb.lock` — a dependency is only marked `"ready"` when its `stampedHash` strictly equals its `designHash`. Blockers (unbuilt or stale deps) are returned in build order so the AI knows what to implement first.
 
 ```
 start_work({ name: "Button" })
@@ -111,7 +111,7 @@ start_work({ name: "Button" })
 
 ### `submit_work`
 
-Stamps a component as implemented against the current design snapshot. Equivalent to `ptb stamp component`.
+Stamps a component as implemented against the current design snapshot. Reconciles dependency statuses against `ptb.lock` before recording the stamp. Equivalent to `ptb stamp component`.
 
 ```
 submit_work({ name: "Button" })
@@ -188,14 +188,14 @@ whats_new()
 
 ### `run_verify`
 
-Pixel-diffs the current implementation against the Figma thumbnail captured at scan time. Returns a similarity score (0.0–1.0) and annotated diff image. Requires Storybook to be running locally.
+Pixel-diffs the current implementation against the Figma thumbnails captured at scan time. Returns a composite verdict from three signals — token content, DOM structure, and pixel similarity — each checked in priority order. Also runs a per-variant pixel diff loop when the component has multiple variants. Requires Storybook to be running locally.
 
 ```
 run_verify({ name: "Button" })
 run_verify({ name: "Button", story: "Primary" })
 ```
 
-A score ≥ 0.90 is the passing threshold. If verification fails, the AI can read the diff image and adjust styles accordingly.
+A score ≥ 0.90 is the passing threshold. `pixelMatch.score` is always the worst across all variant diffs — a single failing variant cannot hide behind a passing default. If verification fails, the AI can read the diff image and adjust styles accordingly.
 
 ### `get_verify_report`
 

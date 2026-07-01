@@ -31,6 +31,15 @@ interface IGenerator {
 
 The current implementation is `ptbReactGenerator`. To add support for Vue or Svelte, a new package implementing `IGenerator` would be registered.
 
+## Naming Strategy
+
+Component names in Figma are display names (e.g. `"Notification Item"`). The normalizer converts them to canonical identifiers using a single shared strategy:
+
+- `toCanonicalComponentName("Notification Item")` → `"NotificationItem"` (PascalCase, icon-aware)
+- `toCanonicalFolderSlug("Notification Item")` → `"notification-item"` (kebab-case, icon-aware)
+
+Icon components are detected by name pattern and normalized separately so they receive `SVGAttributes<SVGSVGElement>` rather than generic HTML attributes.
+
 ## Inline Metadata Headers
 
 Every file written by PTB includes a `PTB_METADATA` comment header. This is how PTB detects user-modified files to avoid accidentally overwriting manual code.
@@ -40,6 +49,28 @@ Every file written by PTB includes a `PTB_METADATA` comment header. This is how 
 ```
 
 If you remove this header, PTB assumes you want to take over ownership of the file and will never overwrite it without the `--force` flag.
+
+## Custom Code Regions
+
+Within PTB-generated files, you can protect blocks of hand-written code from being overwritten on regeneration:
+
+```typescript
+// @ptb-custom-start
+// Your hand-written code here — preserved on re-generate
+// @ptb-custom-end
+```
+
+PTB extracts these sections before regenerating and injects them back in the same position.
+
+## Verify Verdict
+
+`ptb verify` computes a composite score from three independent signals:
+
+1. **Token score** (primary): fraction of Figma design text tokens found in the rendered DOM
+2. **Structure score**: fraction of expected slot types (text, image) present in the DOM
+3. **Pixel score**: full-frame pixel diff similarity (0.0–1.0)
+
+The verdict uses whichever signals are available, in that priority order. Pass threshold: 0.90. Warn threshold: 0.70. This means a component with correct text content and DOM structure can pass verification even when pixel alignment varies slightly due to font rendering.
 
 ---
 

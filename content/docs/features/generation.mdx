@@ -16,9 +16,12 @@ ptb generate-components
 This command parses the `.ptb/latest.json` model and creates framework-specific component shells (e.g., React `tsx` files).
 
 These generated shells are highly intelligent. They include:
-- **TypeScript Interfaces**: Prop types generated from Figma Variant axes (e.g., `size: "sm" | "md" | "lg"`).
+
+- **TypeScript Interfaces**: Prop types generated from Figma Variant axes (e.g., `size: "sm" | "md" | "lg"`). The `extends` type matches the actual root element the component renders — a `<button>` root gets `ButtonHTMLAttributes<HTMLButtonElement>`, not `HTMLDivElement`.
 - **Data Attributes**: `data-variant={variant}` bindings ready for CSS styling.
-- **Slot APIs**: If your component has nested instances, PTB scaffolds React `children` or named slots.
+- **Slot APIs**: If your component has nested instances, PTB scaffolds React `children` or named slots — with slot keys normalized to prevent duplicates when a layer name differs from its prop name.
+- **Icon SVGs**: Icon components include their inline SVG with `stroke="currentColor"` (not hardcoded `stroke="black"`) so they adapt to theme colors automatically.
+- **Correct semantic roots**: Buttons render as `<button>`, form inputs as `<input>`, selects as `<select>`. The layout tree drives the root element — menu items, search fields, and form controls are detected by pattern matching, not just keyword search.
 
 ## Generate Tokens
 
@@ -26,10 +29,18 @@ These generated shells are highly intelligent. They include:
 ptb generate-tokens
 ```
 
-This generates a global CSS file mapping your Figma Variables into standardized CSS Custom Properties (e.g., `--color-primary: #000;`).
+This generates a global CSS file mapping your Figma Variables into standardized CSS Custom Properties (e.g., `--ptb-colors-brand-900: #103D1A`).
+
+CSS values are always the resolved concrete value — never a Figma-internal path or a self-referential variable reference. Gap and padding values come from the raw numeric pixel value, not the Figma token name. Dimension values are rounded to at most 3 decimal places.
 
 > [!IMPORTANT]
 > Generation is entirely deterministic. It does not use AI. It creates the *structural contracts* that your developers (or AI assistants) will fill in with implementation details.
+
+## Naming
+
+Component names from Figma are normalized to consistent PascalCase (component identifiers) and kebab-case (folder names) using the canonical naming strategy. This applies to all code artifacts, prompts, and context files — names are never inconsistent across the pipeline.
+
+Icon components are detected and their names normalized separately (e.g., `icon/chevron-right` → `ChevronRight`) so they receive the correct SVG attributes interface rather than generic HTML attributes.
 
 ---
 
