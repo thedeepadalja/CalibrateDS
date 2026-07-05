@@ -139,19 +139,28 @@ get_status({ quick: true })   // fast check using ptb.lock only, no file reads
 
 ### `run_diff`
 
-Shows exactly what changed in Figma since the last stamp — which variant axes were added, which tokens changed, which layout properties shifted.
+Shows what changed in Figma, grouped into three lifecycle buckets so you (and the AI) know what to *do* with each change:
+
+- **`new`** — a component that appeared for the first time.
+- **`notImplemented`** — a component that's in the lock but has never been built. A design change here is folded into the pending build rather than scheduled as a fix.
+- **`drifted`** — a stamped (implemented) component whose design has moved since you built it. This is what to re-implement.
+
+Every changed component surfaces with full granular detail regardless of stamp state — variant axes, layout, size, typography, text content, render-tree structure, dependencies, and per-variant styling. Scan-timing-independent: stamped components diff against their stamp-time baseline, unstamped ones against the acknowledgement point (see `diff_clear`) or the most recent differing history snapshot, so a change stays visible across any number of scans until it's built or acknowledged.
 
 ```
-run_diff({ name: "Button" })
-run_diff()  // diff across all components
+run_diff()
 ```
+
+Returns `{ totalChanges, summary, components: { new, notImplemented, drifted, removed }, tokens }`.
 
 ### `diff_clear`
 
-Clears the diff history for a component after reviewing changes.
+Acknowledges the current design state as the diff baseline. Future `run_diff` calls suppress everything up to this moment for unstamped and contractless components.
+
+**Reporting-only** — this never touches `ptb.lock`. Stamps, contracts, and verify state are preserved, so staleness detection and the verify gate keep working.
 
 ```
-diff_clear({ name: "Button" })
+diff_clear()
 ```
 
 ### `what_uses`
@@ -243,7 +252,7 @@ Most AI IDEs let you invoke tools explicitly. Examples:
 
 > "Check which components are stale"  → AI calls `get_status()`  
 > "Implement the Card component"  → AI calls `implement_component({ name: "Card" })`  
-> "What changed in Button since last stamp?"  → AI calls `run_diff({ name: "Button" })`  
+> "What changed in Figma since I last built these?"  → AI calls `run_diff()`  
 > "Scan Figma and regenerate tokens"  → AI calls `run({ stage: "scan" })` then `run({ stage: "tokens" })`
 
 ---
