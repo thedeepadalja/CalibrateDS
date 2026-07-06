@@ -145,13 +145,14 @@ Shows what changed in Figma, grouped into three lifecycle buckets so you (and th
 - **`notImplemented`** — a component that's in the lock but has never been built. A design change here is folded into the pending build rather than scheduled as a fix.
 - **`drifted`** — a stamped (implemented) component whose design has moved since you built it. This is what to re-implement.
 
-Every changed component surfaces with full granular detail regardless of stamp state — variant axes, layout, size, typography, text content, render-tree structure, dependencies, and per-variant styling. Scan-timing-independent: stamped components diff against their stamp-time baseline, unstamped ones against the acknowledgement point (see `diff_clear`) or the most recent differing history snapshot, so a change stays visible across any number of scans until it's built or acknowledged.
+Every changed component surfaces with full granular detail regardless of stamp state — variant axes, layout, size, typography (text-style swaps and font metrics), text content, render-tree structure, dependencies, and per-variant styling (naming the exact variant, node, and property that moved). Scan-timing-independent: stamped components diff against their stamp-time baseline, unstamped ones against the acknowledgement point (see `diff_clear`) or the most recent differing history snapshot, so a change stays visible across any number of scans until it's built or acknowledged.
 
 ```
-run_diff()
+run_diff()                      // full library
+run_diff({ name: "Button" })    // scope to one component (name or slug)
 ```
 
-Returns `{ totalChanges, summary, components: { new, notImplemented, drifted, removed }, tokens }`.
+Pass `name` to scope the diff to a single component — for the "diff this component, then implement it" flow. Omit for the full-library diff. Returns `{ totalChanges, summary, components: { new, notImplemented, drifted, removed }, tokens }`.
 
 ### `diff_clear`
 
