@@ -210,7 +210,7 @@ run_verify({ name: "Button" })
 run_verify({ name: "Button", story: "Primary" })
 ```
 
-A score ≥ 0.90 is the passing threshold. `pixelMatch.score` is always the worst across all variant diffs — a single failing variant cannot hide behind a passing default. If verification fails, the AI can read the diff image and adjust styles accordingly.
+A score ≥ 0.90 is the passing threshold. `pixelMatch.score` is always the worst across all variant diffs — a single failing variant cannot hide behind a passing default. PNG artifacts (impl, diff, per-variant screenshots) are deleted after scoring — all scores and AI feedback are persisted in `report.json`. If verification fails, use `get_verify_report` to read the structured diff details and AI assessment, then adjust styles and re-run.
 
 ### `get_verify_report`
 
