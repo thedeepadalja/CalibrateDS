@@ -71,12 +71,29 @@
 
 .bottomInner {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
 }
 
 .copyright {
   color: var(--text-secondary);
   font-size: 0.875rem;
+}
+
+.bottomLinks {
+  display: flex;
+  gap: var(--spacing-6);
+}
+
+.bottomLink {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.bottomLink:hover {
+  color: var(--brand);
 }
 
 @media (max-width: 768px) {

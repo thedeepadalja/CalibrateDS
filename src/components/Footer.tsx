@@ -8,9 +8,20 @@ import styles from './Footer.module.css';
 export function Footer() {
   const pathname = usePathname();
 
-  // Hide the massive footer on documentation pages to prevent infinite scrolling
+  // On docs pages: render only the slim bottom bar (privacy link + copyright)
   if (pathname?.startsWith('/docs')) {
-    return null;
+    return (
+      <div className={styles.bottomBar}>
+        <div className={`container ${styles.bottomInner}`}>
+          <p className={styles.copyright}>
+            © {new Date().getFullYear()} Deep Adalja. All rights reserved.
+          </p>
+          <div className={styles.bottomLinks}>
+            <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -52,6 +63,10 @@ export function Footer() {
             <a href="https://www.npmjs.com/package/@calibrate-ds/cli" target="_blank" rel="noreferrer" className={styles.link}>npm</a>
             <a href="https://www.instagram.com/thedeepadalja/" target="_blank" rel="noreferrer" className={styles.link}>Instagram</a>
           </div>
+          <div className={styles.linkGroup}>
+            <h4 className={styles.groupTitle}>Legal</h4>
+            <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
+          </div>
         </div>
       </div>
       <div className={styles.bottomBar}>
@@ -59,6 +74,9 @@ export function Footer() {
           <p className={styles.copyright}>
             © {new Date().getFullYear()} Deep Adalja. All rights reserved.
           </p>
+          <div className={styles.bottomLinks}>
+            <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+          </div>
         </div>
       </div>
     </footer>
