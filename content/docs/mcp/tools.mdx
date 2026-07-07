@@ -154,6 +154,8 @@ run_diff({ name: "Button" })    // scope to one component (name or slug)
 
 Pass `name` to scope the diff to a single component — for the "diff this component, then implement it" flow. Omit for the full-library diff. Returns `{ totalChanges, summary, components: { new, notImplemented, drifted, removed }, tokens }`.
 
+Each changed component also carries its visual reference — a `thumbnail` (the variant grid) and `variantThumbnails` (per-variant PNGs keyed by selection) — so an agent can load the exact image for the variant a change names, without re-deriving the filename convention.
+
 ### `diff_clear`
 
 Acknowledges the current design state as the diff baseline. Future `run_diff` calls suppress everything up to this moment for unstamped and contractless components.
