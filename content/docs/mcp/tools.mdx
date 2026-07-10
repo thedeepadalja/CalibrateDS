@@ -206,7 +206,7 @@ whats_new()
 
 ### `run_verify`
 
-Pixel-diffs the current implementation against the Figma thumbnails captured at scan time. Returns a composite verdict from three signals — token content, DOM structure, and pixel similarity — each checked in priority order. Also runs a per-variant pixel diff loop when the component has multiple variants. Requires Storybook to be running locally.
+Pixel-diffs the current implementation against the Figma thumbnails captured at scan time. Returns a composite verdict from three signals — token content, DOM structure, and pixel similarity. The primary signal is token content (falling back to DOM structure when the design has no text); since v0.1.76, pixel evidence can rescue a low token score when the scanner has blind spots (attribute-borne text like placeholders and aria-labels, short badge text) — so a pixel-perfect render no longer fails on invisible-to-the-scanner text. Also runs a per-variant pixel diff loop when the component has multiple variants. Requires Storybook to be running locally.
 
 ```
 run_verify({ name: "Button" })
