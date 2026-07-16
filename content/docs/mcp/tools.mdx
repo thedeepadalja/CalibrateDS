@@ -1,11 +1,11 @@
 ---
 title: "MCP Tools Reference"
-description: "Complete reference for all 22 CalibrateDS MCP tools."
+description: "Complete reference for all 23 CalibrateDS MCP tools."
 ---
 
 # MCP Tools Reference
 
-The CalibrateDS MCP server exposes 22 tools across six categories. Your AI IDE calls these automatically during implementation — you can also invoke them by name in the chat.
+The CalibrateDS MCP server exposes 23 tools across six categories. Your AI IDE calls these automatically during implementation — you can also invoke them by name in the chat.
 
 ---
 
@@ -37,6 +37,14 @@ Given a Figma node ID (from the Figma URL `?node-id=...`), returns the matching 
 
 ```
 find_component_by_figma_node({ nodeId: "123:456" })
+```
+
+### `get_variant_tokens`
+
+Returns a compact, pre-resolved **per-variant token/style matrix** for a component set. For every variant combination, it gives the resolved `--ptb-*` binding + value for background / text-color / border-color, plus border-radius, padding, gap, per-node text, and stroke weight + align — everything needed to implement all variants without reading the full context render tree or reconstructing it from variant diffs. A 42-variant set is roughly 6k tokens.
+
+```
+get_variant_tokens({ name: "ChipsWeb" })
 ```
 
 ### `list_themes`

@@ -85,7 +85,7 @@ export default function Home() {
           </h1>
 
           <p className={styles.subtitle}>
-            Connect your AI IDE to Figma in two commands. CalibrateDS gives Claude Code, Cursor, and Windsurf 22 live tools to scan, implement, verify, and ship components — without you leaving the chat.
+            Connect your AI IDE to Figma in two commands. CalibrateDS gives Claude Code, Cursor, and Windsurf 23 live tools to scan, implement, verify, and ship components — without you leaving the chat.
           </p>
 
           <div className={styles.ctaGroup}>
@@ -223,7 +223,7 @@ export default function Home() {
                 { icon: <Zap size={18} color="var(--brand)" />, title: 'Implement from design context', desc: 'Full variant axes, token bindings, and state contracts — AI writes the code, not approximations.' },
                 { icon: <ShieldCheck size={18} color="#27C93F" />, title: 'Pixel-diff verification', desc: 'After implementing, AI diffs the component against the Figma thumbnail and self-corrects if the score is below 0.90.' },
                 { icon: <RefreshCw size={18} color="#3178C6" />, title: 'Live design drift detection', desc: 'AI knows which components are stale before you do. Ask "what changed?" and get an exact diff.' },
-                { icon: <GitBranch size={18} color="#A78BFA" />, title: 'Full pipeline, no terminal', desc: 'Scan Figma, generate tokens, export context, stamp work — 22 tools, all from the chat window.' },
+                { icon: <GitBranch size={18} color="#A78BFA" />, title: 'Full pipeline, no terminal', desc: 'Scan Figma, generate tokens, export context, stamp work — 23 tools, all from the chat window.' },
               ].map((item, i) => (
                 <div key={i} className={styles.capabilityItem}>
                   <div className={styles.capabilityIcon}>{item.icon}</div>
@@ -320,7 +320,7 @@ export default function Home() {
             className={styles.featureCard}
           >
             <div className={styles.featureIcon}><Cpu color="var(--brand)" size={32} /></div>
-            <h3 className={styles.featureTitle}>22 MCP tools, one connection</h3>
+            <h3 className={styles.featureTitle}>23 MCP tools, one connection</h3>
             <p className={styles.featureDesc}>
               Inspect, implement, verify, stamp, diff, and query your design system — all from your AI IDE chat. The terminal is optional.
             </p>
