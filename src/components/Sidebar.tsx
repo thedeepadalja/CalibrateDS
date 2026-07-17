@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
 import navigation from '../../content/navigation.json';
+import { BacklinkCallout } from './BacklinkCallout';
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -32,6 +33,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+      <BacklinkCallout />
     </aside>
   );
 }

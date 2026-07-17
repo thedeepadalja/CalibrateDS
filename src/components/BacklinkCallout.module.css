@@ -1,0 +1,32 @@
+.callout {
+  padding: var(--spacing-4) var(--spacing-2) var(--spacing-2);
+  margin-top: var(--spacing-4);
+  border-top: 1px solid var(--border);
+}
+
+.built {
+  font-size: 0.7rem;
+  color: rgba(160, 157, 150, 0.5);
+  margin-bottom: 4px;
+}
+
+.link {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #b68d42;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.belowSidebarBreakpoint {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .belowSidebarBreakpoint {
+    display: block;
+  }
+}

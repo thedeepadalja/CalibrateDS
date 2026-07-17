@@ -4,20 +4,26 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
+import { BacklinkCallout } from './BacklinkCallout';
 
 export function Footer() {
   const pathname = usePathname();
 
-  // On docs pages: render only the slim bottom bar (privacy link + copyright)
+  // On docs pages: render the slim bottom bar (privacy link + copyright).
+  // The backlink callout itself lives in Sidebar.tsx on desktop; here it
+  // only shows below the breakpoint where the sidebar hides itself.
   if (pathname?.startsWith('/docs')) {
     return (
       <div className={styles.bottomBar}>
-        <div className={`container ${styles.bottomInner}`}>
-          <p className={styles.copyright}>
-            © {new Date().getFullYear()} Deep Adalja. All rights reserved.
-          </p>
-          <div className={styles.bottomLinks}>
-            <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+        <div className="container">
+          <BacklinkCallout belowSidebarBreakpoint />
+          <div className={styles.bottomInner}>
+            <p className={styles.copyright}>
+              © {new Date().getFullYear()} Deep Adalja. All rights reserved.
+            </p>
+            <div className={styles.bottomLinks}>
+              <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -70,12 +76,15 @@ export function Footer() {
         </div>
       </div>
       <div className={styles.bottomBar}>
-        <div className={`container ${styles.bottomInner}`}>
-          <p className={styles.copyright}>
-            © {new Date().getFullYear()} Deep Adalja. All rights reserved.
-          </p>
-          <div className={styles.bottomLinks}>
-            <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+        <div className="container">
+          <BacklinkCallout />
+          <div className={styles.bottomInner}>
+            <p className={styles.copyright}>
+              © {new Date().getFullYear()} Deep Adalja. All rights reserved.
+            </p>
+            <div className={styles.bottomLinks}>
+              <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
+            </div>
           </div>
         </div>
       </div>
