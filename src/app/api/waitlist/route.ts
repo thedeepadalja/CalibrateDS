@@ -7,6 +7,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM = 'CalibrateDS <hello@deepadalja.com>';
 const NOTIFY_TO = 'deep@deepadalja.com';
+// deepadalja.com's DNS isn't cut over to Vercel yet (unlike this domain,
+// which works fine) — this template links OUT to the personal site, so
+// unlike deepadalja.com's own /api/subscribe it can't self-derive the
+// right host from the incoming request. Flip this once DNS is live.
+const PERSONAL_SITE_URL = process.env.PERSONAL_SITE_URL || 'https://deepadalja-com.vercel.app';
 
 // Branded confirmation template — docs/email-waitlist-confirmation.html in
 // the deepadalja.com repo. Feature cards match this route's three
@@ -18,7 +23,9 @@ const confirmationTemplate = readFileSync(
 
 function confirmationHtml(email: string) {
   const unsubscribeUrl = `https://calibrateds.deepadalja.com/unsubscribe?email=${encodeURIComponent(email)}`;
-  return confirmationTemplate.replaceAll('{{UNSUBSCRIBE_URL}}', unsubscribeUrl);
+  return confirmationTemplate
+    .replaceAll('{{UNSUBSCRIBE_URL}}', unsubscribeUrl)
+    .replaceAll('{{SITE_URL}}', PERSONAL_SITE_URL);
 }
 
 export async function POST(request: Request) {
