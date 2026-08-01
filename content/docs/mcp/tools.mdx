@@ -246,6 +246,8 @@ get_checklist({ kind: "upgrade" })  // what to re-run after updating PTB
 
 The setup checklist is smart — it checks your actual workspace state and marks steps as done, pending, or blocked. Steps that can be auto-run include the MCP tool to call next.
 
+If the running MCP server process is older than the CLI installed on disk (common after a global upgrade — a long-running server can't pick up new code without a restart), the response is prefixed with a warning telling you to restart your MCP connection.
+
 ### `setup_mcp`
 
 Configures PTB's MCP server in additional IDEs from inside the chat.
