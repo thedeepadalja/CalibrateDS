@@ -18,7 +18,7 @@ It is a complete quality toolkit with 6 modules — accessibility auditing, comp
 | [Token Inspector](/docs/plugin/token-inspector) | Inspect any node's token bindings and generate multi-platform code (CSS, React, Swift, Kotlin, Tailwind) |
 | [State Diff Engine](/docs/plugin/state-diff) | Compare style differences between component variants and export ready-to-use CSS state blocks |
 | [Stress Test (AI)](/docs/plugin/stress-test) | Simulate real-world content edge cases — long text, translations, narrow viewports — non-destructively |
-| [Token Exporter](/docs/plugin/token-exporter) | Export Figma variable collections to 6 engineering-ready formats, including PTB JSON for the CLI |
+| [Token Exporter / Importer](/docs/plugin/token-exporter) | Export variable collections to 7 engineering-ready formats — or migrate whole token systems between Figma files with alias chains kept live |
 
 ## Dashboard & Health Score
 
@@ -48,7 +48,14 @@ Install directly from the Figma Community:
 
 [**Get the CalibrateDS Plugin on Figma Community →**](https://www.figma.com/community/plugin/1520848851134730449/calibrateds)
 
-Works in both **Design** and **Dev Mode** — though write operations (applying fixes, exporting tokens) are only available in Design mode.
+## Dev Mode
+
+CalibrateDS has native support for **Figma Dev Mode** — developers can run inspections directly from the Dev Mode Inspect panel. Dev Mode is deliberately **read-only**:
+
+- **Write guards** intercept and block every document write and cloning operation, so production files can never be modified from Dev Mode
+- The UI is environment-aware — sandbox creation is disabled and non-intrusive **"View Only" badges** mark what's inspection-only
+
+Full write operations (applying fixes, stress-test sandboxes, imports) are available in Design mode.
 
 ---
 

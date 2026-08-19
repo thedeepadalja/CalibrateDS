@@ -1,11 +1,11 @@
 ---
 title: "Tools Reference"
-description: "Complete reference for all four DNA MCP tools."
+description: "Complete reference for all five DNA MCP tools."
 ---
 
 # Tools Reference
 
-All tools are read-only — they detect and report, never write source or config outside `.dna/`.
+All tools are detector-only — they report, never write source, config, or anything outside `.dna/`. The calling agent uses the findings to make its own edits with its own tools.
 
 ---
 
@@ -42,7 +42,37 @@ Run DNA's design-system conformance check.
 }
 ```
 
+The payload also folds in the optional `render` / `figma` sub-checks (rendered conformance, structural manifests) when those peers are installed and configured — matching the CLI's own `dna check` behavior. It may include a `staleness` note when the identity is older than recent commits that touched checked source.
+
 **When to call it:** After editing any design-relevant file (styles, tokens, component markup). The cooperation convention in `CLAUDE.md`/`AGENTS.md` instructs agents to call this automatically.
+
+---
+
+## dna_resolve
+
+Reverse-lookup a raw design value to the project's identity token(s) — the **proactive counterpart to `dna_check`**.
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `value` | string | A color (`#2E7D32`, `rgb()`/`rgba()`) or a length (`16px`, `1rem`). |
+| `cwd` | string | Absolute path to the project root (optional). |
+
+**Returns:** the matching token name(s) labeled by axis. A value on multiple scales (e.g. both a spacing step and a radius step) reports **all** of them, never one.
+
+```json
+{
+  "status": "resolved",
+  "matches": [
+    { "token": "--brand", "axis": "color" }
+  ]
+}
+```
+
+**Tri-state and honest:** `resolved`, `not-a-token` (well-formed but not in the identity — no green tick), `no-identity`, or `invalid`.
+
+**When to call it:** **Before** writing a raw literal pulled from a design or frame — so the agent authors with the token instead of a hardcoded value that `dna_check` would flag afterward.
 
 ---
 
@@ -79,7 +109,10 @@ Return the current component inventory parsed from code.
 
 ## dna_similar
 
-Score structural similarity between changed code and the component library.
+Run DNA's structural duplication check. Findings are tagged with `kind`:
+
+- **`"rebuild"`** — a hand-rebuild of an existing component: file, line, matched component name/path, score
+- **`"clone"`** — a net-new shape repeated across files with no backing component: size and the list of occurrences to extract
 
 **Parameters:**
 
@@ -96,23 +129,29 @@ Score structural similarity between changed code and the component library.
   "status": "report",
   "findings": [
     {
+      "kind": "rebuild",
       "file": "src/screens/Dashboard.tsx",
       "line": 42,
       "matchedComponent": "Card",
       "matchedPath": "src/components/Card.tsx",
       "score": 0.91
+    },
+    {
+      "kind": "clone",
+      "occurrences": ["src/screens/Pricing.tsx:18", "src/screens/Landing.tsx:74"],
+      "size": 14
     }
   ]
 }
 ```
 
-**When to call it:** Alongside `dna_inventory` before writing new component code. `similar` catches rebuild that slips past a name-only check — a structurally-close-enough component under a different name.
+**When to call it:** Alongside `dna_inventory` before writing new component code. It catches reinvention that slips past a name-only check — and net-new shapes being cloned across files. Advisory, never gating.
 
 ---
 
 ## dna_start_preview
 
-Preview what `dna start` would extract — without writing anything.
+Preview what `dna start` would extract and write — WITHOUT writing anything to disk.
 
 **Parameters:**
 
@@ -121,7 +160,7 @@ Preview what `dna start` would extract — without writing anything.
 | `cwd` | string | workspace root | Absolute path to the project root. |
 | `force` | boolean | `false` | Preview as if `--force` were passed (show draft even when identity.yaml exists). |
 
-**Returns:**
+**Returns:** the palette (declared + observed-in-usage), type scale, spacing grid/scale, radius scale/idioms, Tailwind color families, and per-value provenance annotations — as structured data.
 
 ```json
 {
@@ -131,7 +170,9 @@ Preview what `dna start` would extract — without writing anything.
   },
   "scales": {
     "type": { "body": { "value": 14 }, "display-xl": { "value": 34 } },
-    "spacing": { "value": 4 }
+    "spacing": { "value": 4 },
+    "spacingScale": [4, 8, 12, 16, 24, 32],
+    "radius": { "value": 4 }
   },
   "families": { "allowed": [] }
 }

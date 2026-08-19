@@ -1,0 +1,83 @@
+---
+title: "Change Management"
+description: "Plan, apply, prune, and migrate — handling design changes without breaking generated code."
+---
+
+# Change Management Commands
+
+When the design moves, these commands answer "what does that change touch?" and regenerate **only** what's affected — without stomping hand-written code.
+
+| Command | What it does |
+|---|---|
+| `ptb plan` | Dry-run: lists the generated files likely affected by design changes since the previous snapshot, in dependency order. Nothing is written. |
+| `ptb apply` | Safely regenerates only the generated files affected by design changes. Custom code regions and user-owned files are preserved. |
+| `ptb prune` | Removes stale generated component folders for components that no longer exist in the design system. |
+| `ptb migrate` | Renames generated component folders/files to match the current naming config — the intentional counterpart to the naming-drift warning. |
+
+## The plan → apply flow
+
+```bash
+ptb scan          # pick up the latest design
+ptb diff          # read what changed
+ptb plan          # see which generated files that touches
+ptb apply         # regenerate exactly those files
+```
+
+`plan` is always safe to run — it's read-only. `apply` respects the same ownership rules as generation everywhere in PTB:
+
+- Files whose `PTB_METADATA` header you removed are **user-owned** — never overwritten without `--force`
+- `// @ptb-custom-start … @ptb-custom-end` regions are extracted before regeneration and injected back in place
+
+## Pruning deleted components
+
+When a component is removed in Figma, its generated folder becomes an orphan. `ptb prune` finds and removes those folders — and only those:
+
+```bash
+ptb prune
+```
+
+Also available from your AI IDE as `run({ stage: "prune" })`.
+
+## Renaming after a naming-config change
+
+If you change `naming.componentCase` / `folderCase` in `ptb.config.json`, existing generated folders no longer match the convention — `ptb status` warns about naming drift. `ptb migrate` performs the rename intentionally:
+
+```bash
+ptb migrate           # rename folders/files to match current naming config
+```
+
+---
+
+## Blast-radius analysis
+
+Before changing a shared primitive or a token, ask what depends on it:
+
+| Command | What it does |
+|---|---|
+| `ptb what-uses <name>` | Finds all components that depend on a given component. |
+| `ptb token-impact <token>` | Finds all components that use a specific design token, e.g. `colors.brand.900` or `--ptb-colors-brand-900`. |
+
+```bash
+ptb what-uses Icon
+ptb token-impact colors.brand.900
+```
+
+Both are also available as MCP tools (`what_uses`, `token_impact`) so your AI IDE checks blast radius before editing.
+
+---
+
+## The Symbol Bridge
+
+`ptb-bridge.json` maps Figma node IDs to exported component symbols and file paths — it's what powers design-to-code navigation (`find_component_by_figma_node` in MCP takes a Figma URL's `?node-id=` straight to the file).
+
+```bash
+ptb bridge            # inspect / manage the bridge
+```
+
+The bridge is regenerated during scans and generation; components excluded via `--ignore-collisions` are never bridged, so an AI IDE can't be told a phantom component exists.
+
+---
+
+## Next Steps
+
+Track what changed with the [State & Freshness Commands](/docs/cli/state), or review the [Beta Scope & Limitations](/docs/getting-started/limitations).

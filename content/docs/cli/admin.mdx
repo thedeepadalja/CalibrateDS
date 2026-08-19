@@ -10,6 +10,16 @@ description: "CLI commands for system maintenance and CI integration."
 | `ptb doctor` | Runs the 10-point system and component health audit. Flags missing Auto Layouts, unlinked tokens, and bad dependencies. |
 | `ptb ci setup` | Generates a GitHub Actions workflow (`.github/workflows/ptb.yml`) that runs `ptb status --fail-on-stale` on every push to block PRs with stale code. (Leads only). |
 | `ptb remove` | Reverses `ptb init`. Deletes all PTB config files, `.ptb/` directories, and `.gitignore` entries. It **does not** delete your generated component or token files. |
+| `ptb telemetry [on\|off\|status]` | Manage anonymous usage telemetry. `status` is the default subcommand; `off` opts out entirely. |
+| `ptb bridge` | Manage the Symbol Bridge (`ptb-bridge.json`) — the Figma-node-ID → component-symbol map behind design-to-code navigation. |
+
+## Built-in learning
+
+| Command | What it does |
+|---|---|
+| `ptb learn` | Rich onboarding walkthrough and troubleshooting, in the terminal. |
+| `ptb flow` | Step-by-step action guides for different PTB workflows. |
+| `ptb guide <topic>` | Focused reference for one feature area: `setup` · `context` · `implement` · `document` · `status` · `team` · `ai` · `doctor` · `ci`. |
 
 ---
 

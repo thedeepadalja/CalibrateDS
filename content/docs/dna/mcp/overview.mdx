@@ -9,7 +9,7 @@ The **DNA MCP server** is a standalone process that exposes DNA's findings as st
 
 ## What is MCP?
 
-MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When `dna mcp` is connected, your AI assistant gains four purpose-built tools that make it conformance-aware — without you prompting it.
+MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When `dna mcp` is connected, your AI assistant gains five purpose-built tools that make it conformance-aware — without you prompting it.
 
 ## Why use MCP instead of the CLI
 
@@ -28,22 +28,24 @@ AI: [calls dna_check → finds the change introduces a raw hex color]
 AI: "I noticed this introduces rgba(182,141,66,0.1) — I'll use var(--brand) instead."
 ```
 
-## The four tools
+## The five tools
 
 | Tool | What it does |
 |---|---|
 | `dna_check` | Run conformance and return structured findings — rule, severity, file, line, value, hint |
+| `dna_resolve` | Reverse-lookup a raw value → identity token, before the literal gets written |
 | `dna_inventory` | Return the component library as structured data — name, props, use-when, path |
-| `dna_similar` | Score structural similarity and return rebuild findings |
+| `dna_similar` | Structural duplication findings, tagged `rebuild` or `clone`, with scores |
 | `dna_start_preview` | Preview what `dna start` would extract, without writing anything |
 
-All four tools are **detector-only** — they never write source, config, or anything outside `.dna/`. The AI uses the findings to make its own edits with its own tools.
+All five tools are **detector-only** — they never write source, config, or anything outside `.dna/`. The AI uses the findings to make its own edits with its own tools.
 
 ## Cooperation convention
 
 When `dna start` runs on a project, it auto-writes a short instruction block into that project's `CLAUDE.md` / `AGENTS.md`:
 
 > Before creating a new component, call `dna_inventory` and `dna_similar`.  
+> Before writing a raw value pulled from a design/frame, call `dna_resolve` — author with the token instead of a literal.  
 > After editing a design-relevant file, call `dna_check`.
 
 This means a coding agent picks up the convention automatically on its first read of the project instructions — no manual step from the human. The pre-commit hook (`dna hook install`) is the real backstop; the MCP convention is cooperative enforcement on top.

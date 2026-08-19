@@ -1,11 +1,11 @@
 ---
-title: "Token Exporter"
-description: "Export Figma local variable collections to 6 engineering-ready formats, with validation and multi-mode support."
+title: "Token Exporter / Importer"
+description: "Export Figma variable collections to 7 engineering-ready formats — or migrate whole token systems between files with live alias chains."
 ---
 
-# Token Exporter
+# Token Exporter / Importer
 
-Figma Variables are powerful, but getting them into code is tedious. The **Token Exporter** module generates production-ready output directly from your variable collections — with validation, dependency detection, and multi-mode support built in.
+Figma Variables are powerful, but getting them into code is tedious. The **Token Exporter / Importer** module generates production-ready output directly from your variable collections — with validation, dependency detection, and multi-mode support built in. And with **Figma Transfer**, it migrates entire token systems between Figma files with alias chains kept live.
 
 ## Export Formats
 
@@ -17,6 +17,7 @@ Figma Variables are powerful, but getting them into code is tedious. The **Token
 | **React TS** | `.tokens.tsx` | React + TypeScript with typed token objects |
 | **Tailwind** | `.tailwind.tokens.js` | Tailwind CSS `theme.extend` configuration |
 | **Style Dictionary** | `.style-dictionary.tokens.json` | Standard design token pipelines (W3C format) |
+| **CSV** | `.tokens.csv` | Raw variable data with resolved alias names — opens directly in Google Sheets or Excel |
 
 ## Validation Report
 
@@ -53,6 +54,25 @@ ptb generate-tokens
 ```
 
 The CLI reads the token file, resolves aliases, and generates platform-specific token outputs (CSS, TypeScript) plus embeds token bindings into every component's `ComponentContext` for AI implementation.
+
+---
+
+## Figma Transfer — migrate tokens between files
+
+Every export format above **resolves** aliases to concrete values, because code needs values. **Figma Transfer** is different: a dedicated round-trip format for moving a token system from one Figma file to another with the alias structure intact.
+
+- **Aliases stay live.** `VARIABLE_ALIAS` references are preserved verbatim — never flattened to static values. Cross-collection chains (e.g. `mapped → alias → brand`) survive the transfer and remain live, editable aliases in the target file.
+- **Everything travels.** Collections, modes, and variables are all captured in one Transfer JSON.
+
+## The Import Tab
+
+Drop a Transfer JSON onto the **Import** tab in the target file to rebuild everything in one click:
+
+- **Two-pass build** — every variable is created first, then all alias links are wired in a second pass, so declaration order in the file never matters.
+- **External library detection** — variables that reference published Figma libraries not included in the export are detected *before* the build and clearly flagged, with a tip to connect the missing libraries via the Figma Assets panel.
+- Collections, modes, and values land exactly as they were in the source file.
+
+Use it for: duplicating a design system into a client file, splitting a monolithic file, or versioning a token system across team files — without an external tool and without losing the alias graph.
 
 ---
 

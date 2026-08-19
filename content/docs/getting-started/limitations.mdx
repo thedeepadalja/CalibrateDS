@@ -1,0 +1,65 @@
+---
+title: "Beta Scope & Limitations"
+description: "What PTB supports today, what's in progress, and the honest edges."
+---
+
+# Beta Scope & Limitations
+
+CalibrateDS CLI is in **public beta**. This page is the honest map of what works today, so nothing surprises you mid-project.
+
+## Supported today
+
+- **Framework:** React + TypeScript with CSS Modules for **code generation**. Scan, diff, status, and governance work for Vue, Svelte, and React Native projects too — but component generation is React-only for now (Vue and Svelte generators are in progress).
+- **Tokens:** bring-your-own — import a plugin token export, or scan Figma Variables directly (requires a Figma Enterprise/Organization plan for the Variables REST API).
+- **Platforms:** macOS, Linux, and Windows.
+- **Privacy:** your design system never leaves your machine. PTB talks only to Figma, with your own token; the model is written locally and sent nowhere else.
+
+## Known limitations
+
+- **Long component names on Windows** — names longer than ~200 characters can exceed Windows' 260-character `MAX_PATH` limit. Keep component names reasonably short; a slug-length cap is planned. (Windows-reserved device names like `CON`/`AUX`/`NUL` are already handled — they generate as `con-cmp` etc.)
+- **`ptb verify` needs a running Storybook and a browser** — verification renders your real component and pixel-diffs it; there is no headless-only shortcut.
+- **Proprietary / self-hosted fonts must be provided by you** — Figma's API exposes font *names*, not font *files*. Google Fonts and system fonts load automatically in the playground and verify runs.
+
+## Name collisions in Figma
+
+If two components in your Figma file collide on any derived key (folder slug, lock slug, thumbnail name, or exported symbol — including two same-named components in *different* categories), PTB **hard-fails loudly** naming both components, rather than letting one silently overwrite the other.
+
+If you can't fix the names in Figma right away, use the escape hatch:
+
+```bash
+ptb scan --ignore-collisions
+ptb generate-components --ignore-collisions
+ptb export context --ignore-collisions
+```
+
+Colliding components are **excluded** — never written, never bridged — and named loudly in the output; everything else completes normally. Without the flag, behavior is unchanged: collisions block the run.
+
+## Figma rate limits
+
+PTB is built to survive Figma's API rate limiting rather than fall over:
+
+- 429 responses are retried with backoff, honoring Figma's `Retry-After` header — bounded (capped at 30s per wait, max 5 attempts), never unbounded.
+- If retries are exhausted mid-scan, PTB tells you that your **last successful snapshot on disk is still usable** instead of just printing the raw API error.
+- A rate-limited thumbnail export never silently destroys a previously-good reference — the last-known-good thumbnail is preserved and verification keeps working.
+
+## Telemetry
+
+PTB collects anonymous usage telemetry to guide development. It is controlled entirely from the CLI:
+
+```bash
+ptb telemetry status   # see current state (default subcommand)
+ptb telemetry off      # opt out
+ptb telemetry on       # opt back in
+```
+
+See the [Privacy Policy](/privacy) for what is and isn't collected.
+
+## Found a bug?
+
+This is a beta, and reports directly shape it. Email **[deep@deepadalja.com](mailto:deep@deepadalja.com?subject=%5BPTB%20bug%5D%20&body=PTB%20version%20(ptb%20--version)%3A%0AOS%3A%0AWhat%20happened%3A%0A%0AWhat%20I%20expected%3A%0A%0ASteps%20to%20reproduce%3A%0A)** — the link pre-fills a short template (version, OS, what happened) so the report lands actionable.
+
+---
+
+## Next Steps
+
+Back to the [Quickstart](/docs/getting-started/quickstart), or connect your AI IDE in [MCP Setup](/docs/mcp/setup).

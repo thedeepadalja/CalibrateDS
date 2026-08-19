@@ -16,6 +16,9 @@ These commands read the `ptb.lock` file to help you track Design Drift — the g
 | `ptb stamp component <name>` | Marks a component as implemented against the *current* design snapshot. Use `.` for all components. |
 | `ptb assign <name> [person]` | Assigns a component to a developer. Leads can assign anyone; members can only self-assign. |
 | `ptb verify component <name>` | Pixel-diffs your implementation against the Figma thumbnail. Requires Storybook running on localhost:6006. |
+| `ptb what-uses <name>` | Blast-radius analysis: every component that depends on the given one. See [Change Management](/docs/cli/change-management). |
+| `ptb token-impact <token>` | Every component using a specific token — run before changing a token value. |
+| `ptb plan` / `ptb apply` | Preview, then safely regenerate, only the generated files a design change affects. See [Change Management](/docs/cli/change-management). |
 
 ## The three-column status table
 

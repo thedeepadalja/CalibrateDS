@@ -15,15 +15,17 @@ dna start --force   # overwrite an existing identity.yaml
 ```
 
 **What it extracts:**
-- CSS custom properties (the palette, with tier inference from alias chains)
-- Tailwind color tokens and configured spacing scale
-- Font sizes in use (the type scale)
+- CSS custom properties (the palette, with tiers inferred from the token resolution graph)
+- Tailwind color tokens and the configured spacing scale — a real `theme.spacing` / `extend.spacing` in your `tailwind.config.*` is recorded as `scales.spacingScale`
+- shadcn/ui-style HSL-channel tokens (`--primary: 142 71% 29%`) — recognized as colors only when real usage corroborates them via `hsl(var(--x))` somewhere in live source; a bare number triple is never fabricated into a color
+- Font sizes in use (the type scale), with observed-in-usage values annotated for review — the extractor surfaces, never silently drops
 - The spacing grid unit
+- Radius scale and idioms
 
 **What it writes:**
-- `.dna/identity.yaml` — the identity with per-rule provenance
+- `.dna/identity.yaml` — the identity with per-value provenance
 - `ds-lint.config.json` — a starter lint config (if none exists)
-- An instruction block in `CLAUDE.md` / `AGENTS.md` (if present) telling AI IDEs to call the MCP tools on their own initiative
+- An instruction block in `CLAUDE.md` / `AGENTS.md` (if present) telling AI IDEs to call the MCP tools on their own initiative — inventory/similar before building, resolve before writing raw values, check after design-relevant edits
 
 > **An existing `identity.yaml` is never overwritten without `--force`.** It is a record, not derived output — re-extraction without `--force` leaves the recorded history intact.
 
@@ -48,6 +50,48 @@ dna check --only=lint,render
 | cn-merge guard | `--only=cn` | identity.yaml |
 | Rendered | `--only=render` | puppeteer-core peer + Vite |
 | Manifests | `--only=manifest` | `.dna/frames/` |
+
+Exit `1` on violations; `0` on clean or nothing-to-check. Tri-state output — a run with nothing to check never renders as a green pass.
+
+---
+
+## dna resolve
+
+Reverse-lookup a raw value to its identity token — the **proactive counterpart to `dna check`**. Author in the token vocabulary on the first pass, instead of writing a literal and getting it flagged after the fact.
+
+```bash
+dna resolve "#2E7D32"        # color → token name
+dna resolve "rgb(46,125,50)" # same color, same answer
+dna resolve 16px             # length → token(s)
+dna resolve 1rem
+```
+
+Given a color (hex or `rgb()`/`rgba()` — equivalent inputs resolve identically) or a length, it prints the matching identity token name(s) labeled by axis. A value that sits on **multiple scales** (e.g. both a spacing step and a radius step) reports **all** of them, never just one.
+
+**Tri-state and honest:**
+- A well-formed value that isn't in your identity prints **"not a token"** — no green tick
+- No identity yet → prints the `dna start` prompt
+- Malformed input → a clean error
+
+Detector only — reads the identity, writes nothing.
+
+---
+
+## dna allow
+
+Adopt a deliberate arbitrary value directly into `identity.yaml`'s enforced section — an exception with a reason is a decision; one without is drift.
+
+```bash
+dna allow spacing 18px --why "hero optical adjustment"
+dna allow radius 10px --as chip --why "marketing cards"
+dna allow color "#1DA1F2" --as twitter --why "brand-mandated embed"
+dna allow type 15px --why "legacy article body"
+```
+
+- Takes effect on the next `dna check` immediately — no `dna start` re-run, no hand-editing YAML
+- `--why` is **required**; `--as <name>` names the value (required for `radius` and `color`)
+- Stamps provenance and appends the decision to `.dna/decisions.jsonl`
+- **Survival across re-extraction:** `type` and `spacing` adoptions survive `dna start --force`; `radius` and `color` do not unless the value is also present in source — `dna allow` tells you which applies when you run it
 
 ---
 
@@ -80,24 +124,28 @@ Requires the optional `typescript` peer to parse JSX/TSX components.
 
 ## dna similar
 
-Score structural similarity between changed files and the component library.
+Two advisory duplication checks over the same structural scorer (role-normalized shape + class shape, asymmetric containment). Diff-default; `--audit` for the whole tree.
 
 ```bash
 dna similar              # changed/untracked files only
 dna similar --audit      # whole repo
 ```
 
-**How it works:**
+**Check 1 — rebuild of an existing component.** Changed JSX is scored against the component library: *"you rebuilt `<Metric>` by hand."* A rebuild is roughly the component's size and explains most of the candidate's features — caught even when the tag names differ.
 
-Each JSX subtree is scored against every library component using asymmetric containment over a feature bag of role-normalized structure and class shape. A rebuild is roughly the component's size and explains most of the candidate's features — `similar` catches this even when the tag names differ.
+**Check 2 — clone of a net-new shape.** Near-identical subtrees clustered across the scanned files themselves: a shape repeated ≥2× with **no** backing component — *"extract one and reuse it."* This is the case rebuild-matching is structurally blind to, since neither copy has a library entry to match against.
 
 ```
-similar — 1 finding
+similar — 2 findings
 
-  src/screens/Dashboard.tsx:42
-  → Card (src/components/Card.tsx)  score: 0.91
-    Structurally close — consider reusing the existing component
+  rebuild   src/screens/Dashboard.tsx:42
+            → Card (src/components/Card.tsx)  score: 0.91
+
+  clone     src/screens/Pricing.tsx:18 · src/screens/Landing.tsx:74
+            → same net-new shape ×2, no backing component
 ```
+
+> **Both checks are advisory — exit 0, never gating.** A finding is information for a human, not a broken build.
 
 Configure in `ds-lint.config.json`:
 
@@ -138,15 +186,37 @@ Reads `.dna/frames/` and writes `.dna/manifests/`. Each manifest describes the e
 
 ---
 
+## dna figma diff
+
+**Advisory, optional, hermetic** structural change detector — answers "what changed structurally in the frames since I last looked?" without touching the network.
+
+```bash
+dna figma diff --fresh=./scratch-dump          # diff every configured screen
+dna figma diff --fresh=./scratch-dump home     # diff one screen
+```
+
+- **Baseline vs fresh.** The baseline is the committed dump `gen-manifest` already reads (`<cacheDir>/<screen>.figma.json` — the last frame state you accepted into git). The fresh dump is one you just produced, passed via `--fresh=<dir>`.
+- **Hermetic.** Pure local dump-vs-dump. No fetching, no credentials, no network-capable import — the same isolation guarantee as `dna check`.
+- **Structural only.** Reports the `Sec-*` section delta per screen — **added**, **removed**, and **reordered** (same set, new y-order). Token-value and shape deltas are deliberately out of scope.
+- **Tri-state, middle never green.** `pass` (✓ structurally identical) · `no-op` (• no baseline or no fresh dump, naming the reason) · `delta` (Δ a real change).
+- **Advisory exit convention.** A real delta reports and exits `0`. The only non-zero exit is a hard error — a malformed dump or missing `--fresh`.
+
+dna is code-first: a frame change is *information*, not automatically a code violation. This ships as a reporting command, never a gate.
+
+---
+
 ## dna hook install
 
 Install a git pre-commit hook that runs `dna check` before every commit.
 
 ```bash
 dna hook install
+dna hook install --force   # replace a pre-commit hook dna didn't write
 ```
 
 Writes `.git/hooks/pre-commit`. A failing check blocks the commit.
+
+> **It refuses to overwrite a pre-commit hook it didn't write itself.** Pass `--force` to replace a foreign hook — its content is lost once you do, so back it up first. Re-running over dna's own prior install always proceeds without `--force`.
 
 ---
 

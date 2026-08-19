@@ -29,11 +29,14 @@ See [Token Commands](/docs/cli/tokens) for the full reference.
 
 | Command | What it does |
 |---|---|
-| `ptb scan` | Fetches the Figma file via REST API (or reads `imported-tokens.json`), normalizes it into `DesignSystemModel`, saves snapshot, exports AI context files. |
+| `ptb scan` | Fetches the Figma file via REST API (or reads `imported-tokens.json`), normalizes it into `DesignSystemModel`, saves snapshot, exports AI context files. Supports `--ignore-collisions` — see [Limitations](/docs/getting-started/limitations#name-collisions-in-figma). |
 | `ptb generate-components [name]` | Scaffolds typed component shells using the framework generator (React `tsx` files). |
 | `ptb generate-tokens` | Generates `--ptb-*` CSS custom property files from Figma Variables. |
+| `ptb generate` | Runs the full generation set from the latest snapshot in one command. |
 | `ptb export context` | Exports all component context files to `.ptb/context/`. Commit these — AI IDEs and CI read from them. |
 | `ptb import-tokens <path>` | Imports a CalibrateDS plugin token export directly (alternative to dropping `imported-tokens.json` in `.ptb/`). |
+| `ptb context component <name>` | Prints the rich design context for a component (`.` for all) — variant axes, token bindings, dependencies. |
+| `ptb dev` | Starts the live playground at `localhost:4321` — every implemented component with variant controls sourced from the Figma model, no stories to write. |
 
 ---
 

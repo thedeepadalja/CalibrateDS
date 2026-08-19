@@ -20,7 +20,9 @@ PTB detects whether your repo is fresh or existing:
 - **Fresh repo** — scaffolds `packages/ui/` with framework-specific `package.json`, `tsconfig.json`, and component/token directories
 - **Existing repo** — writes `ptb.config.json` and `.gitignore` entries only, leaves your code untouched
 
-You will be asked to choose your framework (React, Vue, Svelte), workflow type, and documentation tool.
+You will be asked to choose your framework, workflow type, and documentation tool.
+
+> **Beta note:** component **code generation is React (+ TypeScript, CSS Modules) only** for now — Vue and Svelte generators are in progress. Scan, diff, status, and governance work regardless of framework. See [Beta Scope & Limitations](/docs/getting-started/limitations).
 
 ## 2. Add your Figma file key
 

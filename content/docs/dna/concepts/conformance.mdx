@@ -15,10 +15,16 @@ Static analysis of CSS, Tailwind, and JSX source files. Framework-agnostic: a ra
 
 Caught by lint:
 - **`color-family-allowlist`** — colors not in the identity palette
-- **`off-grid-spacing`** — spacing values not divisible by the grid
+- **`off-grid-spacing`** — spacing off the grid; supports `mode: "grid"` (divisibility, the default) or `mode: "scale"` (exact membership in a declared scale)
 - **`arbitrary-values`** — Tailwind bracket syntax (`p-[14px]`)
 - **`prefer-semantic`** — using primitive tokens directly when a semantic alias exists
-- **`prefer-token`** — using a raw hex literal that matches an identity palette value
+- **`prefer-token`** — a raw literal that matches an identity value; use the token
+- **`prefer-token-class`** — Tailwind arbitrary color (`bg-[#hex]`) where a token class exists
+- **`prefer-scale-step`** — a value that should be one of the declared scale steps
+- **`typography-role`** — display-scale tokens in body contexts and vice versa
+- **`ghost-tokens`** — `var()` references to tokens that don't exist in the identity
+
+See the [Rules Reference](/docs/dna/rules/reference) for each rule's details and configuration.
 
 ### 2. cn-merge guard
 

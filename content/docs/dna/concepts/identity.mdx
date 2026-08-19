@@ -27,6 +27,7 @@ scales:
     display-xl: { value: 34, from: figma, at: 2026-07-31 }
   spacing: { value: 4, from: code, at: 2026-08-10 }
   spacingScale: [4, 8, 12, 16, 24, 32, 48, 64]
+  radius:  { value: 4, from: code, at: 2026-08-10 }
 
 families:
   allowed: []
@@ -68,6 +69,29 @@ palette:
 ```
 
 Flat projects (no alias graph) see no tier fields anywhere — neither in the identity nor in any rule output. The tool adapts to the project; it never imposes structure.
+
+## shadcn / Tailwind HSL-channel tokens
+
+The shadcn/ui convention stores bare HSL channels in a custom property and composes them at use sites:
+
+```css
+:root { --primary: 142 71% 29%; }
+.btn  { background: hsl(var(--primary)); }
+```
+
+DNA recognizes these as colors and extracts them into the palette with their resolved hex — **but only when real usage corroborates them**: the value must have the HSL-channel shape (percent signs on saturation and lightness) *and* be genuinely composed via `hsl(var(--x))` / `hsla(var(--x))` somewhere in live source. A bare number triple, or a composition that exists only in a comment, never qualifies. Zero-fabrication is structural, not a tuning knob.
+
+With recognition in place, the full round-trip works on a shadcn codebase: the token extracts, `dna resolve` names it for a hex input, and `bg-[#hex]` downgrades to a `prefer-token-class` finding naming the token.
+
+## Adopting exceptions: dna allow
+
+Values enter the identity two ways: extraction (`dna start`) and **deliberate adoption**:
+
+```bash
+dna allow radius 10px --as chip --why "marketing cards"
+```
+
+`dna allow` writes the value into `identity.yaml`'s enforced section with provenance, and appends the decision — including your `--why` — to the same `.dna/decisions.jsonl` ledger that records authority flips. The next `dna check` accepts it immediately. See [Commands → dna allow](/docs/dna/cli/commands#dna-allow) for survival semantics across `dna start --force`.
 
 ## How the loader works
 

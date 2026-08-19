@@ -7,6 +7,8 @@ description: "All conformance rules — what they check, what they flag, how to 
 
 Rules run during `dna check --only=lint`. Each rule targets a specific class of design drift.
 
+> **Severities are configuration, not constants.** Each rule's severity comes from your `ds-lint.config.json` (`"error"`, `"warn"`, or `"off"`). The severities shown below are common defaults — check your own config for what actually gates.
+
 ---
 
 ## color-family-allowlist
@@ -79,6 +81,14 @@ padding: 6px 10px;
 padding: 8px 12px;
 ```
 
+**Modes.** By default the rule checks **grid divisibility, not scale membership**: at `grid: 4`, `p-11` (44px) passes because `44 % 4 === 0`, even if 44 was never a declared step. Opt into strict membership with `mode: "scale"`:
+
+```json
+"off-grid-spacing": { "severity": "error", "mode": "scale", "scale": [4, 8, 12, 16, 24, 32] }
+```
+
+In scale mode a value must be an exact member of the declared array. The array resolves from (most specific wins): the rule config's own `scale`, else the identity's `scales.spacingScale` (written by `dna start` when your `tailwind.config.*` declares a real `theme.spacing`). If `mode: "scale"` is set but neither source resolves, the rule falls back to the grid check rather than silently going permissive.
+
 ---
 
 ## arbitrary-values
@@ -140,6 +150,32 @@ font-size: var(--text-body);
 
 ---
 
+## prefer-token-class
+
+**Severity:** warning (typical)
+
+The Tailwind counterpart to `prefer-token`: flags an arbitrary color class (`bg-[#2E7D32]`, `text-[#hex]`) whose value matches an identity token that already has a token class. Instead of only saying "arbitrary value", the finding names the class to use.
+
+```tsx
+/* before */
+<div className="bg-[#2E7D32]">
+
+/* after */
+<div className="bg-primary">
+```
+
+Works with shadcn/ui HSL-channel tokens too — a hex that resolves to a corroborated `--primary` downgrades to this rule naming the token.
+
+---
+
+## prefer-scale-step
+
+**Severity:** warning (typical)
+
+Flags a spacing/size value that is on-grid but should be one of the declared scale steps — the advisory companion to `off-grid-spacing`'s `mode: "scale"`. Where a declared scale exists (`scales.spacingScale` in the identity, or the rule config), values between steps are nudged toward the nearest real step.
+
+---
+
 ## typography-role
 
 **Severity:** warning
@@ -167,6 +203,8 @@ ghost-tokens  warning
 ```
 
 **Fix:** Either add `--accent-muted` to your `:root` token definitions, or change the reference to an existing token.
+
+> A token used **only** via `hsl(var(--x))` composition (the shadcn convention) counts as referenced — it is never falsely reported as unused.
 
 ---
 
