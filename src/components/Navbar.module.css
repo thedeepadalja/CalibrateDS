@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+  flex-shrink: 0;
 }
 
 .logoIcon {
@@ -30,31 +31,139 @@
 
 .logoText {
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1rem;
   letter-spacing: -0.02em;
   color: var(--text-heading);
 }
 
-.navLinks {
+/* ── Tool pills ── */
+.toolPills {
   display: flex;
   align-items: center;
-  gap: var(--spacing-6);
+  gap: var(--spacing-2);
+}
+
+.toolPill {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.toolPill:hover {
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.toolPillActive {
+  color: var(--brand);
+  border-color: var(--brand-border);
+  background: var(--brand-dim);
+}
+
+.toolPillActive:hover {
+  color: var(--brand-hover);
+}
+
+/* ── Right actions ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  flex-shrink: 0;
 }
 
 .link {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
+  transition: color 0.15s;
 }
 
 .link:hover {
   color: var(--text-heading);
 }
 
-.actions {
-  display: flex;
+/* ── Docs dropdown ── */
+.docsMenu {
+  position: relative;
+}
+
+.docsTrigger {
+  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-4);
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  transition: color 0.15s;
+}
+
+.docsMenu:hover .docsTrigger,
+.docsMenu:focus-within .docsTrigger {
+  color: var(--text-heading);
+}
+
+.docsDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  padding-top: 8px;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 60;
+}
+
+.docsMenu:hover .docsDropdown,
+.docsMenu:focus-within .docsDropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.docsPanel {
+  display: flex;
+  flex-direction: column;
+  min-width: 216px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--bg-primary) 60%, transparent);
+}
+
+.docsItem {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.docsItem:hover {
+  background: color-mix(in srgb, var(--text-heading) 6%, transparent);
+}
+
+.docsItemName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.docsItemDesc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .searchTrigger {
@@ -63,22 +172,22 @@
   gap: var(--spacing-2);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  padding: 0.4rem 0.6rem 0.4rem 0.8rem;
+  padding: 0.4rem 0.6rem 0.4rem 0.75rem;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .searchTrigger:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--text-heading) 8%, transparent);
   border-color: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
 
 .searchText {
-  margin-right: var(--spacing-4);
+  margin-right: var(--spacing-3);
 }
 
 .searchKbd {
@@ -94,64 +203,42 @@
   color: var(--text-secondary);
 }
 
-.ctaButton {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  background: rgba(182, 141, 66, 0.1);
-  color: var(--brand);
-  border: 1px solid rgba(182, 141, 66, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.ctaButton:hover {
-  background: rgba(182, 141, 66, 0.2);
-  border-color: var(--brand);
-  color: var(--text-heading);
-  box-shadow: 0 0 15px rgba(182, 141, 66, 0.3);
-}
-
-/* Mobile Menu Defaults (Hidden on Desktop) */
+/* ── Mobile ── */
 .mobileMenuBtn {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: var(--spacing-2);
-  margin-left: var(--spacing-4);
 }
 
 .mobileMenuOverlay {
   display: none;
 }
 
-@media (max-width: 1024px) {
-  .navLinks {
-    display: none; /* Hide top nav links on mobile */
+@media (max-width: 900px) {
+  .toolPills {
+    display: none;
   }
-
+  .link {
+    display: none;
+  }
+  .searchText {
+    display: none;
+  }
   .mobileMenuBtn {
     display: flex;
     align-items: center;
     justify-content: center;
   }
-
   .mobileMenuOverlay {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     z-index: 100;
-    background: var(--bg-primary); /* Full dark background */
+    background: var(--bg-primary);
   }
-
   .mobileMenuHeader {
     display: flex;
     align-items: center;
@@ -160,7 +247,6 @@
     height: 4rem;
     border-bottom: 1px solid var(--border);
   }
-
   .closeMenuBtn {
     background: none;
     border: none;
@@ -168,61 +254,63 @@
     padding: var(--spacing-2);
     display: flex;
     align-items: center;
-    justify-content: center;
   }
-
   .mobileMenuContent {
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-6) 1.5rem;
   }
-
   .mobilePrimaryLinks {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
     margin-bottom: var(--spacing-6);
   }
-
   .mobilePrimaryLink {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-
+  .mobileDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
   .mobileDivider {
     border: none;
     border-top: 1px solid var(--border);
     margin-bottom: var(--spacing-6);
   }
-
-  .mobileSection {
-    margin-bottom: var(--spacing-8);
+  .mobileDocsNav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
   }
-
+  .mobileSection {}
   .mobileSectionTitle {
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(160, 157, 150, 0.5);
+    color: var(--text-secondary);
     margin-bottom: var(--spacing-3);
   }
-
   .mobileLinkList {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2);
   }
-
   .mobileLink {
     display: block;
     padding: var(--spacing-2) 0;
     font-size: 0.875rem;
     color: var(--text-primary);
   }
-
   .mobileActive {
     color: var(--brand);
     font-weight: 500;

@@ -7,6 +7,8 @@
   --text-secondary: #A09D96;
   --brand: #B68D42;
   --brand-hover: #D0A75B;
+  --brand-dim: rgba(182, 141, 66, 0.12);
+  --brand-border: rgba(182, 141, 66, 0.25);
   --border: #2C2C2E;
   
   --radius-sm: 4px;
@@ -28,8 +30,9 @@
   --spacing-24: 6rem;
   --spacing-32: 8rem;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+  --font-display: var(--font-archivo), 'Archivo', var(--font-sans);
 }
 
 * {

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const archivo = Archivo({ subsets: ["latin"], variable: '--font-archivo', weight: ['500', '600', '700', '800', '900'] });
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: '--font-jetbrains', weight: ['400', '500', '700'] });
 
 const BASE_URL = 'https://calibrateds.deepadalja.com';
 
@@ -42,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${archivo.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
