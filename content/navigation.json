@@ -3,7 +3,8 @@
     "title": "Getting Started",
     "links": [
       { "title": "Install", "href": "/docs/getting-started/install" },
-      { "title": "Quickstart", "href": "/docs/getting-started/quickstart" }
+      { "title": "Quickstart", "href": "/docs/getting-started/quickstart" },
+      { "title": "Beta Scope & Limitations", "href": "/docs/getting-started/limitations" }
     ]
   },
   {
@@ -47,6 +48,7 @@
       { "title": "Setup & Scanning", "href": "/docs/cli/setup" },
       { "title": "Tokens", "href": "/docs/cli/tokens" },
       { "title": "State & Freshness", "href": "/docs/cli/state" },
+      { "title": "Change Management", "href": "/docs/cli/change-management" },
       { "title": "AI", "href": "/docs/cli/ai" },
       { "title": "Team", "href": "/docs/cli/team" },
       { "title": "Admin", "href": "/docs/cli/admin" }
@@ -69,7 +71,7 @@
       { "title": "Token Inspector", "href": "/docs/plugin/token-inspector" },
       { "title": "State Diff Engine", "href": "/docs/plugin/state-diff" },
       { "title": "Stress Test (AI)", "href": "/docs/plugin/stress-test" },
-      { "title": "Token Exporter", "href": "/docs/plugin/token-exporter" }
+      { "title": "Token Exporter / Importer", "href": "/docs/plugin/token-exporter" }
     ]
   }
 ]

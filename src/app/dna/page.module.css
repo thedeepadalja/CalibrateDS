@@ -153,8 +153,8 @@
 .heroActions {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .btnPrimary {
@@ -183,12 +183,13 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  padding: 8px 8px 8px 20px;
+  padding: 8px 8px 8px 16px;
+  white-space: nowrap;
 }
 
 .installCmd {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--text-primary);
 }
 
@@ -586,6 +587,10 @@
 /* ════════ Responsive ════════ */
 
 @media (max-width: 960px) {
+  .heroActions {
+    flex-wrap: wrap;
+  }
+
   .heroInner {
     grid-template-columns: 1fr;
     min-height: auto;

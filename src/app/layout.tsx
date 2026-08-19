@@ -60,7 +60,7 @@ export default function RootLayout({
               author: { '@type': 'Person', name: 'Deep Adalja', url: 'https://deepadalja.com' },
               offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
               downloadUrl: 'https://www.npmjs.com/package/@calibrate-ds/cli',
-              softwareVersion: '0.1.65',
+              softwareVersion: '0.1.98',
             }),
           }}
         />

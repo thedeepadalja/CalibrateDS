@@ -92,7 +92,7 @@ const CHANNELS = [
     name: 'PTB',
     pkg: '@calibrate-ds/cli',
     headline: 'Compile Figma to typed code.',
-    desc: 'Scans your file like source, emits typed React components, and feeds 22 MCP tools to your AI IDE.',
+    desc: 'Scans your file like source, emits typed React components, and feeds 23 MCP tools to your AI IDE.',
     terminal: [
       { type: 'cmd', text: '$ ptb scan' },
       { type: 'ok', text: '✔ 24 components · 180 tokens' },
@@ -210,7 +210,7 @@ export default function Home() {
           >
             {[
               { val: '03', label: 'instruments' },
-              { val: '22+5', label: 'MCP tools' },
+              { val: '23+5', label: 'MCP tools' },
               { val: '0.0px', label: 'tolerated drift' },
             ].map((r) => (
               <div key={r.label} className={styles.readout}>

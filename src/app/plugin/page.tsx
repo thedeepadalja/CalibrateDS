@@ -537,7 +537,7 @@ export default function PluginPage() {
           >
             <motion.div className={styles.versionChip} variants={rise}>
               <span className={styles.versionDot} />
-              CalibrateDS Plugin · v1.3 · Figma Community
+              CalibrateDS Plugin · v13 · Figma Community
             </motion.div>
 
             <motion.h1 className={styles.headline} variants={rise}>
