@@ -411,16 +411,21 @@
 .channelCta {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  width: fit-content;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--brand);
-  transition: gap 0.15s;
+  padding: 8px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 .channelCta:hover {
-  gap: 8px;
   color: var(--brand-hover);
+  border-color: var(--brand-border);
+  background: var(--brand-dim);
 }
 
 /* ════════ The signal chain ════════ */
@@ -612,10 +617,16 @@
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.installPill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
+  border-radius: var(--radius-full);
+  padding: 8px 8px 8px 20px;
 }
 
 .installLabel {
@@ -624,10 +635,6 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--brand);
-  padding: 4px 12px;
-  border: 1px solid var(--brand-border);
-  background: var(--brand-dim);
-  border-radius: var(--radius-full);
 }
 
 .installCmd {
@@ -642,7 +649,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-secondary);
@@ -662,16 +669,20 @@
 .installDocs {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--brand);
-  transition: gap 0.15s;
+  padding: 8px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 .installDocs:hover {
-  gap: 8px;
   color: var(--brand-hover);
+  border-color: var(--brand-border);
+  background: var(--brand-dim);
 }
 
 .installNote {

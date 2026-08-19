@@ -2,339 +2,443 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Terminal, ArrowRight, ShieldCheck, GitBranch, Eye, Cpu, Search } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Copy, Check } from 'lucide-react';
 import styles from './page.module.css';
 
-const TERMINAL_LINES = [
-  '> dna start',
-  '  ✔ Scanning codebase for design identity...',
-  '  ✔ Palette: 12 tokens found · from: code',
-  '  ✔ Type scale: 8 steps extracted',
-  '  ✔ Spacing grid: 4px · from: code',
-  '  ✔ identity.yaml written → .dna/',
-  '',
-  '> dna check',
-  '  ✗ color-family-allowlist · page.module.css:42',
-  '    rgba(182, 141, 66, 0.1) → use var(--brand)',
-  '  ✗ off-grid-spacing · Sidebar.module.css:31',
-  '    gap: 2px → nearest on-grid: 4px',
-  '',
-  '  2 errors · 0 warnings',
+/* ────────────────────────────────────────────
+   The lint-catch moment: the headline itself
+   carries a violation, gets flagged, resolves
+   to the token, and passes.
+   ──────────────────────────────────────────── */
+
+const PHASES = [
+  { at: 1400, label: '✗ color-family-allowlist — raw value', cls: 'flagRaw' },
+  { at: 2400, label: '→ dna resolve: var(--brand)', cls: 'flagResolve' },
+  { at: 3400, label: '✓ in identity · from: code', cls: 'flagPass' },
+] as const;
+
+function CheckedWord({ children }: { children: string }) {
+  const reduced = useReducedMotion();
+  const [phase, setPhase] = useState(reduced ? PHASES.length : 0);
+
+  useEffect(() => {
+    if (reduced) return;
+    const timers = PHASES.map((p, i) => setTimeout(() => setPhase(i + 1), p.at));
+    const done = setTimeout(() => setPhase(PHASES.length + 1), 5600);
+    return () => { timers.forEach(clearTimeout); clearTimeout(done); };
+  }, [reduced]);
+
+  const settled = phase >= PHASES.length;
+  const flag = phase >= 1 && phase <= PHASES.length ? PHASES[phase - 1] : null;
+
+  return (
+    <span className={styles.checkedWrap}>
+      <span className={`${styles.checkedWord} ${settled ? styles.wordToken : styles.wordRaw}`}>
+        {children}
+      </span>
+      {flag && (
+        <motion.span
+          key={flag.label}
+          className={`${styles.flag} ${styles[flag.cls]}`}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          aria-hidden="true"
+        >
+          {flag.label}
+        </motion.span>
+      )}
+    </span>
+  );
+}
+
+/* ── hero terminal: the whole story in one run ── */
+
+const TERM: Array<{ type: string; text: string; d?: number }> = [
+  { type: 'cmd',   text: '$ dna start' },
+  { type: 'note',  text: '● reading source — postcss · tailwind · tsx' },
+  { type: 'ok',    text: '✔ palette 12 · type 8 · spacing 4px · radius 4' },
+  { type: 'ok',    text: '✔ identity.yaml written · provenance: from code', d: 700 },
+  { type: 'cmd',   text: '$ dna check' },
+  { type: 'err',   text: '✗ Button.module.css:14 — rgba(182,141,66,0.1)' },
+  { type: 'note',  text: '  → use var(--brand-dim)' },
+  { type: 'muted', text: '  1 error · 0 warnings', d: 700 },
+  { type: 'cmd',   text: '$ dna resolve #B68D42' },
+  { type: 'ok',    text: '● --brand · axis: color', d: 700 },
+  { type: 'cmd',   text: '$ dna check' },
+  { type: 'ok',    text: '✓ clean · 0 errors · 0 warnings' },
 ];
 
-const MCP_MESSAGES = [
-  { role: 'user', text: 'What design violations exist right now?' },
-  { role: 'ai', tool: 'dna_check', text: '2 violations found. Button.module.css:14 uses rgba(182,141,66,0.1) — should be var(--brand). Sidebar.module.css:31 has gap:2px, off the 4px grid.' },
-  { role: 'user', text: 'What components do we already have?' },
-  { role: 'ai', tool: 'dna_inventory', text: 'Found 8 components: Button, Card, Input, Badge, Modal, Sidebar, Navbar, Footer. Check before building — the failure mode for components is ignorance, not defiance.' },
-  { role: 'user', text: 'I just added a new Card variant — am I rebuilding something?' },
-  { role: 'ai', tool: 'dna_similar', text: 'Structural similarity: 0.92 match with Card (src/components/Card.tsx). Your new component looks like a rebuild. Reuse the existing one.' },
+function HeroTerminal() {
+  const reduced = useReducedMotion();
+  const [n, setN] = useState(reduced ? TERM.length : 0);
+
+  useEffect(() => {
+    if (reduced || n >= TERM.length) return;
+    const t = setTimeout(() => setN(n + 1), TERM[n].d ?? 260);
+    return () => clearTimeout(t);
+  }, [n, reduced]);
+
+  return (
+    <div className={styles.term}>
+      <div className={styles.termHead}>
+        <span className={styles.termDot} /><span className={styles.termDot} /><span className={styles.termDot} />
+        <span className={styles.termTitle}>bash — dna</span>
+      </div>
+      <pre className={styles.termBody}>
+        {TERM.slice(0, n).map((line, i) => (
+          <span key={i} className={`${styles.termLine} ${styles[`t_${line.type}` as keyof typeof styles]}`}>
+            {line.text}
+          </span>
+        ))}
+        {n < TERM.length && <span className={styles.cursor} />}
+      </pre>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────── */
+
+const FINDINGS = [
+  {
+    rule: 'color-family-allowlist',
+    snippet: 'background: #b68e41;',
+    hint: '→ one digit off var(--brand)',
+    note: 'Invisible in code review. Visible in production.',
+  },
+  {
+    rule: 'off-grid-spacing',
+    snippet: 'gap: 7px;',
+    hint: '→ nearest on-grid: 8px',
+    note: 'The 4px grid dies one arbitrary pixel at a time.',
+  },
+  {
+    rule: 'ghost-tokens',
+    snippet: 'color: var(--accent-muted);',
+    hint: '→ no such token in identity.yaml',
+    note: 'Renamed six months ago. Still referenced in 9 files.',
+  },
+  {
+    rule: 'similar · rebuild',
+    snippet: '<div className="card-wrap">…',
+    hint: '→ 0.92 match with <Card />',
+    note: 'An AI rebuilt it because it never checked the inventory.',
+  },
+];
+
+const STEPS = [
+  {
+    n: '01',
+    title: 'Extract',
+    lead: 'dna start reads what your codebase already believes.',
+    desc: 'Palette with tiers inferred from the token resolution graph, type scale, spacing grid, radius idioms — written to .dna/identity.yaml with per-value provenance: { value, from, at }. Nothing invented: observed values are surfaced for review, never silently dropped, never imposed.',
+    code: '$ dna start\n✔ identity.yaml — 12 tokens\n  brand:\n    value: "#B68D42"\n    from: code\n    at: 2026-08-12',
+  },
+  {
+    n: '02',
+    title: 'Gate',
+    lead: 'dna check holds every change to that identity.',
+    desc: 'Diff-default — it checks what you changed, not what you inherited. Four layers: source lint, cn-merge guard, rendered conformance in headless Chrome, structural manifests. Tri-state and honest: pass, nothing-to-check, or fail — a no-op never renders as a green tick.',
+    code: '$ dna check          # changed lines\n$ dna check --audit  # whole tree\n$ dna hook install   # pre-commit gate',
+  },
+  {
+    n: '03',
+    title: 'Cooperate',
+    lead: 'Your AI IDE calls dna on its own initiative.',
+    desc: 'dna mcp exposes five detector-only tools, and dna start writes the convention into your CLAUDE.md / AGENTS.md: check the inventory before building, resolve values before writing literals, check after every design-relevant edit. The pre-commit hook stays the backstop.',
+    code: '$ claude mcp add dna -- dna mcp\n\nyou: "add a hover state"\nAI:  [dna_resolve #B68D42 → --brand]\nAI:  "using var(--brand)"',
+  },
 ];
 
 const FEATURES = [
   {
-    icon: <Eye size={20} color="var(--brand)" />,
-    title: 'Extract, don\'t impose',
-    desc: 'dna start reads what your codebase already believes — tokens, type scale, spacing grid — and records it as .dna/identity.yaml with per-rule provenance.',
+    title: 'dna resolve',
+    desc: 'The proactive counterpart to check: reverse-lookup any raw value to its identity token before the literal is ever written. A value on multiple scales reports all of them.',
   },
   {
-    icon: <ShieldCheck size={20} color="var(--brand)" />,
-    title: 'Conformance at every layer',
-    desc: 'Static lint catches raw hex values and off-grid spacing. Headless Chrome rendered checks verify the identity is actually applied in the DOM, not just in source.',
+    title: 'dna allow',
+    desc: 'Deliberate exceptions, adopted with provenance and a required --why into decisions.jsonl. An exception with a reason is a decision. One without is drift.',
   },
   {
-    icon: <GitBranch size={20} color="var(--brand)" />,
-    title: 'Provenance you can trust',
-    desc: 'Every value in identity.yaml carries { from, at } — who held authority (figma | code | hand) and when. Authority flips; which side is stale becomes a lookup.',
+    title: 'dna similar',
+    desc: 'Catches hand-rebuilds of existing components and net-new shapes cloned across files with no backing component. Advisory, never gating.',
   },
   {
-    icon: <Search size={20} color="var(--brand)" />,
-    title: 'Rebuild detection',
-    desc: 'dna similar scores structural similarity between new code and your component library. Catches reinvention that a name-only check would miss.',
+    title: 'Tri-state honesty',
+    desc: 'Every check answers pass, nothing-to-check, or fail. Nothing-to-check never renders as a green tick — silence is never sold as success.',
   },
   {
-    icon: <Cpu size={20} color="var(--brand)" />,
-    title: '4 MCP tools for AI IDEs',
-    desc: 'dna mcp exposes dna_check, dna_inventory, dna_similar, and dna_start_preview as structured data — so your AI IDE calls them on its own initiative.',
+    title: 'Isolation by design',
+    desc: 'Owns .dna/ and writes nowhere else. No network calls, no credentials, no telemetry. Every MCP tool is detector-only: it reports, your tools edit.',
   },
   {
-    icon: <Terminal size={20} color="var(--brand)" />,
-    title: 'Isolates to .dna/ only',
-    desc: 'Runs in a bare directory — no config, no git, no network, no credentials. Owns .dna/ and writes nowhere else. Every tool is detector-only.',
+    title: 'Speaks shadcn / Tailwind',
+    desc: 'HSL-channel tokens (--primary: 142 71% 29%) are recognized when real usage corroborates them — full extraction and resolve for the dominant modern token architecture.',
   },
 ];
 
+const MCP_TOOLS = [
+  { name: 'dna_check', desc: 'Conformance findings as structured data — rule, severity, file, line, hint.' },
+  { name: 'dna_resolve', desc: 'Raw value → identity token, before the literal gets written.' },
+  { name: 'dna_inventory', desc: 'The component vocabulary — name, props, use-when, path.' },
+  { name: 'dna_similar', desc: 'Rebuild and clone findings, tagged by kind, with scores.' },
+  { name: 'dna_start_preview', desc: 'What dna start would extract — without writing anything.' },
+];
+
+const INSTALL_CMD = 'npm install -g @calibrate-ds/dna';
+
 export default function DNAPage() {
-  const [mounted, setMounted] = useState(false);
-  const [termLines, setTermLines] = useState<string[]>([]);
-  const [chatStep, setChatStep] = useState(0);
+  const [copied, setCopied] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  const copyInstall = () => {
+    navigator.clipboard.writeText(INSTALL_CMD).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
-  useEffect(() => {
-    if (!mounted) return;
-    let i = 0;
-    const id = setInterval(() => {
-      if (i < TERMINAL_LINES.length) {
-        setTermLines((prev) => [...prev, TERMINAL_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(id);
-      }
-    }, 160);
-    return () => clearInterval(id);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const id = setInterval(() => {
-      setChatStep((s) => (s < MCP_MESSAGES.length - 1 ? s + 1 : s));
-    }, 2400);
-    return () => clearInterval(id);
-  }, [mounted]);
+  const rise = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
+  };
 
   return (
     <div className={styles.page}>
 
-      {/* Hero */}
+      {/* ── Hero: the lint-catch moment ── */}
       <section className={styles.hero}>
-        <motion.div
-          className={styles.heroContent}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
-          <div className={styles.badge}>
-            <span className={styles.badgeDot} />
-            @calibrate-ds/dna · v0.2.2
-          </div>
-          <h1 className={styles.title}>
-            Your codebase<br />
-            has a design<br />
-            <span className={styles.accent}>identity.</span>
-          </h1>
-          <p className={styles.subtitle}>
-            Extract it. Record it with provenance. Keep every file — source and rendered — conformant to it. DNA catches what Figma can&apos;t see: drift that lives in the code itself.
-          </p>
-          <div className={styles.ctas}>
-            <div className={styles.installSnippet}>
-              <Terminal size={14} color="var(--brand)" />
-              <code>npm install -g @calibrate-ds/dna</code>
-            </div>
-            <Link href="/docs/dna/getting-started/quickstart" className={styles.primaryBtn}>
-              See DNA docs <ArrowRight size={15} />
-            </Link>
-          </div>
-        </motion.div>
-
-        {/* Terminal */}
-        <motion.div
-          className={styles.terminalWrap}
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          <div className={styles.terminalHeader}>
-            <div className={styles.macBtns}>
-              <span className={styles.close} /><span className={styles.min} /><span className={styles.max} />
-            </div>
-            <span className={styles.termTitle}>bash — dna</span>
-          </div>
-          <div className={styles.termBody}>
-            <pre><code>
-              {mounted && termLines.map((line, i) => {
-                const safe    = line ?? '';
-                const isCmd   = safe.startsWith('>');
-                const isOk    = safe.includes('✔');
-                const isErr   = safe.includes('✗');
-                const isFinal = safe.includes('errors') || safe.includes('warnings');
-                return (
-                  <span
-                    key={i}
-                    style={{
-                      display: 'block',
-                      color: isCmd ? 'var(--text-heading)'
-                           : isOk  ? '#4ADE80'
-                           : isErr ? '#F87171'
-                           : isFinal ? 'var(--brand)'
-                           : 'var(--text-secondary)',
-                    }}
-                  >
-                    {line || ' '}
-                  </span>
-                );
-              })}
-              {mounted && <span className={styles.cursor} />}
-            </code></pre>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* MCP Spotlight */}
-      <section className={styles.mcp}>
-        <div className={`container ${styles.mcpInner}`}>
+        <div className={styles.heroTicks} aria-hidden="true" />
+        <div className={styles.heroInner}>
           <motion.div
-            className={styles.mcpTag}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            className={styles.heroLeft}
+            initial="hidden"
+            animate="show"
+            variants={{ show: { transition: { staggerChildren: 0.1 } } }}
           >
-            <Cpu size={13} color="var(--brand)" />
-            MCP — AI IDE Integration
-          </motion.div>
-          <motion.h2
-            className={styles.mcpHeading}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.08 }}
-          >
-            Your AI IDE, now conformance-aware.
-          </motion.h2>
-          <motion.p
-            className={styles.mcpSub}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.14 }}
-          >
-            One command. Your assistant gains live access to your design identity, component inventory, conformance violations, and rebuild detection — all as structured data.
-          </motion.p>
-
-          <div className={styles.mcpCols}>
-            {/* Chat */}
-            <motion.div
-              className={styles.chatWindow}
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: 0.2 }}
-            >
-              <div className={styles.chatHeader}>
-                <div className={styles.macBtns}>
-                  <span className={styles.close} /><span className={styles.min} /><span className={styles.max} />
-                </div>
-                <span className={styles.chatTitle}>Claude Code · dna connected</span>
-                <span className={styles.chatOnline} />
-              </div>
-              <div className={styles.chatBody}>
-                {mounted && MCP_MESSAGES.slice(0, chatStep + 1).map((msg, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className={msg.role === 'user' ? styles.chatUser : styles.chatAI}
-                  >
-                    {msg.tool && <span className={styles.chatTool}>[{msg.tool}]</span>}
-                    {msg.text}
-                  </motion.div>
-                ))}
-                {mounted && chatStep < MCP_MESSAGES.length - 1 && (
-                  <div className={styles.chatTyping}>
-                    <span /><span /><span />
-                  </div>
-                )}
-              </div>
+            <motion.div className={styles.versionChip} variants={rise}>
+              <span className={styles.versionDot} />
+              @calibrate-ds/dna · v0.2.17
             </motion.div>
 
-            {/* Tool list */}
-            <motion.div
-              className={styles.mcpTools}
-              initial={{ opacity: 0, x: 16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: 0.28 }}
-            >
-              {[
-                { tool: 'dna_check',         desc: 'Run conformance and return structured findings — rule, severity, file, line, value, hint.' },
-                { tool: 'dna_inventory',     desc: 'Return the component library as structured data. Check here before building anything new.' },
-                { tool: 'dna_similar',       desc: 'Score structural similarity against the library. Catches reinvention a name-only check misses.' },
-                { tool: 'dna_start_preview', desc: 'Preview what dna start would extract — without writing anything to disk.' },
-              ].map((t) => (
-                <div key={t.tool} className={styles.mcpTool}>
-                  <code className={styles.mcpToolName}>{t.tool}</code>
-                  <p className={styles.mcpToolDesc}>{t.desc}</p>
-                </div>
-              ))}
-              <Link href="/docs/dna/mcp/overview" className={styles.mcpLink}>
-                Explore MCP integration <ArrowRight size={13} />
+            <motion.h1 className={styles.headline} variants={rise}>
+              <span className={styles.hLine}>Your code</span>
+              <span className={styles.hLine}>already knows its</span>
+              <CheckedWord>identity.</CheckedWord>
+            </motion.h1>
+
+            <motion.p className={styles.sub} variants={rise}>
+              dna extracts the palette, type scale, and spacing grid your codebase
+              already believes — records where every value came from — and gates
+              every change against it. Nothing imposed. Nothing invented.
+            </motion.p>
+
+            <motion.div className={styles.heroActions} variants={rise}>
+              <Link href="/docs/dna/getting-started/quickstart" className={styles.btnPrimary}>
+                Get started <ArrowRight size={14} />
               </Link>
+              <div className={styles.installRow}>
+                <code className={styles.installCmd}>{INSTALL_CMD}</code>
+                <button className={styles.copyBtn} onClick={copyInstall} aria-label="Copy install command">
+                  {copied ? <Check size={14} className={styles.copiedIcon} /> : <Copy size={14} />}
+                </button>
+              </div>
             </motion.div>
-          </div>
+          </motion.div>
+
+          <motion.div
+            className={styles.heroRight}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
+            <HeroTerminal />
+          </motion.div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className={styles.howItWorks}>
-        <div className={`container ${styles.howInner}`}>
-          <motion.h2
-            className={styles.sectionHeading}
+      {/* ── 01 · The problem ── */}
+      <section className={styles.problem}>
+        <div className={styles.inner}>
+          <motion.div
+            className={styles.sectionHead}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5 }}
           >
-            Up and running in two commands
-          </motion.h2>
-          <div className={styles.steps}>
-            {[
-              {
-                n: '01',
-                title: 'Extract your identity',
-                desc: 'Run dna start — it scans your codebase, extracts the palette, type scale, and spacing grid, and writes .dna/identity.yaml with per-rule provenance. Also writes a starter config so dna check has something to check immediately.',
-                code: 'npm install -g @calibrate-ds/dna\ndna start\n# → .dna/identity.yaml written\n# → ds-lint.config.json written',
-              },
-              {
-                n: '02',
-                title: 'Check conformance',
-                desc: 'dna check is the gate. It lints source for off-palette colors, off-grid spacing, and arbitrary values. Then optionally renders in headless Chrome to verify the identity is actually applied in the DOM — not just in source.',
-                code: 'dna check\n# ✗ color-family-allowlist\n#   rgba(182,141,66) → use var(--brand)\n# ✗ off-grid-spacing  gap: 2px → 4px\n\ndna hook install  # pre-commit gate',
-              },
-              {
-                n: '03',
-                title: 'Wire your AI IDE',
-                desc: 'Run dna mcp to start the standalone MCP server. Add it to Claude Code or Cursor once. Your AI assistant will call dna_check, dna_inventory, and dna_similar on its own initiative — no terminal context-switching needed.',
-                code: 'claude mcp add dna -- dna mcp\n\n# In Claude Code:\n"What components do we already have?"\n# → AI calls dna_inventory automatically',
-              },
-            ].map((step, i) => (
+            <span className={styles.eyebrow}>01 · The problem</span>
+            <h2 className={styles.sectionTitle}>Drift doesn&apos;t need a handoff.</h2>
+            <p className={styles.sectionSub}>
+              It happens inside the codebase — one raw literal, one off-grid pixel,
+              one rebuilt component at a time. Faster now that AI writes most of the UI.
+            </p>
+          </motion.div>
+
+          <div className={styles.findings}>
+            {FINDINGS.map((f, i) => (
               <motion.div
-                key={i}
-                className={styles.step}
-                initial={{ opacity: 0, y: 20 }}
+                key={f.rule}
+                className={styles.finding}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.12 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.45, delay: i * 0.08 }}
               >
-                <div className={styles.stepNumber}>{step.n}</div>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDesc}>{step.desc}</p>
-                <div className={styles.stepCode}>
-                  <pre><code>{step.code}</code></pre>
-                </div>
+                <span className={styles.findingRule}>✗ {f.rule}</span>
+                <code className={styles.findingSnippet}>{f.snippet}</code>
+                <span className={styles.findingHint}>{f.hint}</span>
+                <p className={styles.findingNote}>{f.note}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className={styles.features}>
-        <div className={`container ${styles.featuresInner}`}>
-          {FEATURES.map((f, i) => (
+      {/* ── 02 · The process ── */}
+      <section className={styles.process}>
+        <div className={styles.inner}>
+          <motion.div
+            className={styles.sectionHead}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className={styles.eyebrow}>02 · The process</span>
+            <h2 className={styles.sectionTitle}>Extract. Gate. Cooperate.</h2>
+          </motion.div>
+
+          <div className={styles.steps}>
+            {STEPS.map((s, i) => (
+              <motion.div
+                key={s.n}
+                className={styles.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <span className={styles.stepN}>{s.n}</span>
+                <h3 className={styles.stepTitle}>{s.title}</h3>
+                <p className={styles.stepLead}>{s.lead}</p>
+                <p className={styles.stepDesc}>{s.desc}</p>
+                <pre className={styles.stepCode}>{s.code}</pre>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 03 · The instrument ── */}
+      <section className={styles.instrument}>
+        <div className={styles.inner}>
+          <motion.div
+            className={styles.sectionHead}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className={styles.eyebrow}>03 · The instrument</span>
+            <h2 className={styles.sectionTitle}>Opinionated about honesty.<br />Neutral about your choices.</h2>
+          </motion.div>
+
+          <div className={styles.featureGrid}>
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={f.title}
+                className={styles.feature}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+              >
+                <h3 className={styles.featureTitle}>{f.title}</h3>
+                <p className={styles.featureDesc}>{f.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── MCP ── */}
+      <section className={styles.mcp}>
+        <div className={styles.inner}>
+          <motion.div
+            className={styles.sectionHead}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className={styles.eyebrow}>MCP — five detector-only tools</span>
+            <h2 className={styles.sectionTitle}>Your AI IDE, conformance-aware.</h2>
+            <p className={styles.sectionSub}>
+              One command wires them in. None of them ever write source — they report,
+              and the agent edits with its own tools.
+            </p>
+          </motion.div>
+
+          <div className={styles.mcpGrid}>
+            {MCP_TOOLS.map((t, i) => (
+              <motion.div
+                key={t.name}
+                className={styles.mcpTool}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+              >
+                <code className={styles.mcpName}>{t.name}</code>
+                <p className={styles.mcpDesc}>{t.desc}</p>
+              </motion.div>
+            ))}
             <motion.div
-              key={i}
-              className={styles.featureCard}
-              initial={{ opacity: 0, y: 16 }}
+              className={`${styles.mcpTool} ${styles.mcpWire}`}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             >
-              <div className={styles.featureIcon}>{f.icon}</div>
-              <h3 className={styles.featureTitle}>{f.title}</h3>
-              <p className={styles.featureDesc}>{f.desc}</p>
+              <code className={styles.mcpWireCmd}>$ claude mcp add dna -- dna mcp</code>
+              <Link href="/docs/dna/mcp/overview" className={styles.mcpLink}>
+                MCP docs <ArrowRight size={13} />
+              </Link>
             </motion.div>
-          ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Closing ── */}
+      <section className={styles.closing}>
+        <div className={styles.inner}>
+          <motion.h2
+            className={styles.closingTitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6 }}
+          >
+            Your identity is already<br />in the code. Enforce it.
+          </motion.h2>
+          <motion.div
+            className={styles.closingActions}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+          >
+            <div className={styles.installRow}>
+              <code className={styles.installCmd}>{INSTALL_CMD}</code>
+              <button className={styles.copyBtn} onClick={copyInstall} aria-label="Copy install command">
+                {copied ? <Check size={14} className={styles.copiedIcon} /> : <Copy size={14} />}
+              </button>
+            </div>
+            <Link href="/docs/dna/getting-started/quickstart" className={styles.btnPrimary}>
+              Read the quickstart <ArrowRight size={14} />
+            </Link>
+          </motion.div>
         </div>
       </section>
 

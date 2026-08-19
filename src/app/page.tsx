@@ -210,7 +210,7 @@ export default function Home() {
           >
             {[
               { val: '03', label: 'instruments' },
-              { val: '22+4', label: 'MCP tools' },
+              { val: '22+5', label: 'MCP tools' },
               { val: '0.0px', label: 'tolerated drift' },
             ].map((r) => (
               <div key={r.label} className={styles.readout}>
@@ -396,15 +396,17 @@ export default function Home() {
           >
             {INSTALLS.map((inst, i) => (
               <div key={inst.label} className={styles.install}>
-                <span className={styles.installLabel}>{inst.label}</span>
-                <code className={styles.installCmd}>{inst.cmd}</code>
-                <button
-                  className={styles.copyBtn}
-                  onClick={() => copyCmd(i)}
-                  aria-label={`Copy ${inst.label} install command`}
-                >
-                  {copied === i ? <Check size={14} className={styles.copiedIcon} /> : <Copy size={14} />}
-                </button>
+                <div className={styles.installPill}>
+                  <span className={styles.installLabel}>{inst.label}</span>
+                  <code className={styles.installCmd}>{inst.cmd}</code>
+                  <button
+                    className={styles.copyBtn}
+                    onClick={() => copyCmd(i)}
+                    aria-label={`Copy ${inst.label} install command`}
+                  >
+                    {copied === i ? <Check size={14} className={styles.copiedIcon} /> : <Copy size={14} />}
+                  </button>
+                </div>
                 <Link href={inst.docs} className={styles.installDocs}>
                   docs <ArrowRight size={12} />
                 </Link>
