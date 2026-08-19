@@ -1,0 +1,59 @@
+---
+title: "Install"
+description: "Install @calibrate-ds/dna globally or run it one-off with npx."
+---
+
+# Install
+
+`@calibrate-ds/dna` is a standalone npm package. It does not depend on `@calibrate-ds/cli` (PTB) — the two are independent products that can be used separately or together.
+
+## Requirements
+
+Node.js >= 18.17.
+
+## Global install (recommended)
+
+```bash
+npm install -g @calibrate-ds/dna
+```
+
+Once installed, the `dna` command is available directly:
+
+```bash
+dna --version
+dna check
+```
+
+## One-off with npx
+
+Note the **full package name** — `dna` alone resolves an unrelated package on npm:
+
+```bash
+npx @calibrate-ds/dna check
+npx @calibrate-ds/dna start
+```
+
+## Optional peers
+
+DNA's core installs with a single dependency (`postcss`) and degrades cleanly when peers are missing — it always tells you what it skipped and why.
+
+| Peer | Required for |
+|---|---|
+| `typescript >= 5` | `dna inventory` and `dna similar` (JSX/TSX parsing) |
+| `puppeteer-core >= 20` | `dna check --only=render` (headless rendered conformance) |
+
+Install peers only if you need those features:
+
+```bash
+# For inventory and similar
+npm install -D typescript
+
+# For rendered checks
+npm install -D puppeteer-core
+```
+
+---
+
+## Next steps
+
+Run `dna start` to extract your codebase's design identity. See the [Quickstart](/docs/dna/getting-started/quickstart) for the full first-run walkthrough.

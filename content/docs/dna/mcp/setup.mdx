@@ -1,0 +1,88 @@
+---
+title: "MCP Setup"
+description: "Connect the DNA MCP server to Claude Code, Cursor, or Windsurf."
+---
+
+# MCP Setup
+
+## One command (Claude Code)
+
+```bash
+claude mcp add dna -- dna mcp
+```
+
+This registers `dna mcp` as a project-scoped MCP server in Claude Code. Restart the session once to pick it up, then ask: *"Run the DNA setup checklist"* — Claude will confirm the connection with a live status report.
+
+## Manual config (all IDEs)
+
+Add the following to your IDE's MCP config file:
+
+**Claude Code** — `.mcp.json`:
+```json
+{
+  "mcpServers": {
+    "dna": {
+      "command": "dna",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+**Cursor** — `.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "dna": {
+      "command": "dna",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`:
+```json
+{
+  "mcpServers": {
+    "dna": {
+      "command": "dna",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+## Setting the project root
+
+By default, `dna mcp` uses the MCP client's workspace root, then the server process's own `cwd`. To pin it to a specific directory:
+
+```json
+{
+  "mcpServers": {
+    "dna": {
+      "command": "dna",
+      "args": ["mcp", "--cwd=/path/to/your/project"]
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+**`dna mcp` hangs when run in a terminal.**
+
+Expected. `dna mcp` starts a stdio MCP server — it holds the process open waiting for JSON-RPC messages from a client. There is no output to see in a terminal without a client attached. Use `Ctrl+C` to exit. Register it as an MCP server in your IDE instead.
+
+**`Cannot find package '@modelcontextprotocol/sdk'` when running `dna mcp`.**
+
+This only occurs on a local git clone of the monorepo where `packages/dna` hasn't been installed separately. It does not occur on a real `npm install -g @calibrate-ds/dna`. Fix with:
+
+```bash
+cd packages/dna
+npm install
+```
+
+**The AI isn't calling DNA tools automatically.**
+
+Check that `dna start` has been run — it auto-writes the cooperation instructions into `CLAUDE.md`/`AGENTS.md`. If the file already existed before `dna start`, run `dna start --force` to backfill the instruction block.

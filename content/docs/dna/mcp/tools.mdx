@@ -1,0 +1,140 @@
+---
+title: "Tools Reference"
+description: "Complete reference for all four DNA MCP tools."
+---
+
+# Tools Reference
+
+All tools are read-only — they detect and report, never write source or config outside `.dna/`.
+
+---
+
+## dna_check
+
+Run DNA's design-system conformance check.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `audit` | boolean | `true` | `true` = whole-repo scan. `false` = only changed lines since `base`. |
+| `base` | string | `HEAD` | Git ref to diff against when `audit` is `false`. |
+| `cwd` | string | workspace root | Absolute path to the project root. |
+
+**Returns:**
+
+```json
+{
+  "status": "fail",
+  "mode": "audit",
+  "summary": { "errors": 2, "warnings": 0 },
+  "findings": [
+    {
+      "rule": "color-family-allowlist",
+      "severity": "error",
+      "file": "src/components/Button.module.css",
+      "line": 14,
+      "value": "rgba(182, 141, 66, 0.1)",
+      "snippet": "background: rgba(182, 141, 66, 0.1);",
+      "hint": "use var(--brand)"
+    }
+  ]
+}
+```
+
+**When to call it:** After editing any design-relevant file (styles, tokens, component markup). The cooperation convention in `CLAUDE.md`/`AGENTS.md` instructs agents to call this automatically.
+
+---
+
+## dna_inventory
+
+Return the current component inventory parsed from code.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `cwd` | string | workspace root | Absolute path to the project root. |
+
+**Returns:**
+
+```json
+{
+  "status": "report",
+  "count": 8,
+  "components": [
+    {
+      "name": "Button",
+      "props": ["variant", "size", "disabled", "onClick", "children"],
+      "useWhen": "Primary action. Use for all form submissions and primary CTAs.",
+      "path": "src/components/Button.tsx"
+    }
+  ]
+}
+```
+
+**When to call it:** Before creating a new component. For components, the failure mode is ignorance — an AI rebuilds a Card not because it was told to, but because it never checked.
+
+---
+
+## dna_similar
+
+Score structural similarity between changed code and the component library.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `audit` | boolean | `true` | `true` = whole repo. `false` = changed/untracked files only. |
+| `base` | string | `HEAD` | Git ref for diff when `audit` is `false`. |
+| `cwd` | string | workspace root | Absolute path to the project root. |
+
+**Returns:**
+
+```json
+{
+  "status": "report",
+  "findings": [
+    {
+      "file": "src/screens/Dashboard.tsx",
+      "line": 42,
+      "matchedComponent": "Card",
+      "matchedPath": "src/components/Card.tsx",
+      "score": 0.91
+    }
+  ]
+}
+```
+
+**When to call it:** Alongside `dna_inventory` before writing new component code. `similar` catches rebuild that slips past a name-only check — a structurally-close-enough component under a different name.
+
+---
+
+## dna_start_preview
+
+Preview what `dna start` would extract — without writing anything.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `cwd` | string | workspace root | Absolute path to the project root. |
+| `force` | boolean | `false` | Preview as if `--force` were passed (show draft even when identity.yaml exists). |
+
+**Returns:**
+
+```json
+{
+  "status": "preview",
+  "palette": {
+    "brand": { "value": "hsl(38 47% 48%)", "from": "code", "at": "2026-08-10" }
+  },
+  "scales": {
+    "type": { "body": { "value": 14 }, "display-xl": { "value": 34 } },
+    "spacing": { "value": 4 }
+  },
+  "families": { "allowed": [] }
+}
+```
+
+**When to call it:** To show a user what `dna start` is about to set up before they run it themselves. `dna start` (CLI, user-initiated) is the only thing that actually writes.

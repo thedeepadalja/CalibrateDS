@@ -1,0 +1,57 @@
+---
+title: "CLI Overview"
+description: "All dna commands at a glance."
+---
+
+# CLI Overview
+
+The `dna` CLI provides seven commands. Three are the main workflow (`start`, `check`, `hook install`); the rest are supporting tools.
+
+## Command reference
+
+| Command | What it does |
+|---|---|
+| [`dna start`](/docs/dna/cli/start) | Extract design identity from the codebase → `.dna/identity.yaml` |
+| [`dna check`](/docs/dna/cli/check) | Run conformance: lint · cn-merge guard · rendered · manifests |
+| [`dna inventory`](/docs/dna/cli/inventory) | List the component library parsed from code |
+| [`dna similar`](/docs/dna/cli/similar) | Score structural similarity against the library (rebuild detection) |
+| [`dna shapes`](/docs/dna/cli/shapes) | Derive a component vocabulary from committed Figma frame dumps |
+| [`dna gen-manifest`](/docs/dna/cli/gen-manifest) | Generate structural screen manifests from design frames |
+| `dna hook install` | Install a pre-commit hook that runs `dna check` |
+| `dna mcp` | Start the MCP server (see [MCP Overview](/docs/dna/mcp/overview)) |
+
+## Global flags
+
+| Flag | Effect |
+|---|---|
+| `--cwd=<path>` | Project root to operate on (defaults to `process.cwd()`) |
+| `--config=<path>` | Path to `ds-lint.config.json` |
+| `--json` | Machine-readable JSON output (supported by `inventory`, `similar`) |
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Clean or nothing-to-check |
+| `1` | Violations found (errors) |
+
+Warnings never cause a non-zero exit — they are advisory.
+
+## Configuration
+
+DNA reads `ds-lint.config.json` at the project root. A minimal config:
+
+```json
+{
+  "includePaths": ["src"],
+  "inventory": {
+    "dirs": ["src/components"]
+  },
+  "similar": {
+    "threshold": 0.8,
+    "enabled": true
+  }
+}
+```
+
+`dna start` writes this file automatically if none exists.

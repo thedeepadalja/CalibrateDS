@@ -6,16 +6,19 @@ import { getMdxContent, getAllDocSlugs } from '@/lib/mdx';
 import { MDXComponents } from '@/components/MDXComponents';
 import styles from './DocsPage.module.css';
 import { Metadata } from 'next';
-import navigation from '../../../../content/navigation.json';
+import ptbNavigation from '../../../../content/navigation.json';
+import dnaNavigation from '../../../../content/navigation-dna.json';
 
+type NavSection = { title: string; links: NavLink[] };
 interface NavLink { title: string; href: string; }
 
-function getAllLinks(): NavLink[] {
-  return (navigation as { title: string; links: NavLink[] }[]).flatMap((s) => s.links);
+function getAllLinks(href: string): NavLink[] {
+  const nav: NavSection[] = href.startsWith('/docs/dna') ? dnaNavigation : ptbNavigation;
+  return nav.flatMap((s) => s.links);
 }
 
 function getAdjacentPages(currentHref: string): { prev: NavLink | null; next: NavLink | null } {
-  const links = getAllLinks();
+  const links = getAllLinks(currentHref);
   const idx = links.findIndex((l) => l.href === currentHref);
   return {
     prev: idx > 0 ? links[idx - 1] : null,

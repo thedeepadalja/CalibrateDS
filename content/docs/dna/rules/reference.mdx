@@ -1,0 +1,214 @@
+---
+title: "Rules Reference"
+description: "All conformance rules — what they check, what they flag, how to fix each one."
+---
+
+# Rules Reference
+
+Rules run during `dna check --only=lint`. Each rule targets a specific class of design drift.
+
+---
+
+## color-family-allowlist
+
+**Severity:** error
+
+Flags raw color literals that fall inside the palette hue ranges but aren't expressed as design tokens. The "allowlist" is your palette — any raw value close enough to a palette hue is considered a drift violation.
+
+**What it catches:**
+- Raw hex values: `#4F84D6`, `#bf8a40`
+- Raw rgb/rgba: `rgba(182, 141, 66, 0.1)`, `rgb(79, 132, 214)`
+- Raw hsl/hsla: `hsl(38 47% 48%)`
+
+**Does not flag:**
+- Values in `:root` where tokens are defined
+- `transparent`, `currentColor`, `inherit`
+- Colors in the `excludePaths` config
+
+**Example finding:**
+```
+color-family-allowlist  error
+  src/components/Badge.module.css:22
+  rgba(182, 141, 66, 0.1)
+  hint: use var(--brand)
+```
+
+**Fix:** Replace the literal with the appropriate CSS custom property.
+
+```css
+/* before */
+background: rgba(182, 141, 66, 0.1);
+
+/* after */
+background: color-mix(in srgb, var(--brand) 10%, transparent);
+```
+
+---
+
+## off-grid-spacing
+
+**Severity:** error
+
+Flags spacing values that don't land on the extracted grid unit. If your grid is `4px`, any margin, padding, gap, or size that isn't a multiple of 4 is an error.
+
+**What it catches:**
+- `padding: 6px` on a 4px grid
+- `margin-top: 10px` on an 8px grid
+- Tailwind classes like `p-[13px]` or `gap-[6px]`
+
+**Does not flag:**
+- Values of `0`
+- `1px` border-like values (configurable)
+- Values in `excludePaths`
+
+**Example finding:**
+```
+off-grid-spacing  error
+  src/components/Card.module.css:34
+  padding: 6px
+  hint: nearest grid values are 4px, 8px
+```
+
+**Fix:** Round to the nearest grid multiple.
+
+```css
+/* before — 4px grid */
+padding: 6px 10px;
+
+/* after */
+padding: 8px 12px;
+```
+
+---
+
+## arbitrary-values
+
+**Severity:** warning
+
+Flags Tailwind arbitrary-value syntax (`p-[13px]`, `text-[#abc]`) that bypasses the design scale. Arbitrary values are a design escape hatch — fine in prototypes, but each one is a point where design tokens can't enforce constraints.
+
+**What it catches:**
+- `class="p-[13px]"`, `class="w-[342px]"`, `class="text-[#4F84D6]"`
+- Combined classes like `class="flex gap-[6px] items-center"`
+
+**Fix:** Use a configured Tailwind scale value, or add the value to the scale.
+
+```tsx
+/* before */
+<div className="p-[13px]">
+
+/* after */
+<div className="p-3">   {/* 12px, nearest grid step */}
+```
+
+---
+
+## prefer-semantic
+
+**Severity:** warning
+
+Flags direct use of primitive tokens where a semantic alias exists. If your identity has both `--yellow-500` and `--warning`, using `--yellow-500` in a component context is a drift signal.
+
+**Example finding:**
+```
+prefer-semantic  warning
+  src/components/Alert.tsx:14
+  var(--yellow-500)
+  hint: prefer var(--warning)
+```
+
+---
+
+## prefer-token
+
+**Severity:** warning
+
+Flags font-size, font-weight, or line-height literals that match extracted type-scale values. This is the type-scale equivalent of `color-family-allowlist`.
+
+**What it catches:**
+- `font-size: 14px` when `14` is in the type scale as `--text-body`
+- `font-size: 34px` when `34` is `--text-display-xl`
+
+**Fix:**
+```css
+/* before */
+font-size: 14px;
+
+/* after */
+font-size: var(--text-body);
+```
+
+---
+
+## typography-role
+
+**Severity:** warning
+
+Flags text that uses a display-size token in a body context, or a body-size token in a display context. DNA infers which scale values are "display" vs "body" by their relative magnitude and where they appear in the codebase.
+
+**What it catches:**
+- A paragraph element using `var(--text-display-xl)`
+- A heading using `var(--text-xs)` with no size override
+
+---
+
+## ghost-tokens
+
+**Severity:** warning
+
+Flags `var()` references to tokens that don't exist in the extracted identity. Ghost tokens are commonly left behind after a palette rename, or used as aspirational placeholders before the token is defined.
+
+**Example finding:**
+```
+ghost-tokens  warning
+  src/components/Chip.module.css:8
+  var(--accent-muted)
+  hint: no such token in .dna/identity.yaml
+```
+
+**Fix:** Either add `--accent-muted` to your `:root` token definitions, or change the reference to an existing token.
+
+---
+
+## cn-merge guard
+
+**Severity:** error  
+**Layer:** cn-merge (not lint — runs as a separate check pass)
+
+Flags `cn()` / `clsx()` / `twMerge()` calls where a class argument contains a raw color or spacing literal that bypasses the token system. This catches drift that escapes the source-file lint pass because it's assembled at call-site.
+
+**What it catches:**
+```tsx
+cn("flex", "bg-[#4F84D6]")       // raw hex in cn call
+cn(base, isActive && "p-[7px]")   // off-grid arbitrary in conditional
+```
+
+**Fix:** Use token-based classes inside `cn()`.
+
+```tsx
+cn("flex", "bg-[var(--brand)]")
+cn(base, isActive && "p-2")
+```
+
+---
+
+## Configuring rules
+
+Rules are configured in `ds-lint.config.json`. To disable a rule or change its severity:
+
+```json
+{
+  "rules": {
+    "arbitrary-values": "off",
+    "ghost-tokens": "warn",
+    "prefer-semantic": "off"
+  },
+  "excludePaths": [
+    "src/styles/legacy/**"
+  ]
+}
+```
+
+Valid severity values: `"error"`, `"warn"`, `"off"`.
+
+> Errors cause `dna check` to exit 1 and block the pre-commit hook. Warnings are advisory — they print but do not block.

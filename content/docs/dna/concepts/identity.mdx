@@ -1,0 +1,86 @@
+---
+title: "Design Identity"
+description: "What .dna/identity.yaml is, what it records, and why provenance is the core idea."
+---
+
+# Design Identity
+
+The `.dna/identity.yaml` file is the foundation of everything DNA does. It records what your codebase believes about design — palette, type scale, spacing grid — with **per-rule provenance**: who held authority and when.
+
+## What gets recorded
+
+```yaml
+palette:
+  brand:
+    value: "hsl(38 47% 48%)"
+    from: code
+    at: 2026-08-10
+  foreground:
+    value: "#18181C"
+    from: figma
+    at: 2026-07-31
+    reason: "reconciled to the committed frames"
+
+scales:
+  type:
+    body:       { value: 14, from: code, at: 2026-08-10 }
+    display-xl: { value: 34, from: figma, at: 2026-07-31 }
+  spacing: { value: 4, from: code, at: 2026-08-10 }
+  spacingScale: [4, 8, 12, 16, 24, 32, 48, 64]
+
+families:
+  allowed: []
+
+forbidden:
+  - pattern: raw-hex
+  - pattern: off-grid-spacing
+```
+
+## Provenance is per-rule, not per-file
+
+Every value carries `{ from, at }`. `from` is the side that held authority — `figma`, `code`, or `hand` — and `at` is when.
+
+**Why this matters:** authority flips. In a real project, sometimes Figma is ahead of the code; sometimes the code is the more current representation and the design frames trail. Without recording which side held authority and when, "which side is stale?" becomes an argument. With provenance, it's a lookup.
+
+When a value's `from` or `value` changes, DNA appends a record to `.dna/decisions.jsonl`:
+
+```json
+{"type":"authority-flip","rule":"palette.foreground","scope":"figma→code","reason":"frames trail the reconciled tokens","at":"2026-08-10"}
+```
+
+## Tiers: primitive and semantic
+
+If your project uses a two-tier token structure (primitive tokens aliased by semantic tokens), DNA infers the tiers from the CSS alias graph — it does not require any naming convention or config.
+
+```yaml
+palette:
+  --color-blue-500:
+    value: "#3B82F6"
+    tier: primitive
+    from: code
+    at: 2026-08-10
+  --color-brand:
+    value: "#3B82F6"
+    tier: semantic
+    resolves: "--color-blue-500"
+    from: code
+    at: 2026-08-10
+```
+
+Flat projects (no alias graph) see no tier fields anywhere — neither in the identity nor in any rule output. The tool adapts to the project; it never imposes structure.
+
+## How the loader works
+
+`dna check` and all MCP tools prefer `.dna/identity.yaml` when present, then fall back to `ds-lint.config.json`, then return null (no identity → the seed message, exit 0, zero writes).
+
+The identity is the single source of truth for:
+- Which color tokens are allowed (palette names become the allowlist)
+- What the type scale is (for `arbitrary-values` checks on font sizes)
+- What the spacing grid is (for `off-grid-spacing`)
+- Which Tailwind color families are permitted
+
+---
+
+## Next steps
+
+Learn how DNA tracks conformance across source and rendered output in [Conformance](/docs/dna/concepts/conformance).

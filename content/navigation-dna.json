@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Getting Started",
+    "links": [
+      { "title": "Install", "href": "/docs/dna/getting-started/install" },
+      { "title": "Quickstart", "href": "/docs/dna/getting-started/quickstart" }
+    ]
+  },
+  {
+    "title": "Concepts",
+    "links": [
+      { "title": "Design Identity", "href": "/docs/dna/concepts/identity" },
+      { "title": "Conformance Layers", "href": "/docs/dna/concepts/conformance" }
+    ]
+  },
+  {
+    "title": "CLI",
+    "links": [
+      { "title": "Overview", "href": "/docs/dna/cli/overview" },
+      { "title": "Commands", "href": "/docs/dna/cli/commands" }
+    ]
+  },
+  {
+    "title": "MCP — AI IDE Integration",
+    "links": [
+      { "title": "Overview", "href": "/docs/dna/mcp/overview" },
+      { "title": "Setup", "href": "/docs/dna/mcp/setup" },
+      { "title": "Tools Reference", "href": "/docs/dna/mcp/tools" }
+    ]
+  },
+  {
+    "title": "Rules",
+    "links": [
+      { "title": "Rules Reference", "href": "/docs/dna/rules/reference" }
+    ]
+  }
+]

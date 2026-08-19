@@ -1,0 +1,55 @@
+---
+title: "MCP Overview"
+description: "How the DNA MCP server turns your AI IDE into a conformance-aware coding partner."
+---
+
+# MCP Overview
+
+The **DNA MCP server** is a standalone process that exposes DNA's findings as structured data to an MCP client (Claude Code, Cursor, Windsurf). It is independent of the PTB MCP server — no shared code, no shared process.
+
+## What is MCP?
+
+MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When `dna mcp` is connected, your AI assistant gains four purpose-built tools that make it conformance-aware — without you prompting it.
+
+## Why use MCP instead of the CLI
+
+Without MCP:
+```
+terminal: dna check
+IDE: "here are the violations, please fix..."
+terminal: dna inventory
+IDE: "ok here are the components..."
+```
+
+With MCP, the AI calls these tools on its own initiative:
+```
+you: "add a hover state to the Button"
+AI: [calls dna_check → finds the change introduces a raw hex color]
+AI: "I noticed this introduces rgba(182,141,66,0.1) — I'll use var(--brand) instead."
+```
+
+## The four tools
+
+| Tool | What it does |
+|---|---|
+| `dna_check` | Run conformance and return structured findings — rule, severity, file, line, value, hint |
+| `dna_inventory` | Return the component library as structured data — name, props, use-when, path |
+| `dna_similar` | Score structural similarity and return rebuild findings |
+| `dna_start_preview` | Preview what `dna start` would extract, without writing anything |
+
+All four tools are **detector-only** — they never write source, config, or anything outside `.dna/`. The AI uses the findings to make its own edits with its own tools.
+
+## Cooperation convention
+
+When `dna start` runs on a project, it auto-writes a short instruction block into that project's `CLAUDE.md` / `AGENTS.md`:
+
+> Before creating a new component, call `dna_inventory` and `dna_similar`.  
+> After editing a design-relevant file, call `dna_check`.
+
+This means a coding agent picks up the convention automatically on its first read of the project instructions — no manual step from the human. The pre-commit hook (`dna hook install`) is the real backstop; the MCP convention is cooperative enforcement on top.
+
+---
+
+## Next steps
+
+See [MCP Setup](/docs/dna/mcp/setup) for installation instructions and IDE-specific configs, and [Tools Reference](/docs/dna/mcp/tools) for detailed tool schemas.

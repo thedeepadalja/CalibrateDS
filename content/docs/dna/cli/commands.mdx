@@ -1,0 +1,160 @@
+---
+title: "Commands"
+description: "Detailed reference for every dna CLI command."
+---
+
+# Commands
+
+## dna start
+
+Extract a design identity from the current codebase and write `.dna/identity.yaml`.
+
+```bash
+dna start           # extract identity
+dna start --force   # overwrite an existing identity.yaml
+```
+
+**What it extracts:**
+- CSS custom properties (the palette, with tier inference from alias chains)
+- Tailwind color tokens and configured spacing scale
+- Font sizes in use (the type scale)
+- The spacing grid unit
+
+**What it writes:**
+- `.dna/identity.yaml` — the identity with per-rule provenance
+- `ds-lint.config.json` — a starter lint config (if none exists)
+- An instruction block in `CLAUDE.md` / `AGENTS.md` (if present) telling AI IDEs to call the MCP tools on their own initiative
+
+> **An existing `identity.yaml` is never overwritten without `--force`.** It is a record, not derived output — re-extraction without `--force` leaves the recorded history intact.
+
+---
+
+## dna check
+
+The conformance gate. Runs lint, cn-merge guard, rendered conformance, and structural manifests.
+
+```bash
+dna check                    # diff-default: only changed files
+dna check --audit            # whole-repo scan
+dna check --only=lint        # specific layers only
+dna check --only=lint,render
+```
+
+**Layers:**
+
+| Layer | Flag | Requires |
+|---|---|---|
+| Lint (source) | `--only=lint` | identity.yaml |
+| cn-merge guard | `--only=cn` | identity.yaml |
+| Rendered | `--only=render` | puppeteer-core peer + Vite |
+| Manifests | `--only=manifest` | `.dna/frames/` |
+
+---
+
+## dna inventory
+
+List every exported component in the configured `inventory.dirs` — parsed fresh from source on every run.
+
+```bash
+dna inventory          # human-readable output
+dna inventory --json   # machine-readable JSON
+```
+
+**Output:**
+
+```
+inventory — 8 component(s). Check here BEFORE building anything new.
+
+  Button             {variant, size, disabled}
+                     Primary action. Use for all form submissions.  ·  src/components/Button.tsx
+
+  Card               {title, children, footer}
+                     Container for grouped content.  ·  src/components/Card.tsx
+```
+
+> For components, the failure mode is **ignorance, not defiance.** An AI writes a new Card because it never looked — not because it was told to. `dna inventory` is designed to be read at session start.
+
+Requires the optional `typescript` peer to parse JSX/TSX components.
+
+---
+
+## dna similar
+
+Score structural similarity between changed files and the component library.
+
+```bash
+dna similar              # changed/untracked files only
+dna similar --audit      # whole repo
+```
+
+**How it works:**
+
+Each JSX subtree is scored against every library component using asymmetric containment over a feature bag of role-normalized structure and class shape. A rebuild is roughly the component's size and explains most of the candidate's features — `similar` catches this even when the tag names differ.
+
+```
+similar — 1 finding
+
+  src/screens/Dashboard.tsx:42
+  → Card (src/components/Card.tsx)  score: 0.91
+    Structurally close — consider reusing the existing component
+```
+
+Configure in `ds-lint.config.json`:
+
+```json
+{
+  "similar": {
+    "threshold": 0.8,
+    "minEvidence": 8,
+    "exclude": ["SpecialCard"],
+    "enabled": true
+  }
+}
+```
+
+---
+
+## dna shapes
+
+Derive a candidate component vocabulary from committed Figma frame dumps, ranked by frequency (rule of three).
+
+```bash
+dna shapes
+```
+
+Reads `.dna/frames/` and extracts recurring structural patterns. Useful for bootstrapping a component inventory from design before writing code.
+
+---
+
+## dna gen-manifest
+
+Generate structural screen manifests from Figma frame dumps for use by `dna check --only=manifest`.
+
+```bash
+dna gen-manifest
+```
+
+Reads `.dna/frames/` and writes `.dna/manifests/`. Each manifest describes the expected major sections and their vertical order for a screen.
+
+---
+
+## dna hook install
+
+Install a git pre-commit hook that runs `dna check` before every commit.
+
+```bash
+dna hook install
+```
+
+Writes `.git/hooks/pre-commit`. A failing check blocks the commit.
+
+---
+
+## dna mcp
+
+Start the standalone MCP server. See [MCP Overview](/docs/dna/mcp/overview).
+
+```bash
+dna mcp
+dna mcp --cwd=/path/to/project
+```

@@ -1,0 +1,87 @@
+---
+title: "Quickstart"
+description: "Extract your design identity, run your first conformance check, and wire DNA into your AI IDE in three steps."
+---
+
+# Quickstart
+
+This guide takes you from a fresh install to a running conformance check in three steps.
+
+## 1. Extract your identity
+
+Navigate to your project root and run:
+
+```bash
+dna start
+```
+
+DNA scans your codebase and extracts what it already believes about design:
+
+- **Palette** — CSS custom properties and Tailwind color tokens, with tier inference (primitive vs. semantic) from the alias graph
+- **Type scale** — font sizes in use, annotated for review
+- **Spacing grid** — the grid unit (default 4px) and optionally a declared spacing scale
+- **Component directories** — auto-detected for `inventory` and `similar`
+
+Everything is written to `.dna/identity.yaml` with **per-rule provenance** — every value carries `{ from, at }` so you know which side held authority and when.
+
+DNA also writes a starter `ds-lint.config.json` (if none exists) so `dna check` has something to check immediately.
+
+> **Nothing to extract → nothing written.** DNA never fabricates an identity. If it can't find design values, it says so and exits cleanly.
+
+## 2. Run your first check
+
+```bash
+dna check
+```
+
+On a fresh extraction, this should be clean — DNA checked against the code it just extracted from. Now make a change that violates the identity (use a raw hex color instead of a CSS variable) and run it again:
+
+```
+✗ color-family-allowlist · src/components/Button.module.css:14
+  rgba(182, 141, 66, 0.1) — not in the palette
+  → use var(--brand)
+
+✗ off-grid-spacing · src/components/Sidebar.module.css:31
+  gap: 2px — not divisible by the 4px grid
+  → nearest on-grid: 4px
+
+2 errors · 0 warnings
+```
+
+Three possible outcomes per run — never just pass/fail:
+
+| Outcome | Meaning |
+|---|---|
+| **pass** | Checked N files, all conformant — shown with counts |
+| **nothing-to-check** | No identity, no config, or no in-scope files — never shown as green |
+| **fail** | Violations found — listed with file, line, value, and a fix hint |
+
+## 3. Install the pre-commit hook
+
+```bash
+dna hook install
+```
+
+This installs a git pre-commit hook that runs `dna check` before every commit. Violations block the commit.
+
+## 4. Wire your AI IDE (optional)
+
+```bash
+# Claude Code
+claude mcp add dna -- dna mcp
+
+# Or manually — add to your IDE's MCP config:
+# { "command": "dna", "args": ["mcp"] }
+```
+
+Once connected, your AI assistant gains four tools: `dna_check`, `dna_inventory`, `dna_similar`, and `dna_start_preview`. It will call them on its own initiative when working on design-relevant files — no manual prompting needed.
+
+See [MCP Overview](/docs/dna/mcp/overview) for the full setup guide.
+
+---
+
+## Next steps
+
+- Understand how the identity file works in [Design Identity](/docs/dna/concepts/identity)
+- See all available rules in the [Rules Reference](/docs/dna/rules/reference)
+- Explore all CLI commands in the [CLI Overview](/docs/dna/cli/overview)

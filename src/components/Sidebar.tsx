@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
-import navigation from '../../content/navigation.json';
+import ptbNavigation from '../../content/navigation.json';
+import dnaNavigation from '../../content/navigation-dna.json';
 import { BacklinkCallout } from './BacklinkCallout';
 
 export function Sidebar() {
   const pathname = usePathname();
+  const navigation = pathname.startsWith('/docs/dna') ? dnaNavigation : ptbNavigation;
 
   return (
     <aside className={styles.sidebar}>
