@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "dna": {
+      "type": "stdio",
+      "command": "dna",
+      "args": ["mcp", "--cwd=/Users/deepadalja/Documents/calibratedswiki"]
+    }
+  }
+}

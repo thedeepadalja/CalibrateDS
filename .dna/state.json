@@ -1,0 +1,10 @@
+{
+  "severities": {
+    "color-family-allowlist": "error",
+    "arbitrary-values": "error",
+    "ghost-tokens": "warn",
+    "off-grid-spacing": "error",
+    "prefer-token": "off",
+    "prefer-semantic": "off"
+  }
+}

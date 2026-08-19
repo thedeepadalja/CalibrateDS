@@ -1,0 +1,42 @@
+{
+  "includePaths": [
+    "src"
+  ],
+  "excludePaths": [],
+  "tokenSources": [
+    "src/app/globals.css",
+    "tailwind.config.*"
+  ],
+  "scale": 4,
+  "resolvers": "auto",
+  "rules": {
+    "color-family-allowlist": {
+      "severity": "error",
+      "allowedFamilies": []
+    },
+    "arbitrary-values": {
+      "severity": "error"
+    },
+    "ghost-tokens": {
+      "severity": "warn",
+      "severityReason": "audit-only, non-gating",
+      "allow": {}
+    },
+    "off-grid-spacing": {
+      "severity": "error"
+    },
+    "prefer-token": {
+      "severity": "off",
+      "severityReason": "opt-in style nudge — a literal that IS a palette value is legal; preferring var(--x) is an upgrade, not a violation"
+    },
+    "prefer-semantic": {
+      "severity": "off",
+      "severityReason": "opt-in, tiered systems only — direct primitive use bypasses the role layer; inert when no tiers are inferred"
+    }
+  },
+  "inventory": {
+    "dirs": [
+      "src/components"
+    ]
+  }
+}
