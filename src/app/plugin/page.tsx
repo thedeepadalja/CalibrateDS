@@ -480,7 +480,7 @@ const MODULES = [
   },
 ];
 
-const TRUST = ['Free · Apache-2.0', '100% local-first', 'BYOK AI — 8 providers', 'No accounts · no telemetry'];
+const TRUST = ['Free', '100% local-first', 'BYOK AI — 8 providers', 'No accounts · no telemetry'];
 
 /* ════════ Page ════════ */
 

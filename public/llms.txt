@@ -52,7 +52,7 @@ With npx, use the full package name: `npx @calibrate-ds/dna check`.
 
 ## Figma plugin
 
-Six modules: Accessibility Advisor, Component Readiness, Token Inspector, State Diff Engine, Stress Test (AI) and Token Exporter / Importer. Runs locally, no account required.
+Six modules: Accessibility Advisor, Component Readiness, Token Inspector, State Diff Engine, Stress Test (AI) and Token Exporter / Importer. Free on Figma Community. Runs locally, no account required.
 
 ## License
 
