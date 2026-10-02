@@ -1,35 +1,76 @@
 # CalibrateDS
 
-> A local-first design system compiler and quality control toolkit for design engineers. Connects Figma to code, enforces design freshness, and automates React component generation.
+> CalibrateDS is a set of local-first design system tools for design engineers who keep a design system in Figma and ship it in code. It treats the Figma file as source code and makes design drift measurable. It has three independent tools, each installed separately: PTB (`@calibrate-ds/cli`) generates components and tracks freshness, DNA (`@calibrate-ds/dna`) governs conformance, and a Figma plugin audits designs. Built by Deep Adalja.
 
-## What CalibrateDS does
+## Naming
 
-CalibrateDS is a CLI tool (`@calibrate-ds/cli`) and Figma plugin that bridges the gap between design and engineering. It reads a Figma file, normalises it into a structured DesignSystemModel, and generates typed React components, design tokens, and AI-ready implementation prompts.
+- PTB stands for "prompt to both".
+- DNA is a name, not an acronym.
 
-Key capabilities:
-- Scans Figma files and builds a normalised DesignSystemModel (variants, tokens, states, interactions)
-- Generates typed React + TypeScript components from the model
-- MCP (Model Context Protocol) server — lets AI assistants like Claude query live design context directly
-- `ptb status` — detects design drift: which components are stale vs. fresh
-- `ptb dev` — live Vite playground to preview generated components with variant controls sourced from Figma
-- Figma plugin with 6 quality modules: Accessibility Advisor, Component Readiness, Token Inspector, State Diff Engine, Stress Test, Token Exporter
+## PTB (`@calibrate-ds/cli`, command `ptb`)
 
-## Why it exists
+PTB scans a Figma file, normalises it into a DesignSystemModel, and generates typed React + TypeScript components (CSS Modules) and `--ptb-*` CSS custom property tokens. Generated code is plain code the team owns.
 
-Design systems drift. Engineers implement components once and never update them when designers iterate. CalibrateDS treats your Figma file as source code — every component has a `contextHash` that changes when the design changes, making staleness measurable and automatable in CI.
+- `ptb scan` writes the model to `.ptb/latest.json` and per-component context files to `.ptb/context/`
+- `ptb generate-components` and `ptb generate-tokens` produce components and tokens
+- `ptb status` shows Design, Code and Visual freshness per component; `ptb stamp` marks a component implemented
+- `ptb verify` screenshots the component in Storybook and scores it against Figma; 0.90 or above passes
+- `ptb dev` runs a Vite playground with variant controls sourced from Figma
+- MCP server with 23 tools, the primary way to use PTB; `ptb mcp setup` configures Claude Code, Cursor, Windsurf and VS Code
 
-## How to install
+Install (Node.js 20 or later):
 
 ```bash
 npm install -g @calibrate-ds/cli
 ptb init
 ```
 
+## How design freshness works
+
+On every `ptb scan`, PTB computes a `designHash` per component and stores it in `ptb.lock`. `ptb stamp` copies that hash into `stampedHash`. If `stampedHash` equals `designHash` the component is ready; if they differ, Figma changed since the last stamp and the component is stale; if `stampedHash` is missing, it is not implemented. Generated files carry a `contextHash` in their header, which `ptb status` uses for the Code column. `ptb ci setup` writes a GitHub Actions workflow running `ptb status --fail-on-stale`; it reads only the committed `ptb.lock`, so CI needs no Figma token.
+
+## DNA (`@calibrate-ds/dna`, command `dna`)
+
+DNA is the governance tool: it checks that code keeps to the design system. It does not depend on PTB.
+
+- `dna start` extracts the codebase's existing design identity (palette with primitive and semantic tiers, type scale, spacing grid) into `.dna/identity.yaml`, with per-rule provenance (`figma`, `code` or `hand`, and when). If it finds nothing, it writes nothing.
+- `dna check` runs conformance in four layers: source lint, a cn-merge guard, rendered checks in headless Chrome, and structural manifests. Each run reports pass, nothing-to-check, or fail, and exits non-zero on violations, so it can gate CI.
+- `dna allow` adopts a deliberate exception with a required reason. Exceptions and authority flips are appended to the decisions ledger, `.dna/decisions.jsonl`.
+- `dna hook install` adds a git pre-commit hook that runs `dna check` and blocks failing commits.
+- `dna similar` flags rebuilds and clones of existing components (advisory).
+- `dna mcp` starts DNA's own MCP server, separate from PTB's, with five detector-only tools (`dna_check`, `dna_resolve`, `dna_inventory`, `dna_similar`, `dna_start_preview`) that never write source.
+
+Install (Node.js 18.17 or later):
+
+```bash
+npm install -g @calibrate-ds/dna
+dna start
+dna check
+```
+
+With npx, use the full package name: `npx @calibrate-ds/dna check`.
+
+## Figma plugin
+
+Six modules: Accessibility Advisor, Component Readiness, Token Inspector, State Diff Engine, Stress Test (AI) and Token Exporter / Importer. Free on Figma Community. Runs locally, no account required.
+
+## License
+
+Both npm packages are licensed FSL-1.1-MIT. CalibrateDS is not open source; the source repositories are private.
+
+## Docs
+
+- [PTB quickstart](https://calibrateds.deepadalja.com/docs/getting-started/quickstart)
+- [Design freshness](https://calibrateds.deepadalja.com/docs/concepts/design-freshness)
+- [CI integration](https://calibrateds.deepadalja.com/docs/architecture/ci-integration)
+- [PTB MCP setup](https://calibrateds.deepadalja.com/docs/mcp/setup)
+- [DNA quickstart](https://calibrateds.deepadalja.com/docs/dna/getting-started/quickstart)
+- [DNA MCP setup](https://calibrateds.deepadalja.com/docs/dna/mcp/setup)
+- [Figma plugin docs](https://calibrateds.deepadalja.com/docs/plugin/overview)
+
 ## Links
 
-- Documentation: https://calibrateds.deepadalja.com/docs/getting-started/quickstart
-- npm: https://www.npmjs.com/package/@calibrate-ds/cli
-- Figma plugin: https://www.figma.com/community/plugin/1520848851134730449
-- MCP setup: https://calibrateds.deepadalja.com/docs/mcp/setup
-- GitHub: https://github.com/thedeepadalja
-- Made by Deep Adalja — https://deepadalja.com
+- [@calibrate-ds/cli on npm](https://www.npmjs.com/package/@calibrate-ds/cli)
+- [@calibrate-ds/dna on npm](https://www.npmjs.com/package/@calibrate-ds/dna)
+- [Figma plugin](https://www.figma.com/community/plugin/1520848851134730449)
+- [Deep Adalja](https://deepadalja.com)
