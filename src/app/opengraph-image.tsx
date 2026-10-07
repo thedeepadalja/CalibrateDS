@@ -1,154 +1,234 @@
 import { ImageResponse } from 'next/og';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-export const runtime = 'edge';
-export const alt = 'CalibrateDS — Your design file is source code.';
+export const alt = 'CalibrateDS: design and code, calibrated.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default function OGImage() {
+const BG = '#0A0A0B';
+const PANEL = '#161618';
+const BORDER = '#2C2C2E';
+const HEADING = '#FFF0D4';
+const TEXT = '#A09D96';
+const BRAND = '#B68D42';
+
+const CHANNELS = [
+  { ch: '01', name: 'PTB', role: 'Compile Figma to typed code' },
+  { ch: '02', name: 'DNA', role: 'Hold code to its identity' },
+  { ch: '03', name: 'Plugin', role: 'Verify design before handoff' },
+];
+
+type FontWeight = 400 | 700 | 800;
+
+/* The site's own faces (Archivo, JetBrains Mono), fetched once at build time.
+   If the fetch fails the image still renders with the default face. */
+async function loadGoogleFont(family: string, weight: FontWeight) {
+  try {
+    const css = await fetch(
+      `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:wght@${weight}`
+    ).then((r) => r.text());
+    const url = css.match(/src: url\((.+?)\) format\('(?:truetype|opentype)'\)/)?.[1];
+    if (!url) return null;
+    const data = await fetch(url).then((r) => r.arrayBuffer());
+    return { name: family, data, weight, style: 'normal' as const };
+  } catch {
+    return null;
+  }
+}
+
+export default async function OGImage() {
+  const [archivo, mono, monoBold, logo] = await Promise.all([
+    loadGoogleFont('Archivo', 800),
+    loadGoogleFont('JetBrains Mono', 400),
+    loadGoogleFont('JetBrains Mono', 700),
+    readFile(join(process.cwd(), 'public', 'CalibrateDSLogoSingle.svg'), 'base64'),
+  ]);
+  const fonts = [archivo, mono, monoBold].filter((f) => f !== null);
+
+  const display = { fontFamily: 'Archivo', fontWeight: 800, letterSpacing: '-0.04em' } as const;
+  const word = { ...display, fontSize: 148, lineHeight: 1, display: 'flex' } as const;
+
   return new ImageResponse(
     (
       <div
         style={{
-          width: '1200px',
-          height: '630px',
-          background: '#0a0a0b',
+          width: '100%',
+          height: '100%',
+          background: BG,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '72px 80px',
-          fontFamily: 'sans-serif',
+          padding: '64px 72px 56px',
+          fontFamily: 'JetBrains Mono',
           position: 'relative',
-          overflow: 'hidden',
         }}
       >
-        {/* Background grid lines */}
+        {/* Ruler ticks along the top edge, as on the site hero */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'linear-gradient(rgba(182,141,66,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(182,141,66,0.06) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+            top: 0,
+            left: 0,
+            width: 1200,
+            height: 10,
             display: 'flex',
+            backgroundImage: `linear-gradient(90deg, ${BORDER} 1px, transparent 1px)`,
+            backgroundSize: '12px 10px',
           }}
         />
-
-        {/* Gold glow top-right */}
         <div
           style={{
             position: 'absolute',
-            top: '-120px',
-            right: '-120px',
-            width: '500px',
-            height: '500px',
+            top: 0,
+            left: 0,
+            width: 1200,
+            height: 18,
+            display: 'flex',
+            backgroundImage: `linear-gradient(90deg, rgba(182,141,66,0.55) 1px, transparent 1px)`,
+            backgroundSize: '96px 18px',
+          }}
+        />
+        {/* Brand glow behind the registered word */}
+        <div
+          style={{
+            position: 'absolute',
+            left: -260,
+            top: -40,
+            width: 900,
+            height: 900,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(182,141,66,0.18) 0%, transparent 70%)',
             display: 'flex',
+            background: 'radial-gradient(circle, rgba(182,141,66,0.16) 0%, transparent 68%)',
           }}
         />
 
-        {/* Top: logo + badge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', zIndex: 1 }}>
-          {/* Gold accent + wordmark */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
-            <div
-              style={{
-                width: '5px',
-                height: '32px',
-                background: '#B68D42',
-                borderRadius: '3px 0 0 3px',
-                marginRight: '12px',
-                display: 'flex',
-              }}
-            />
-            <span style={{ fontSize: '26px', fontWeight: 800, color: '#F5F0E8', letterSpacing: '-0.02em' }}>
-              Calibrate
-            </span>
-            <span style={{ fontSize: '26px', fontWeight: 800, color: '#B68D42', letterSpacing: '-0.02em' }}>
-              DS
-            </span>
-          </div>
+        {/* Register mark: the drifted ring, and the one that landed */}
+        <div style={{ position: 'absolute', left: 908, top: 196, width: 220, height: 220, display: 'flex' }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: 14,
+              top: 22,
+              width: 168,
+              height: 168,
+              borderRadius: '50%',
+              border: '2px solid rgba(182,141,66,0.3)',
+              display: 'flex',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 26,
+              top: 26,
+              width: 168,
+              height: 168,
+              borderRadius: '50%',
+              border: `2px solid ${HEADING}`,
+              display: 'flex',
+            }}
+          />
+          <div style={{ position: 'absolute', left: 0, top: 109, width: 220, height: 2, background: BORDER, display: 'flex' }} />
+          <div style={{ position: 'absolute', left: 109, top: 0, width: 2, height: 220, background: BORDER, display: 'flex' }} />
+          <div
+            style={{
+              position: 'absolute',
+              left: 99,
+              top: 99,
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: BRAND,
+              display: 'flex',
+            }}
+          />
+        </div>
 
-          {/* Version badge */}
+        {/* Top row: wordmark and the drift meter */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <img src={`data:image/svg+xml;base64,${logo}`} width={34} height={34} alt="" />
+            <div style={{ ...display, letterSpacing: '-0.02em', fontSize: 30, color: HEADING, display: 'flex' }}>
+              Calibrate<span style={{ color: BRAND }}>DS</span>
+            </div>
+          </div>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '4px 12px',
-              background: 'rgba(182,141,66,0.1)',
-              border: '1px solid rgba(182,141,66,0.25)',
-              borderRadius: '999px',
+              gap: 18,
+              padding: '10px 22px',
+              border: `1px solid ${BORDER}`,
+              borderRadius: 9999,
+              background: PANEL,
+              fontSize: 17,
+              letterSpacing: '0.08em',
             }}
           >
+            <span style={{ color: TEXT }}>Δ DRIFT</span>
+            <span style={{ color: HEADING, fontWeight: 700 }}>0.0PX</span>
+            <span style={{ color: BRAND }}>● IN REGISTER</span>
+          </div>
+        </div>
+
+        {/* Headline: the registered word, with the misaligned layers it replaced */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ ...display, fontSize: 84, lineHeight: 1, color: HEADING, display: 'flex' }}>
+            Design and code,
+          </div>
+          <div style={{ display: 'flex', position: 'relative', marginTop: 6 }}>
             <div
               style={{
-                width: '7px',
-                height: '7px',
-                borderRadius: '50%',
-                background: '#B68D42',
-                display: 'flex',
+                ...word,
+                position: 'absolute',
+                left: -16,
+                top: -10,
+                color: 'rgba(182,141,66,0.3)',
               }}
-            />
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#B68D42', letterSpacing: '0.06em' }}>
-              v0.1.65 · MCP-POWERED
-            </span>
+            >
+              calibrated.
+            </div>
+            <div style={{ ...word, position: 'absolute', left: 14, top: 9, color: 'rgba(255,240,212,0.1)' }}>
+              calibrated.
+            </div>
+            <div
+              style={{
+                ...word,
+                backgroundImage: `linear-gradient(115deg, ${HEADING} 0%, ${BRAND} 85%)`,
+                backgroundClip: 'text',
+                color: 'transparent',
+              }}
+            >
+              calibrated.
+            </div>
           </div>
         </div>
 
-        {/* Center: headline */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', zIndex: 1 }}>
-          <div style={{ fontSize: '78px', fontWeight: 800, color: '#F5F0E8', lineHeight: 1.05, letterSpacing: '-0.03em', display: 'flex', flexDirection: 'column' }}>
-            <span>Your design file is</span>
-            <span style={{ color: '#B68D42' }}>source code.</span>
-          </div>
-          <div style={{ fontSize: '24px', color: '#64748B', lineHeight: 1.5, maxWidth: '720px', display: 'flex' }}>
-            Scan Figma · Generate typed React components · Detect design drift in CI
-          </div>
-        </div>
-
-        {/* Bottom: install snippet + tags */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 1 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: '#111113',
-              border: '1px solid #1e1e22',
-              borderRadius: '10px',
-              padding: '14px 22px',
-            }}
-          >
-            <span style={{ fontSize: '16px', color: '#B68D42', fontFamily: 'monospace' }}>$</span>
-            <span style={{ fontSize: '18px', color: '#94A3B8', fontFamily: 'monospace' }}>
-              npm install -g @calibrate-ds/cli
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '10px' }}>
-            {['Claude Code', 'Cursor', 'Windsurf'].map((tag) => (
-              <div
-                key={tag}
-                style={{
-                  display: 'flex',
-                  padding: '8px 16px',
-                  background: '#111113',
-                  border: '1px solid #1e1e22',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  color: '#64748B',
-                  fontWeight: 600,
-                }}
-              >
-                {tag}
+        {/* Bottom row: the three instruments */}
+        <div style={{ display: 'flex', borderTop: `1px solid ${BORDER}`, paddingTop: 26 }}>
+          {CHANNELS.map((c, i) => (
+            <div
+              key={c.ch}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                flex: 1,
+                paddingLeft: i === 0 ? 0 : 28,
+                borderLeft: i === 0 ? 'none' : `1px solid ${BORDER}`,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+                <span style={{ fontSize: 15, color: BRAND, letterSpacing: '0.12em' }}>CH {c.ch}</span>
+                <span style={{ fontSize: 24, fontWeight: 700, color: HEADING }}>{c.name}</span>
               </div>
-            ))}
-          </div>
+              <span style={{ fontSize: 17, color: TEXT }}>{c.role}</span>
+            </div>
+          ))}
         </div>
       </div>
     ),
-    { ...size }
+    { ...size, fonts }
   );
 }
