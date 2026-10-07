@@ -47,7 +47,7 @@ export default async function OGImage() {
   const fonts = [archivo, mono, monoBold].filter((f) => f !== null);
 
   const display = { fontFamily: 'Archivo', fontWeight: 800, letterSpacing: '-0.04em' } as const;
-  const word = { ...display, fontSize: 148, lineHeight: 1, display: 'flex' } as const;
+  const word = { ...display, fontSize: 96, lineHeight: 1, color: HEADING, display: 'flex' } as const;
 
   return new ImageResponse(
     (
@@ -174,22 +174,20 @@ export default async function OGImage() {
 
         {/* Headline: the registered word, with the misaligned layers it replaced */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ ...display, fontSize: 84, lineHeight: 1, color: HEADING, display: 'flex' }}>
-            Design and code,
-          </div>
-          <div style={{ display: 'flex', position: 'relative', marginTop: 6 }}>
+          <div style={word}>Design and code,</div>
+          <div style={{ display: 'flex', position: 'relative', marginTop: 4 }}>
             <div
               style={{
                 ...word,
                 position: 'absolute',
-                left: -16,
-                top: -10,
+                left: -12,
+                top: -8,
                 color: 'rgba(182,141,66,0.3)',
               }}
             >
               calibrated.
             </div>
-            <div style={{ ...word, position: 'absolute', left: 14, top: 9, color: 'rgba(255,240,212,0.1)' }}>
+            <div style={{ ...word, position: 'absolute', left: 11, top: 7, color: 'rgba(255,240,212,0.1)' }}>
               calibrated.
             </div>
             <div
