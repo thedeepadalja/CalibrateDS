@@ -9,7 +9,7 @@ The **DNA MCP server** is a standalone process that exposes DNA's findings as st
 
 ## What is MCP?
 
-MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When `dna mcp` is connected, your AI assistant gains five purpose-built tools that make it conformance-aware — without you prompting it.
+MCP (Model Context Protocol) is an open standard that lets AI IDEs call external tools during a conversation. When `dna mcp` is connected, your AI assistant gains six purpose-built tools that make it conformance-aware — without you prompting it.
 
 ## Why use MCP instead of the CLI
 
@@ -28,7 +28,7 @@ AI: [calls dna_check → finds the change introduces a raw hex color]
 AI: "I noticed this introduces rgba(182,141,66,0.1) — I'll use var(--brand) instead."
 ```
 
-## The five tools
+## The six tools
 
 | Tool | What it does |
 |---|---|
@@ -36,9 +36,10 @@ AI: "I noticed this introduces rgba(182,141,66,0.1) — I'll use var(--brand) in
 | `dna_resolve` | Reverse-lookup a raw value → identity token, before the literal gets written |
 | `dna_inventory` | Return the component library as structured data — name, props, use-when, path |
 | `dna_similar` | Structural duplication findings, tagged `rebuild` or `clone`, with scores |
+| `dna_doctor` | Integration status as structured data — identity, hook, agent block, MCP, rules, theme config |
 | `dna_start_preview` | Preview what `dna start` would extract, without writing anything |
 
-All five tools are **detector-only** — they never write source, config, or anything outside `.dna/`. The AI uses the findings to make its own edits with its own tools.
+All six tools are **detector-only** — they never write source, config, or anything outside `.dna/`. The AI uses the findings to make its own edits with its own tools.
 
 ## Cooperation convention
 

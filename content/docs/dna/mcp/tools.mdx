@@ -1,6 +1,6 @@
 ---
 title: "Tools Reference"
-description: "Complete reference for all five DNA MCP tools."
+description: "Complete reference for all six DNA MCP tools."
 ---
 
 # Tools Reference
@@ -146,6 +146,33 @@ Run DNA's structural duplication check. Findings are tagged with `kind`:
 ```
 
 **When to call it:** Alongside `dna_inventory` before writing new component code. It catches reinvention that slips past a name-only check — and net-new shapes being cloned across files. Advisory, never gating.
+
+---
+
+## dna_doctor
+
+One-screen integration status — the same checks `dna doctor` prints, as structured data.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `config` | string | `ds-lint.config.json` | ds-lint config path, relative to the project root, for the `rules` check. |
+
+**Returns:**
+
+```json
+{
+  "checks": [
+    { "id": "identity", "status": "ok", "detail": "…", "fix": null }
+  ],
+  "summary": { "ok": 7, "warn": 1, "missing": 0, "unknown": 0 }
+}
+```
+
+`status` is `ok`, `warn`, `missing`, or `unknown`; `fix` names the one command for a `warn` / `missing` line. The `identity` check carries `duplicateKeys` when a key is written twice in one block, and a `theme-config` check is present only when a `tailwind.config.*` could not be loaded.
+
+**When to call it:** To confirm dna is wired into a project — hook, agent block, MCP registration — before relying on it.
 
 ---
 
