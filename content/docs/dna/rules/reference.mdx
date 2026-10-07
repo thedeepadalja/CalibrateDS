@@ -22,6 +22,8 @@ Flags raw color literals that fall inside the palette hue ranges but aren't expr
 - Raw rgb/rgba: `rgba(182, 141, 66, 0.1)`, `rgb(79, 132, 214)`
 - Raw hsl/hsla: `hsl(38 47% 48%)`
 
+**Where it looks.** A literal is linted in every position of a declaration value, not only in `color` / `background-color`: each gradient stop, the plain colour layers of a multi-layer `background`, `outline`, per-side and logical borders, `column-rule`, every `text-shadow` layer, `filter: drop-shadow()`, `mask-image`, a `var()` fallback (`var(--x, #fff)`), `color-mix()` / `light-dark()` arguments, and SCSS `$var` definitions. JS/TS inline `style` objects are read under the matching keys (`borderTop`, `outline`, `textShadow`, `filter`, `maskImage`, `backgroundImage`, …). The finding names where the literal sat, e.g. `(gradient stop #abcdef)`.
+
 **Does not flag:**
 - Values in `:root` where tokens are defined
 - `transparent`, `currentColor`, `inherit`

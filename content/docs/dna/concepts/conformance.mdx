@@ -11,7 +11,7 @@ description: "How dna check verifies design identity across source code and rend
 
 ### 1. Lint (source)
 
-Static analysis of CSS, Tailwind, and JSX source files. Framework-agnostic: a raw hex value is flagged whether it came from `bg-[#4A90D9]`, `color:#4A90D9`, or a CSS module. The rules are applied to a normalized intermediate representation — not the source syntax.
+Static analysis of CSS, SCSS, LESS, Tailwind, and JSX source files — `.scss` and `.less` are parsed with their own syntaxes (`postcss-scss`, `postcss-less`), the same way `dna start` reads them. Framework-agnostic: a raw hex value is flagged whether it came from `bg-[#4A90D9]`, `color:#4A90D9`, or a CSS module. The rules are applied to a normalized intermediate representation — not the source syntax.
 
 Caught by lint:
 - **`color-family-allowlist`** — colors not in the identity palette

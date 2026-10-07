@@ -11,8 +11,10 @@ Extract a design identity from the current codebase and write `.dna/identity.yam
 
 ```bash
 dna start           # extract identity
-dna start --force   # overwrite an existing identity.yaml
+dna start --force   # re-extract over an existing identity.yaml
 ```
+
+Reads every stylesheet `dna check` lints — `.css`, `.scss`, `.less`, `.pcss` — so a value used only in a preprocessor file still reaches the identity.
 
 **What it extracts:**
 - CSS custom properties (the palette, with tiers inferred from the token resolution graph)
@@ -28,6 +30,10 @@ dna start --force   # overwrite an existing identity.yaml
 - An instruction block in `CLAUDE.md` / `AGENTS.md` (if present) telling AI IDEs to call the MCP tools on their own initiative — inventory/similar before building, resolve before writing raw values, check after design-relevant edits
 
 > **An existing `identity.yaml` is never overwritten without `--force`.** It is a record, not derived output — re-extraction without `--force` leaves the recorded history intact.
+
+**What `--force` does.** It re-extracts and merges with the existing file rather than starting blank: values are re-derived from source, while adopted and hand-recorded entries (any `from` other than `code`) are kept. Since 0.2.19 that includes the **type scale** — `from: code` steps follow the source, with added and removed steps named in the diff — and a key written twice in one block is repaired (first occurrence wins, reported on a `duplicate key repaired` line). Anything rewritten that is not an entry change is stated on its own line; compare the file diff before committing.
+
+> If a `tailwind.config.*` cannot be loaded (dependencies not installed, a failing import, a syntax error), `dna start` reports it as `config-load-error` and `--force` carries the theme-sourced steps forward unverified instead of deleting them.
 
 ---
 
@@ -50,6 +56,8 @@ dna check --only=lint,render
 | cn-merge guard | `--only=cn` | identity.yaml |
 | Rendered | `--only=render` | puppeteer-core peer + Vite |
 | Manifests | `--only=manifest` | `.dna/frames/` |
+
+A `tailwind.config.*` that cannot be loaded is reported as a named `config-load-error` skip — the headline gains `1 theme config not loaded` and an otherwise clean run prints `⚠` instead of `✓`.
 
 Exit `1` on violations; `0` on clean or nothing-to-check. Tri-state output — a run with nothing to check never renders as a green pass.
 
@@ -89,9 +97,9 @@ dna allow type 15px --why "legacy article body"
 ```
 
 - Takes effect on the next `dna check` immediately — no `dna start` re-run, no hand-editing YAML
-- `--why` is **required**; `--as <name>` names the value (required for `radius` and `color`)
+- `--why` is **required**; `--as <name>` names the value on every axis (required for `radius` and `color`; `type` and `spacing` default to `step-<px>`). A name that already holds a different value is refused — exit `1`, nothing written
 - Stamps provenance and appends the decision to `.dna/decisions.jsonl`
-- **Survival across re-extraction:** `type` and `spacing` adoptions survive `dna start --force`; `radius` and `color` do not unless the value is also present in source — `dna allow` tells you which applies when you run it
+- **Survival across re-extraction:** adoptions survive `dna start --force` on all four axes, value and provenance intact. One the fresh scan no longer finds in source is kept and annotated as not seen by the static scan, never silently dropped
 
 ---
 
@@ -217,6 +225,33 @@ dna hook install --force   # replace a pre-commit hook dna didn't write
 Writes `.git/hooks/pre-commit`. A failing check blocks the commit.
 
 > **It refuses to overwrite a pre-commit hook it didn't write itself.** Pass `--force` to replace a foreign hook — its content is lost once you do, so back it up first. Re-running over dna's own prior install always proceeds without `--force`.
+
+---
+
+## dna agent-block
+
+Insert or refresh the agent-instruction block — the same one `dna start` writes — in `CLAUDE.md` / `AGENTS.md`, without re-extracting an identity.
+
+```bash
+dna agent-block
+```
+
+Replaces only the delimited region if the block is already present, and writes nothing when it is already up to date.
+
+---
+
+## dna doctor
+
+One-screen integration status: is dna actually wired in, not just installed?
+
+```bash
+dna doctor
+dna doctor --json
+```
+
+Each line is `ok`, `warn`, `missing`, or `unknown`, with the one fix command where there is one. It covers the identity (present, tracked in git, staleness, duplicate keys), the agent-instruction block, the pre-commit hook, MCP registration in `.mcp.json`, a CI step running `dna check`, which `dna` binary would run, and the active rule table. A `theme-config` line appears only when a `tailwind.config.*` could not be loaded — to name the error, `dna doctor` executes that config.
+
+Reads only — writes nothing.
 
 ---
 

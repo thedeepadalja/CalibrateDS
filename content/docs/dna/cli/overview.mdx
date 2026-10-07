@@ -5,7 +5,7 @@ description: "All dna commands at a glance."
 
 # CLI Overview
 
-The `dna` CLI provides ten commands. Three are the main workflow (`start`, `check`, `hook install`); the rest are supporting instruments.
+The `dna` CLI provides thirteen commands. Three are the main workflow (`start`, `check`, `hook install`); the rest are supporting instruments.
 
 ## Command reference
 
@@ -21,6 +21,8 @@ The `dna` CLI provides ten commands. Three are the main workflow (`start`, `chec
 | [`dna gen-manifest`](/docs/dna/cli/commands#dna-gen-manifest) | Generate structural screen manifests from design frames |
 | [`dna figma diff`](/docs/dna/cli/commands#dna-figma-diff) | Advisory structural change detector: committed frame dump vs a fresh one |
 | [`dna hook install`](/docs/dna/cli/commands#dna-hook-install) | Install a pre-commit hook that runs `dna check` |
+| [`dna agent-block`](/docs/dna/cli/commands#dna-agent-block) | Insert or refresh the agent-instruction block in `CLAUDE.md` / `AGENTS.md`, without re-extracting |
+| [`dna doctor`](/docs/dna/cli/commands#dna-doctor) | One-screen integration status: identity, hook, agent block, MCP, rules, theme config |
 | `dna mcp` | Start the MCP server (see [MCP Overview](/docs/dna/mcp/overview)) |
 
 ## Global flags
@@ -29,7 +31,8 @@ The `dna` CLI provides ten commands. Three are the main workflow (`start`, `chec
 |---|---|
 | `--cwd=<path>` | Project root to operate on (defaults to `process.cwd()`) |
 | `--config=<path>` | Path to `ds-lint.config.json` |
-| `--json` | Machine-readable JSON output (supported by `inventory`, `similar`) |
+| `--json` | Machine-readable JSON output (supported by `inventory`, `similar`, `shapes`, `doctor`) |
+| `--help`, `-h` | Print the command's usage and exit `0` — nothing runs and nothing is written. Works on every command (`dna start --help`); `dna --help` and `dna help [command]` print the overview |
 
 ## Exit codes
 

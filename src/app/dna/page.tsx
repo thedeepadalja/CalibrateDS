@@ -218,7 +218,7 @@ export default function DNAPage() {
           >
             <motion.div className={styles.versionChip} variants={rise}>
               <span className={styles.versionDot} />
-              @calibrate-ds/dna · v0.2.18
+              @calibrate-ds/dna · v0.2.19
             </motion.div>
 
             <motion.h1 className={styles.headline} variants={rise}>
