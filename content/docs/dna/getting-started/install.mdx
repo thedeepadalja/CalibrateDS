@@ -35,7 +35,7 @@ npx @calibrate-ds/dna start
 
 ## Optional peers
 
-DNA's core installs with a small dependency set — `postcss` plus the `postcss-scss` and `postcss-less` syntaxes for stylesheet parsing, and the MCP SDK with `zod` for `dna mcp` — and degrades cleanly when peers are missing — it always tells you what it skipped and why.
+DNA's core installs with a small dependency set — `postcss` plus the `postcss-scss` and `postcss-less` syntaxes for stylesheet parsing, `es-module-lexer` for loading an ESM `tailwind.config.js` in memory, and the MCP SDK with `zod` for `dna mcp` — and degrades cleanly when peers are missing — it always tells you what it skipped and why.
 
 | Peer | Required for |
 |---|---|
