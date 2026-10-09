@@ -72,7 +72,7 @@ By default, `dna mcp` uses the MCP client's workspace root, then the server proc
 
 **`dna mcp` hangs when run in a terminal.**
 
-Expected. `dna mcp` starts a stdio MCP server — it holds the process open waiting for JSON-RPC messages from a client. There is no output to see in a terminal without a client attached. Use `Ctrl+C` to exit. Register it as an MCP server in your IDE instead.
+Expected. `dna mcp` starts a stdio MCP server — it holds the process open waiting for JSON-RPC messages from a client. There is no output to see in a terminal without a client attached. Use `Ctrl+C` to exit. Under a client it exits on its own when the client goes away. Register it as an MCP server in your IDE instead.
 
 **`Cannot find package '@modelcontextprotocol/sdk'` when running `dna mcp`.**
 
