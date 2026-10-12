@@ -33,7 +33,14 @@ Reads every stylesheet `dna check` lints — `.css`, `.scss`, `.less`, `.pcss` �
 
 **What `--force` does.** It re-extracts and merges with the existing file rather than starting blank: values are re-derived from source, while adopted and hand-recorded entries (any `from` other than `code`) are kept. Since 0.2.19 that includes the **type scale** — `from: code` steps follow the source, with added and removed steps named in the diff — and a key written twice in one block is repaired (first occurrence wins, reported on a `duplicate key repaired` line). Anything rewritten that is not an entry change is stated on its own line; compare the file diff before committing.
 
+Since 0.2.20, `--force` also:
+- **re-derives `scales.spacingScale`** when the loaded `tailwind.config.*` declares a spacing scale — the array becomes that scale plus your adopted values, with added and removed values named. A value typed into the array by hand is removed; keep one the theme does not declare with `dna allow spacing <px> --why "…"`
+- **keeps `intent:` items exactly as typed**, comments included (0.2.19 rewrote the block to `intent: []`)
+- **lists what it does not write back** — a `not carried forward` block under the diff names each piece of hand-written text it dropped (a field dna does not carry, text after an entry's closing brace, …), with its line number in the file as it was on disk
+
 > If a `tailwind.config.*` cannot be loaded (dependencies not installed, a failing import, a syntax error), `dna start` reports it as `config-load-error` and `--force` carries the theme-sourced steps forward unverified instead of deleting them.
+>
+> dna reads **one** `tailwind.config.*` per project, as Tailwind itself does. When `tokenSources` matches several, every other match is named on a `config-not-read` line and never executed — list the one to read alone (or first) in `tokenSources`, or run dna inside the package.
 
 ---
 
@@ -46,6 +53,7 @@ dna check                    # diff-default: only changed files
 dna check --audit            # whole-repo scan
 dna check --only=lint        # specific layers only
 dna check --only=lint,render
+dna check --all-findings     # print every finding (default: first 1,000 errors + 1,000 warnings)
 ```
 
 **Layers:**
@@ -57,7 +65,9 @@ dna check --only=lint,render
 | Rendered | `--only=render` | puppeteer-core peer + Vite |
 | Manifests | `--only=manifest` | `.dna/frames/` |
 
-A `tailwind.config.*` that cannot be loaded is reported as a named `config-load-error` skip — the headline gains `1 theme config not loaded` and an otherwise clean run prints `⚠` instead of `✓`.
+A `tailwind.config.*` that cannot be loaded is reported as a named `config-load-error` skip — the headline gains `1 theme config not loaded` and an otherwise clean run prints `⚠` instead of `✓`. The same goes for a config that was matched but not read (`config-not-read`, headline `N theme config(s) not read`) — dna reads one theme config per project. The `cn` and `render` steps and `dna resolve` name both cases too.
+
+**Large runs.** `dna check` prints at most 1,000 errors and 1,000 warnings. Past that it prints how many more there are; the headline and the exit code still count everything, every finding is in `.dna/log.jsonl`, and `--all-findings` prints them all.
 
 Exit `1` on violations; `0` on clean or nothing-to-check. Tri-state output — a run with nothing to check never renders as a green pass.
 
@@ -99,6 +109,7 @@ dna allow type 15px --why "legacy article body"
 - Takes effect on the next `dna check` immediately — no `dna start` re-run, no hand-editing YAML
 - `--why` is **required**; `--as <name>` names the value on every axis (required for `radius` and `color`; `type` and `spacing` default to `step-<px>`). A name that already holds a different value is refused — exit `1`, nothing written
 - Stamps provenance and appends the decision to `.dna/decisions.jsonl`
+- A value that is already on its axis but not adopted — a theme step, an extracted step, a declared or observed colour — is recorded as adopted (`✓ recorded as adopted`). Only a value an adopted entry already holds is a no-op
 - **Survival across re-extraction:** adoptions survive `dna start --force` on all four axes, value and provenance intact. One the fresh scan no longer finds in source is kept and annotated as not seen by the static scan, never silently dropped
 
 ---
@@ -249,7 +260,7 @@ dna doctor
 dna doctor --json
 ```
 
-Each line is `ok`, `warn`, `missing`, or `unknown`, with the one fix command where there is one. It covers the identity (present, tracked in git, staleness, duplicate keys), the agent-instruction block, the pre-commit hook, MCP registration in `.mcp.json`, a CI step running `dna check`, which `dna` binary would run, and the active rule table. A `theme-config` line appears only when a `tailwind.config.*` could not be loaded — to name the error, `dna doctor` executes that config.
+Each line is `ok`, `warn`, `missing`, or `unknown`, with the one fix command where there is one. It covers the identity (present, tracked in git, staleness, duplicate keys), the agent-instruction block, the pre-commit hook, MCP registration in `.mcp.json`, a CI step running `dna check`, which `dna` binary would run, and the active rule table. A `theme-config` line appears only when a `tailwind.config.*` could not be loaded or was matched but not read — to name the error, `dna doctor` executes that config.
 
 Reads only — writes nothing.
 
@@ -263,3 +274,5 @@ Start the standalone MCP server. See [MCP Overview](/docs/dna/mcp/overview).
 dna mcp
 dna mcp --cwd=/path/to/project
 ```
+
+The server re-reads a `tailwind.config.*` whose contents changed since it last loaded it — no restart needed — and exits on its own once its client has gone (stdin closed, no call in flight).

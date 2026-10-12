@@ -42,7 +42,7 @@ Run DNA's design-system conformance check.
 }
 ```
 
-The payload also folds in the optional `render` / `figma` sub-checks (rendered conformance, structural manifests) when those peers are installed and configured — matching the CLI's own `dna check` behavior. It may include a `staleness` note when the identity is older than recent commits that touched checked source.
+The payload also folds in the optional `render` / `figma` sub-checks (rendered conformance, structural manifests) when those peers are installed and configured — matching the CLI's own `dna check` behavior. At most 1,000 findings per severity are returned; a larger run carries `findingsTruncated` (the omitted counts, plus the `.dna/log.jsonl` run that holds every finding), and the summary still counts everything. It may include a `staleness` note when the identity is older than recent commits that touched checked source.
 
 **When to call it:** After editing any design-relevant file (styles, tokens, component markup). The cooperation convention in `CLAUDE.md`/`AGENTS.md` instructs agents to call this automatically.
 
@@ -170,7 +170,7 @@ One-screen integration status — the same checks `dna doctor` prints, as struct
 }
 ```
 
-`status` is `ok`, `warn`, `missing`, or `unknown`; `fix` names the one command for a `warn` / `missing` line. The `identity` check carries `duplicateKeys` when a key is written twice in one block, and a `theme-config` check is present only when a `tailwind.config.*` could not be loaded.
+`status` is `ok`, `warn`, `missing`, or `unknown`; `fix` names the one command for a `warn` / `missing` line. The `identity` check carries `duplicateKeys` when a key is written twice in one block, and a `theme-config` check is present only when a `tailwind.config.*` could not be loaded or was matched but not read (`themeConfigsNotRead`).
 
 **When to call it:** To confirm dna is wired into a project — hook, agent block, MCP registration — before relying on it.
 
