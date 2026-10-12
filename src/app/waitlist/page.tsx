@@ -13,6 +13,7 @@ export default function WaitlistPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || status === 'loading') return;
+    const website = String(new FormData(e.currentTarget).get('website') ?? '');
 
     setStatus('loading');
     setErrorMsg('');
@@ -21,7 +22,7 @@ export default function WaitlistPage() {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, website }),
       });
 
       const data = await res.json();
@@ -64,6 +65,8 @@ export default function WaitlistPage() {
           </motion.div>
         ) : (
           <form className={styles.form} onSubmit={handleSubmit}>
+            {/* Honeypot: hidden from people, filled in by form-spam bots. */}
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" hidden />
             <div className={styles.inputGroup}>
               <Mail className={styles.inputIcon} size={20} color="var(--text-secondary)" />
               <input
