@@ -80,7 +80,15 @@ export async function POST(request: Request) {
     // the list gets a success and no mail.
     const audienceId = process.env.RESEND_AUDIENCE_ID;
     if (audienceId) {
-      const { data: existing } = await resend.contacts.get({ audienceId, email });
+      const { data: existing, error: lookupError } = await resend.contacts.get({
+        audienceId,
+        email,
+      });
+      // Only "not found" means a new signup. Any other lookup failure
+      // (rate limit, outage) stops here rather than risk a repeat send.
+      if (lookupError && lookupError.name !== 'not_found') {
+        throw new Error(lookupError.message);
+      }
       if (existing) {
         return NextResponse.json({ success: true });
       }
